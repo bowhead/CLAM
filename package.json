@@ -55,6 +55,7 @@
         "typescript": "^3.9.10"
     },
     "dependencies": {
+        "crypto-js": "^4.1.1",
         "eth-hd-wallet": "^0.5.1",
         "ethereum-hdwallet": "^0.1.2",
         "openpgp": "^5.3.1"
