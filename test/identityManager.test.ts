@@ -16,8 +16,9 @@ describe('Testing IdentityManager class', () => {
     expect(objectKeys.includes("publicKeyPGP")).toBe(true);
     expect(objectKeys.includes("privateKeyPGP")).toBe(true);
     expect(objectKeys.includes("encryptionLayer")).toBe(true);
+    expect(objectKeys.includes("keysGenerator")).toBe(true);
     expect(objectKeys.includes("generateIdentity")).toBe(true);
-    expect(objectKeys.length).toBe(8);
+    expect(objectKeys.length).toBe(9);
   });
 
   test('should the mnmonic property length be equal to 0', () => {

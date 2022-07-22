@@ -1,6 +1,5 @@
 import IEncryptionLayer from "../interfaces/IEncryptionLayer";
-import { generateKey, readKey, encrypt, decrypt, readMessage, createMessage, decryptKey, readPrivateKey } from 'openpgp';
-import IPGPKeys from "../interfaces/IPGPKeys";
+import {readKey, encrypt, decrypt, readMessage, createMessage, decryptKey, readPrivateKey } from 'openpgp';
 
 /**
  * This class is used to generate public and private keys using PGP 
@@ -8,32 +7,6 @@ import IPGPKeys from "../interfaces/IPGPKeys";
  * the above mentioned standard together with public and private keys.
  */
 class EncryptionLayer implements IEncryptionLayer {
-
-    /**
-     * This function generates the public and private pgp keys.
-     * @param name This parameter is the name of the user that will generate the public and private pgp keys.
-     * @param email This parameter is the email of the user that will generate the public and private pgp keys.
-     */
-    generatePGPKeys = async (name: string, email: string): Promise<IPGPKeys> => {
-        try {
-            const { privateKey, publicKey } = await generateKey({
-                type: 'ecc',
-                curve: 'curve25519',
-                userIDs: [{ name, email }],
-                passphrase: "passphrase",
-                format: 'armored'
-            });
-            const pgpKeys: IPGPKeys = {
-                privateKeyPGP: privateKey,
-                publicKeyPGP: publicKey
-            }
-            return pgpKeys;
-        } catch (error) {
-            const pgpKeys: IPGPKeys = { privateKeyPGP: "", publicKeyPGP: "" }
-            return pgpKeys;
-        }
-    }
-
     /**
      * This function encrypts the data passed as a parameter using the 
      * public key passed as a parameter.

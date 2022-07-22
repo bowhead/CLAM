@@ -1,8 +1,7 @@
-import EncryptionLayer from "./encryptionLayer/EncryptioLayer";
+import EncryptionLayer from "./encryptionLayer/EncryptioLayerPGP";
 import IdentityManager from "./indentityManager/IdentityManager";
 import ShareableIdentity from "./indentityManager/ShareableIdentity";
 import IEncryptionLayer from "./interfaces/IEncryptionLayer";
-import IPGPKeys from "./interfaces/IPGPKeys";
 
 // const generateIdentityMethod = async () => {
 //     console.log("\n-->This is the implementation of generateIdentity method<--");
@@ -73,12 +72,11 @@ import IPGPKeys from "./interfaces/IPGPKeys";
 //     }
 // }
 
-//main();
+// main();
 
 export {
     IdentityManager,
     ShareableIdentity,
     EncryptionLayer,
-    IEncryptionLayer,
-    IPGPKeys
+    IEncryptionLayer
 };
