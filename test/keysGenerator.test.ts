@@ -4,11 +4,11 @@ import { TextEncoder, TextDecoder } from "util";
 
 import IKeysGenerator from "../src/keysGenerator/IKeysGenerator";
 import KeysGeneratorPGP from "../src/keysGenerator/KeysGeneratorPGP";
-
+import IKeysPGP from "../src/keysGenerator/IKeysPGP";
 
 
 describe('Testing keys generator', () => {
-    const generatorPGP: IKeysGenerator = new KeysGeneratorPGP();
+    const generatorPGP: IKeysGenerator<IKeysPGP> = new KeysGeneratorPGP();
     test('the instance of KeyGeneratorPGP should have a good structure', () => {
         const keys = Object.keys(generatorPGP);
         expect(keys.includes("generateKeys")).toBe(true);
@@ -29,13 +29,17 @@ describe('Testing keys generator', () => {
 
     });
     test('should not generate private and public PGP keys ', async () => {
-        const data = {
-            name: "name",
-            email: "email"
+        try {
+            const data = {
+                name: "name",
+                email: "email"
+            }
+            await generatorPGP.generateKeys(data);
+
+        } catch (error) {
+            expect(error).toBeInstanceOf(Error);
+            expect(error.message).toBe("Error generating keypair: Invalid user ID format")
         }
-        const { privateKeyPGP, publicKeyPGP } = await generatorPGP.generateKeys(data);
-        expect(privateKeyPGP).toBe("");
-        expect(publicKeyPGP).toBe("");
 
     });
 });

@@ -7,9 +7,10 @@ import EncryptioLayerAES from "../src/encryptionLayer/EncryptioLayerAES";
 import IEncryptionLayer from "../src/encryptionLayer/IEncryptionLayer";
 import IKeysGenerator from "../src/keysGenerator/IKeysGenerator"
 import KeysGeneratorPGP from "../src/keysGenerator/KeysGeneratorPGP";
+import IKeysPGP from "../src/keysGenerator/IKeysPGP"
 
 describe('Testing encryption using PGP', () => {
-    const keysGeneratos: IKeysGenerator = new KeysGeneratorPGP();
+    const keysGeneratos: IKeysGenerator<IKeysPGP> = new KeysGeneratorPGP();
     const encryptionPGP: IEncryptionLayer = new EncryptionLayerPGP();
 
     test('should generate public and private PGP keys', async () => {
@@ -20,12 +21,13 @@ describe('Testing encryption using PGP', () => {
     });
 
     test('should no generate public andprivate PGP keys if the name and email parameters are not valid', async () => {
-        const keys = await keysGeneratos.generateKeys({ name: "Name", email: "email" });
-        const { privateKeyPGP, publicKeyPGP } = keys;
-        expect(privateKeyPGP.length).toBe(0);
-        expect(publicKeyPGP.length).toBe(0);
-        expect(privateKeyPGP).toBe("");
-        expect(publicKeyPGP).toBe("");
+        try {
+            await keysGeneratos.generateKeys({ name: "Name", email: "email" });
+        } catch (error) {
+            expect(error).toBeInstanceOf(Error);
+            expect(error.message).toBe("Error generating keypair: Invalid user ID format");
+        }
+
     });
     test('should ecnrypt the message "hello bowhead"', async () => {
         const keys = await keysGeneratos.generateKeys({ name: "Name", email: "email@email.com" });
@@ -66,7 +68,7 @@ describe('Testing encryption using PGP', () => {
 
 
 describe('Testing encryption using AES', () => {
-    const keysGeneratos: IKeysGenerator = new KeysGeneratorPGP();
+    const keysGeneratos: IKeysGenerator<IKeysPGP> = new KeysGeneratorPGP();
     const encryptionAES: IEncryptionLayer = new EncryptioLayerAES();
 
 

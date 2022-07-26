@@ -2,6 +2,7 @@ import EncryptionLayer from "../encryptionLayer/EncryptioLayerPGP";
 import IEncryptionLayer from "../encryptionLayer/IEncryptionLayer";
 import IKeysGenerator from "../keysGenerator/IKeysGenerator";
 import KeysGeneratorPGP from "../keysGenerator/KeysGeneratorPGP";
+import IKeysPGP from "../keysGenerator/IKeysPGP";
 const { fromMnemonic } = require('ethereum-hdwallet');
 const { generateMnemonic } = require('eth-hd-wallet');
 
@@ -19,7 +20,7 @@ class IdentityManager {
     privateKeyPGP: any;
     publicKeyPGP: any;
     encryptionLayer: IEncryptionLayer;
-    keysGenerator: IKeysGenerator;
+    keysGenerator: IKeysGenerator<IKeysPGP>;
 
     /**
      * Constructor that initializes your identity using the values passed as parameters.

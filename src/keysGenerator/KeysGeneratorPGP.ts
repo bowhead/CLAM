@@ -1,29 +1,26 @@
 
 import IKeysGenerator from "./IKeysGenerator";
 import { generateKey } from "openpgp";
+import IKeysPGP from "./IKeysPGP";
 
-class KeysGeneratorPGP implements IKeysGenerator {
+class KeysGeneratorPGP implements IKeysGenerator<IKeysPGP> {
 
-    generateKeys = async (data: any = null): Promise<any> => {
-        const pgpKeys = {
+    public generateKeys = async (data: any = null): Promise<IKeysPGP> => {
+        const pgpKeys: IKeysPGP = {
             privateKeyPGP: "",
             publicKeyPGP: ""
         };
         const { name, email } = data;
-        try {
-            const { privateKey, publicKey } = await generateKey({
-                type: 'ecc',
-                curve: 'curve25519',
-                userIDs: [{ name, email }],
-                passphrase: "passphrase",
-                format: 'armored'
-            });
-            pgpKeys.privateKeyPGP = privateKey;
-            pgpKeys.publicKeyPGP = publicKey;
-            return pgpKeys;
-        } catch (error) {
-            return pgpKeys;
-        }
+        const { privateKey, publicKey } = await generateKey({
+            type: 'ecc',
+            curve: 'curve25519',
+            userIDs: [{ name, email }],
+            passphrase: "passphrase",
+            format: 'armored'
+        });
+        pgpKeys.privateKeyPGP = privateKey;
+        pgpKeys.publicKeyPGP = publicKey;
+        return pgpKeys;
     }
 
 }
