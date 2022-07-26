@@ -1,4 +1,4 @@
-import IEncryptionLayer from "../interfaces/IEncryptionLayer";
+import IEncryptionLayer from "./IEncryptionLayer";
 import {readKey, encrypt, decrypt, readMessage, createMessage, decryptKey, readPrivateKey } from 'openpgp';
 
 /**

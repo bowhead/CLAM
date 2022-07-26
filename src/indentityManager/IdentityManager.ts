@@ -1,7 +1,7 @@
 import EncryptionLayer from "../encryptionLayer/EncryptioLayerPGP";
-import IEncryptionLayer from "../interfaces/IEncryptionLayer";
-import IKeysGenerator from "../interfaces/IKeysGenerator";
-import KeysGeneratorPGP from "../encryptionLayer/KeysGeneratorPGP";
+import IEncryptionLayer from "../encryptionLayer/IEncryptionLayer";
+import IKeysGenerator from "../keysGenerator/IKeysGenerator";
+import KeysGeneratorPGP from "../keysGenerator/KeysGeneratorPGP";
 const { fromMnemonic } = require('ethereum-hdwallet');
 const { generateMnemonic } = require('eth-hd-wallet');
 

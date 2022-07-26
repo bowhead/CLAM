@@ -1,4 +1,4 @@
-import IEncryptionLayer from "../interfaces/IEncryptionLayer";
+import IEncryptionLayer from "./IEncryptionLayer";
 const CryptoJS = require("crypto-js");
 
 class EncryptioLayerAES implements IEncryptionLayer {

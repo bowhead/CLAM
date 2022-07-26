@@ -2,8 +2,8 @@ import { TextEncoder, TextDecoder } from "util";
 (global as any).TextEncoder = TextEncoder;
 (global as any).TextDecoder = TextDecoder;
 
-import IKeysGenerator from "../src/interfaces/IKeysGenerator";
-import KeysGeneratorPGP from "../src/encryptionLayer/KeysGeneratorPGP";
+import IKeysGenerator from "../src/keysGenerator/IKeysGenerator";
+import KeysGeneratorPGP from "../src/keysGenerator/KeysGeneratorPGP";
 
 
 

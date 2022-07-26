@@ -1,7 +1,7 @@
 import EncryptionLayer from "./encryptionLayer/EncryptioLayerPGP";
 import IdentityManager from "./indentityManager/IdentityManager";
 import ShareableIdentity from "./indentityManager/ShareableIdentity";
-import IEncryptionLayer from "./interfaces/IEncryptionLayer";
+import IEncryptionLayer from "./encryptionLayer/IEncryptionLayer";
 
 // const generateIdentityMethod = async () => {
 //     console.log("\n-->This is the implementation of generateIdentity method<--");

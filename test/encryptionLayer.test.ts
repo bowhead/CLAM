@@ -4,9 +4,9 @@ import { TextEncoder, TextDecoder } from "util";
 import EncryptionLayerPGP from "../src/encryptionLayer/EncryptioLayerPGP";
 import EncryptioLayerAES from "../src/encryptionLayer/EncryptioLayerAES";
 
-import IEncryptionLayer from "../src/interfaces/IEncryptionLayer";
-import IKeysGenerator from "../src/interfaces/IKeysGenerator";
-import KeysGeneratorPGP from "../src/encryptionLayer/KeysGeneratorPGP";
+import IEncryptionLayer from "../src/encryptionLayer/IEncryptionLayer";
+import IKeysGenerator from "../src/keysGenerator/IKeysGenerator"
+import KeysGeneratorPGP from "../src/keysGenerator/KeysGeneratorPGP";
 
 describe('Testing encryption using PGP', () => {
     const keysGeneratos: IKeysGenerator = new KeysGeneratorPGP();

@@ -1,5 +1,5 @@
 
-import IKeysGenerator from "../interfaces/IKeysGenerator";
+import IKeysGenerator from "./IKeysGenerator";
 import { generateKey } from "openpgp";
 
 class KeysGeneratorPGP implements IKeysGenerator {
