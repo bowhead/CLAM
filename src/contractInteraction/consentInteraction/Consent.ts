@@ -1,11 +1,11 @@
 class Consent {
-    consented: boolean;
-    consentDate: Date;
-    address: string;
-    addressConsentIndex: Map<string, number>;
-    publicPGPKeys: Map<string, string>;
+    public consented: boolean;
+    public consentDate: Date;
+    public address: string;
+    public addressConsentIndex: Map<string, number>;
+    public publicPGPKeys: Map<string, string>;
 
-    constructor(
+    public constructor(
         consented: boolean,
         consentDate: Date,
         address: string,
