@@ -56,9 +56,9 @@ class IdentityManager {
             name: this.address,
             email: `${this.address}@localhost.com`
         }
-        const { privateKeyPGP, publicKeyPGP } = await this.keysGenerator.generateKeys(data);
-        this.privateKeyPGP = privateKeyPGP;
-        this.publicKeyPGP = publicKeyPGP;
+        const { privateKey, publicKey } = await this.keysGenerator.generateKeys(data);
+        this.privateKeyPGP = privateKey;
+        this.publicKeyPGP = publicKey;
     }
 
     /**

@@ -26,9 +26,7 @@ class EncryptioLayerAES implements IEncryptionLayer {
             padding: CryptoJS.pad.Pkcs7,
             mode: CryptoJS.mode.CBC,
         });
-        const transitmessage = salt.toString() + iv.toString() + encrypted.toString();
-        console.log(transitmessage);
-        
+        const transitmessage = salt.toString() + iv.toString() + encrypted.toString();        
         return transitmessage;
     }
     /**
