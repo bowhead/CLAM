@@ -30,11 +30,16 @@ describe('Testing ShareableIdentity class', () => {
     });
 
     test('should not genereta identities if the main identity is not generated', async () => {
-        const mainIdentity: IdentityManager = new IdentityManager();
-        const shareable: ShareableIdentity = new ShareableIdentity(mainIdentity);
-        await shareable.generateIdentities(5);
-        const { identities } = shareable;
-        expect(identities.length).toBe(0);
+        try {
+            const mainIdentity: IdentityManager = new IdentityManager();
+            const shareable: ShareableIdentity = new ShareableIdentity(mainIdentity);
+            await shareable.generateIdentities(5);
+            const { identities } = shareable;
+            expect(identities.length).toBe(0);
+        } catch (error) {
+            expect(error).toBeInstanceOf(Error);
+            expect(error.message).toBe("The main identity has to be initialized");
+        }
     });
 
     test('should increse by 5 the property lastIdentity when the user wants 4 identities', async () => {
@@ -48,12 +53,17 @@ describe('Testing ShareableIdentity class', () => {
         expect(lastIdentity).toBe(5);
     });
 
-    test('should not increse the property lastIdentity when the user wants 4 identities', () => {
-        const mainIdentity: IdentityManager = new IdentityManager();
-        const shareable: ShareableIdentity = new ShareableIdentity(mainIdentity);
-        shareable.generateIdentities(4);
-        const { lastIdentity } = shareable;
-        expect(lastIdentity).toBe(1);
+    test('should not increse the property lastIdentity when the user wants 4 identities', async () => {
+        try {
+            const mainIdentity: IdentityManager = new IdentityManager();
+            const shareable: ShareableIdentity = new ShareableIdentity(mainIdentity);
+            shareable.generateIdentities(4);
+            const { lastIdentity } = shareable;
+            expect(lastIdentity).toBe(1);
+        } catch (error) {
+            expect(error).toBeInstanceOf(Error);
+            expect(error.message).toBe("The main identity has to be initialized");
+        }
     });
 
     test('should return an specific IdentityManager by index', async () => {
@@ -69,18 +79,27 @@ describe('Testing ShareableIdentity class', () => {
     });
 
     test('should return an empty object if the mainIdentity is not generated', async () => {
-        const mainIdentity: IdentityManager = new IdentityManager();
-        const shareable: ShareableIdentity = new ShareableIdentity(mainIdentity);
-        await shareable.generateIdentities(4);
-        const identity: IdentityManager = shareable.getIdentityByIndex(1);
-        const { mnemonic, address, publicKey, privateKey } = identity;
+        try {
+            const mainIdentity: IdentityManager = new IdentityManager();
+            const shareable: ShareableIdentity = new ShareableIdentity(mainIdentity);
+            await shareable.generateIdentities(4);
+            shareable.getIdentityByIndex(1);
 
-        expect(mnemonic).toBe("");
-        expect(address).toBe("");
-        expect(publicKey).toBe("");
-        expect(privateKey).toBe("");
-
+        } catch (error) {
+            expect(error).toBeInstanceOf(Error);
+            expect(error.message).toBe("The main identity has to be initialized");
+        }
     });
-
+    test('should throw an error if the position is less than 1', async () => {
+        try {
+            const mainIdentity: IdentityManager = new IdentityManager();
+            const shareable: ShareableIdentity = new ShareableIdentity(mainIdentity);
+            await shareable.generateIdentities(4);
+            shareable.getIdentityByIndex(-1);
+        } catch (error) {
+            expect(error).toBeInstanceOf(Error);
+            expect(error.message).toBe("Position must be equal or greater than 0");
+        }
+    });
 
 });

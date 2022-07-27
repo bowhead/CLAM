@@ -29,6 +29,7 @@ class ShareableIdentity {
      * instantiated from the main identity.
      */
     public generateIdentities = async (count: number): Promise<void> => {
+        if (count === 0 || count < 1) throw new Error("The count must be greater than 0");
         if (this.mainIdentity.mnemonic.length != 0) {
             const auxWallet = fromMnemonic(this.mainIdentity.mnemonic);
             let address: string = ""
@@ -56,6 +57,7 @@ class ShareableIdentity {
      * @returns an instance of IdentityManeger class.
      */
     public getIdentityByIndex = (index: number): IdentityManager => {
+        if(index<0) throw new Error("Position must be equal or greater than 0");
         let identity: IdentityManager = new IdentityManager();
         if (index >= 0 && index < this.identities.length) {
             identity = this.identities[index];
