@@ -1,14 +1,14 @@
 
 import IKeysGenerator from "./IKeysGenerator";
+import IKeys from "./IKeys";
 import { generateKey } from "openpgp";
-import IKeysPGP from "./IKeysPGP";
 
-class KeysGeneratorPGP implements IKeysGenerator<IKeysPGP> {
+class KeysGeneratorPGP implements IKeysGenerator {
 
-    public generateKeys = async (data: any = null): Promise<IKeysPGP> => {
-        const pgpKeys: IKeysPGP = {
-            privateKeyPGP: "",
-            publicKeyPGP: ""
+    public generateKeys = async (data: any): Promise<IKeys> => {
+        const pgpKeys: IKeys = {
+            privateKey: "",
+            publicKey: ""
         };
         const { name, email } = data;
         const { privateKey, publicKey } = await generateKey({
@@ -18,12 +18,11 @@ class KeysGeneratorPGP implements IKeysGenerator<IKeysPGP> {
             passphrase: "passphrase",
             format: 'armored'
         });
-        pgpKeys.privateKeyPGP = privateKey;
-        pgpKeys.publicKeyPGP = publicKey;
+        pgpKeys.privateKey = privateKey;
+        pgpKeys.publicKey = publicKey;
         return pgpKeys;
     }
 
 }
-
 
 export default KeysGeneratorPGP;
