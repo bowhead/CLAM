@@ -56,6 +56,7 @@ class IdentityManager {
             name: this.address,
             email: `${this.address}@localhost.com`
         }
+        if (!this.keysGenerator) throw new Error("Please set a specific implementation of keysGenerator");
         const { privateKey, publicKey } = await this.keysGenerator.generateKeys(data);
         this.privateKeyPGP = privateKey;
         this.publicKeyPGP = publicKey;
