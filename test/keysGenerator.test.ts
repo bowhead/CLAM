@@ -18,12 +18,12 @@ describe('Testing keys generator', () => {
             name: "name",
             email: "email@email.com"
         }
-        const { privateKeyPGP, publicKeyPGP } = await generatorPGP.generateKeys(data);
-        expect(privateKeyPGP.includes("-----BEGIN PGP PRIVATE KEY BLOCK-----")).toBe(true);
-        expect(privateKeyPGP.includes("-----END PGP PRIVATE KEY BLOCK-----")).toBe(true);
+        const { privateKey, publicKey } = await generatorPGP.generateKeys(data);
+        expect(privateKey.includes("-----BEGIN PGP PRIVATE KEY BLOCK-----")).toBe(true);
+        expect(privateKey.includes("-----END PGP PRIVATE KEY BLOCK-----")).toBe(true);
 
-        expect(publicKeyPGP.includes("-----BEGIN PGP PUBLIC KEY BLOCK-----")).toBe(true);
-        expect(publicKeyPGP.includes("-----END PGP PUBLIC KEY BLOCK-----")).toBe(true);
+        expect(publicKey.includes("-----BEGIN PGP PUBLIC KEY BLOCK-----")).toBe(true);
+        expect(publicKey.includes("-----END PGP PUBLIC KEY BLOCK-----")).toBe(true);
 
 
     });

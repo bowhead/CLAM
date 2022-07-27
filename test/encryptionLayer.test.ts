@@ -14,9 +14,9 @@ describe('Testing encryption using PGP', () => {
 
     test('should generate public and private PGP keys', async () => {
         const keys = await keysGeneratos.generateKeys({ name: "Name", email: "email@email.com" });
-        const { privateKeyPGP, publicKeyPGP } = keys;
-        expect(privateKeyPGP.length).toBeGreaterThan(0);
-        expect(publicKeyPGP.length).toBeGreaterThan(0);
+        const { privateKey, publicKey } = keys;
+        expect(privateKey.length).toBeGreaterThan(0);
+        expect(publicKey.length).toBeGreaterThan(0);
     });
 
     test('should no generate public andprivate PGP keys if the name and email parameters are not valid', async () => {
@@ -30,9 +30,9 @@ describe('Testing encryption using PGP', () => {
     });
     test('should ecnrypt the message "hello bowhead"', async () => {
         const keys = await keysGeneratos.generateKeys({ name: "Name", email: "email@email.com" });
-        const { publicKeyPGP } = keys;
+        const { publicKey } = keys;
         const message: string = "hello bowhaed";
-        const messageEncrypted: string = await encryptionPGP.ecryptData(publicKeyPGP, message);
+        const messageEncrypted: string = await encryptionPGP.ecryptData(publicKey, message);
 
         expect(messageEncrypted.length).toBeGreaterThan(0);
         expect(messageEncrypted.includes("-----BEGIN PGP MESSAGE-----")).toBe(true);
@@ -40,25 +40,37 @@ describe('Testing encryption using PGP', () => {
     });
 
     test('should not encrypt the message if the public PGP key is not valid', async () => {
-        const messageEncrypted = await encryptionPGP.ecryptData("key", "message");
-        expect(messageEncrypted).toBe("Error while encrypting data");
+        try {
+            await encryptionPGP.ecryptData("key", "message");
+        } catch (error) {
+            expect(error).toBeInstanceOf(Error);
+            expect(error.message).toBe("Misformed armored text");
+        }
+
+
     });
 
     test('should decrypt the message encrypted "hello bowhead" using the private PGP key ', async () => {
         const keys = await keysGeneratos.generateKeys({ name: "Name", email: "email@email.com" });
-        const { publicKeyPGP, privateKeyPGP } = keys;
+        const { publicKey, privateKey } = keys;
         const message: string = "hello bowhaed";
-        const messageEncrypted: string = await encryptionPGP.ecryptData(publicKeyPGP, message);
-        const messageDecrypted: string = await encryptionPGP.decryptData(privateKeyPGP, messageEncrypted);
+        const messageEncrypted: string = await encryptionPGP.ecryptData(publicKey, message);
+        const messageDecrypted: string = await encryptionPGP.decryptData(privateKey, messageEncrypted);
         expect(messageDecrypted).toBe("hello bowhaed");
     });
     test('should not decrypt the message encrypted "hello bowhead" if the private PGP key is not valid', async () => {
-        const keys = await keysGeneratos.generateKeys({ name: "Name", email: "email@email.com" });
-        const { publicKeyPGP } = keys;
-        const message: string = "hello bowhaed";
-        const messageEncrypted: string = await encryptionPGP.ecryptData(publicKeyPGP, message);
-        const messageDecrypted: string = await encryptionPGP.decryptData("key", messageEncrypted);
-        expect(messageDecrypted).toBe("Error while decrypting data");
+
+
+        try {
+            const keys = await keysGeneratos.generateKeys({ name: "Name", email: "email@email.com" });
+            const { publicKey } = keys;
+            const message: string = "hello bowhaed";
+            const messageEncrypted: string = await encryptionPGP.ecryptData(publicKey, message);
+            await encryptionPGP.decryptData("key", messageEncrypted);
+        } catch (error) {
+            expect(error).toBeInstanceOf(Error);
+            expect(error.message).toBe("Misformed armored text");
+        }
     });
 
 });
@@ -73,18 +85,18 @@ describe('Testing encryption using AES', () => {
 
     test('should ecnrypt the message "hello bowhead" using AES-256 algorithm', async () => {
         const keys = await keysGeneratos.generateKeys({ name: "Name", email: "email@email.com" });
-        const { privateKeyPGP } = keys;
+        const { publicKey } = keys;
         const message: string = "hello bowhaed";
-        const messageEncrypted: string = await encryptionAES.ecryptData(privateKeyPGP, message);
+        const messageEncrypted: string = await encryptionAES.ecryptData(publicKey, message);
         expect(messageEncrypted.length).toBeGreaterThan(0);
     });
 
     test('should decrypt the message encrypted "hello bowhead" using the private PGP key with AES-256 algorithm ', async () => {
         const keys = await keysGeneratos.generateKeys({ name: "Name", email: "email@email.com" });
-        const { privateKeyPGP } = keys;
+        const { privateKey } = keys;
         const message: string = "hello bowhaed";
-        const messageEncrypted: string = await encryptionAES.ecryptData(privateKeyPGP, message);
-        const messageDecrypted: string = await encryptionAES.decryptData(privateKeyPGP, messageEncrypted);
+        const messageEncrypted: string = await encryptionAES.ecryptData(privateKey, message);
+        const messageDecrypted: string = await encryptionAES.decryptData(privateKey, messageEncrypted);
         expect(messageDecrypted).toBe("hello bowhaed");
     });
 
