@@ -6,9 +6,9 @@ const { fromMnemonic } = require('ethereum-hdwallet');
  * thus generating compatible and child indentities based on the main indentity.
  */
 class ShareableIdentity {
-    mainIdentity: IdentityManager;
-    identities: IdentityManager[];
-    lastIdentity: number;
+    public mainIdentity: IdentityManager;
+    public identities: IdentityManager[];
+    public lastIdentity: number;
 
     /**
      * Constructor that initializes your ShareableIdentity component
@@ -16,7 +16,7 @@ class ShareableIdentity {
      * 
      * @param mainIdentity This parameter is the main identity for instantiating many identities.
      */
-    constructor(mainIdentity: IdentityManager) {
+    public constructor(mainIdentity: IdentityManager) {
         this.mainIdentity = mainIdentity;
         this.identities = [];
         this.lastIdentity = 1;
@@ -28,7 +28,7 @@ class ShareableIdentity {
      * @param count this parameter is the number of identities that will be 
      * instantiated from the main identity.
      */
-    generateIdentities = async (count: number): Promise<void> => {
+    public generateIdentities = async (count: number): Promise<void> => {
         if (this.mainIdentity.mnemonic.length != 0) {
             const auxWallet = fromMnemonic(this.mainIdentity.mnemonic);
             let address: string = ""
@@ -38,9 +38,11 @@ class ShareableIdentity {
                 address = `0x${auxWallet.derive(`m/44'/60'/0'/0/${i}`).getAddress().toString('hex')}`;
                 privateKey = auxWallet.derive(`m/44'/60'/0'/0/${i}`).getPrivateKey(true).toString('hex');
                 publicKey = auxWallet.derive(`m/44'/60'/0'/0/${i}`).getPublicKey(true).toString('hex');
-                const newWalletChild: IdentityManager = new IdentityManager(this.mainIdentity.mnemonic, address, privateKey, publicKey);
-                await newWalletChild.generateIdentity();
-                this.identities.push(newWalletChild);
+                const newIdentityChild: IdentityManager = new IdentityManager(this.mainIdentity.mnemonic, address, privateKey, publicKey);
+                newIdentityChild.setEncryptionLayer(this.mainIdentity.encryptionLayer);
+                newIdentityChild.setKeysGenerator(this.mainIdentity.keysGenerator);
+                await newIdentityChild.generateIdentity();
+                this.identities.push(newIdentityChild);
                 this.lastIdentity++;
             }
         }
@@ -53,7 +55,7 @@ class ShareableIdentity {
      * @param index This parameter is the specific position in your identities.
      * @returns an instance of IdentityManeger class.
      */
-    getIdentityByIndex = (index: number): IdentityManager => {
+    public getIdentityByIndex = (index: number): IdentityManager => {
         let identity: IdentityManager = new IdentityManager();
         if (index >= 0 && index < this.identities.length) {
             identity = this.identities[index];

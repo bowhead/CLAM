@@ -7,10 +7,9 @@ import EncryptioLayerAES from "../src/encryptionLayer/EncryptioLayerAES";
 import IEncryptionLayer from "../src/encryptionLayer/IEncryptionLayer";
 import IKeysGenerator from "../src/keysGenerator/IKeysGenerator"
 import KeysGeneratorPGP from "../src/keysGenerator/KeysGeneratorPGP";
-import IKeysPGP from "../src/keysGenerator/IKeysPGP"
 
 describe('Testing encryption using PGP', () => {
-    const keysGeneratos: IKeysGenerator<IKeysPGP> = new KeysGeneratorPGP();
+    const keysGeneratos: IKeysGenerator = new KeysGeneratorPGP();
     const encryptionPGP: IEncryptionLayer = new EncryptionLayerPGP();
 
     test('should generate public and private PGP keys', async () => {
@@ -68,7 +67,7 @@ describe('Testing encryption using PGP', () => {
 
 
 describe('Testing encryption using AES', () => {
-    const keysGeneratos: IKeysGenerator<IKeysPGP> = new KeysGeneratorPGP();
+    const keysGeneratos: IKeysGenerator = new KeysGeneratorPGP();
     const encryptionAES: IEncryptionLayer = new EncryptioLayerAES();
 
 

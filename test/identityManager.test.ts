@@ -1,10 +1,14 @@
-import { IdentityManager } from '../src';
+import { IdentityManager, EncryptionLayerPGP } from '../src';
+import KeysGeneratorPGP from '../src/keysGenerator/KeysGeneratorPGP';
+
 import { TextEncoder, TextDecoder } from "util";
 (global as any).TextEncoder = TextEncoder;
 (global as any).TextDecoder = TextDecoder;
 
 describe('Testing IdentityManager class', () => {
   const instance: IdentityManager = new IdentityManager();
+  instance.setEncryptionLayer(new EncryptionLayerPGP());
+  instance.setKeysGenerator(new KeysGeneratorPGP());
   instance.generateIdentity();
 
   test('should the instance of the IdentityManager class have the correct structure', () => {
@@ -18,7 +22,9 @@ describe('Testing IdentityManager class', () => {
     expect(objectKeys.includes("encryptionLayer")).toBe(true);
     expect(objectKeys.includes("keysGenerator")).toBe(true);
     expect(objectKeys.includes("generateIdentity")).toBe(true);
-    expect(objectKeys.length).toBe(9);
+    expect(objectKeys.includes("setEncryptionLayer")).toBe(true);
+    expect(objectKeys.includes("setKeysGenerator")).toBe(true);
+    expect(objectKeys.length).toBe(11);
   });
 
   test('should the mnmonic property length be equal to 0', () => {

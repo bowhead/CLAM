@@ -1,4 +1,5 @@
-import { ShareableIdentity, IdentityManager } from '../src';
+import { ShareableIdentity, IdentityManager, EncryptionLayerPGP } from '../src';
+import KeysGeneratorPGP from '../src/keysGenerator/KeysGeneratorPGP';
 import { TextEncoder, TextDecoder } from "util";
 (global as any).TextEncoder = TextEncoder;
 (global as any).TextDecoder = TextDecoder;
@@ -19,6 +20,8 @@ describe('Testing ShareableIdentity class', () => {
 
     test('should generate 5 identities based on the main identity', async () => {
         const mainIdentity: IdentityManager = new IdentityManager();
+        mainIdentity.setEncryptionLayer(new EncryptionLayerPGP());
+        mainIdentity.setKeysGenerator(new KeysGeneratorPGP());
         await mainIdentity.generateIdentity();
         const shareable: ShareableIdentity = new ShareableIdentity(mainIdentity);
         await shareable.generateIdentities(5);
@@ -36,6 +39,8 @@ describe('Testing ShareableIdentity class', () => {
 
     test('should increse by 5 the property lastIdentity when the user wants 4 identities', async () => {
         const mainIdentity: IdentityManager = new IdentityManager();
+        mainIdentity.setEncryptionLayer(new EncryptionLayerPGP());
+        mainIdentity.setKeysGenerator(new KeysGeneratorPGP());
         await mainIdentity.generateIdentity();
         const shareable: ShareableIdentity = new ShareableIdentity(mainIdentity);
         await shareable.generateIdentities(4);
@@ -53,6 +58,8 @@ describe('Testing ShareableIdentity class', () => {
 
     test('should return an specific IdentityManager by index', async () => {
         const mainIdentity: IdentityManager = new IdentityManager();
+        mainIdentity.setEncryptionLayer(new EncryptionLayerPGP());
+        mainIdentity.setKeysGenerator(new KeysGeneratorPGP());
         await mainIdentity.generateIdentity();
         const shareable: ShareableIdentity = new ShareableIdentity(mainIdentity);
         await shareable.generateIdentities(4);

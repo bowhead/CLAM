@@ -1,8 +1,5 @@
-import EncryptionLayer from "../encryptionLayer/EncryptioLayerPGP";
 import IEncryptionLayer from "../encryptionLayer/IEncryptionLayer";
 import IKeysGenerator from "../keysGenerator/IKeysGenerator";
-import KeysGeneratorPGP from "../keysGenerator/KeysGeneratorPGP";
-import IKeysPGP from "../keysGenerator/IKeysPGP";
 const { fromMnemonic } = require('ethereum-hdwallet');
 const { generateMnemonic } = require('eth-hd-wallet');
 
@@ -13,14 +10,14 @@ const { generateMnemonic } = require('eth-hd-wallet');
  * encrypt and decrypt information.
  */
 class IdentityManager {
-    mnemonic: string;
-    address: string;
-    privateKey: string;
-    publicKey: string;
-    privateKeyPGP: any;
-    publicKeyPGP: any;
-    encryptionLayer: IEncryptionLayer;
-    keysGenerator: IKeysGenerator<IKeysPGP>;
+    public mnemonic: string;
+    public address: string;
+    public privateKey: string;
+    public publicKey: string;
+    public privateKeyPGP: any;
+    public publicKeyPGP: any;
+    public encryptionLayer: IEncryptionLayer;
+    public keysGenerator: IKeysGenerator;
 
     /**
      * Constructor that initializes your identity using the values passed as parameters.
@@ -30,22 +27,20 @@ class IdentityManager {
      * @param privateKey this parameter is your private key.
      * @param publicKey this parameter is your public key.
      */
-    constructor(mnemonic: string = "", address: string = "", privateKey: string = "", publicKey: string = "") {
+    public constructor(mnemonic: string = "", address: string = "", privateKey: string = "", publicKey: string = "") {
         this.mnemonic = mnemonic;
         this.address = address;
         this.privateKey = privateKey;
         this.publicKey = publicKey;
         this.privateKeyPGP = "";
         this.publicKeyPGP = "";
-        this.encryptionLayer = new EncryptionLayer();
-        this.keysGenerator = new KeysGeneratorPGP();
     }
 
     /**
      * This function generates your mnemonic, address, private key and public key to build your identity.
      * 
      */
-    generateIdentity = async (): Promise<void> => {
+    public generateIdentity = async (): Promise<void> => {
 
         if (this.mnemonic.trim() === "" && this.address.trim() === "" &&
             this.privateKey.trim() === "" && this.publicKey.trim() == "") {
@@ -66,6 +61,23 @@ class IdentityManager {
         this.publicKeyPGP = publicKeyPGP;
     }
 
+    /**
+     * This function set the specific implementation of encryptionLayer interface.
+     * 
+     * @param encryptionLayer this parameter is the implementation of the encryptionLayer interface.
+     */
+    public setEncryptionLayer = (encryptionLayer: IEncryptionLayer): void => {
+        this.encryptionLayer = encryptionLayer;
+    }
+
+    /**
+     * This function set the specific implementation of keysGenerator interface.
+     * 
+     * @param keysGenerator this parameter is the implementation of the keysGenerator interface.
+     */
+    public setKeysGenerator = (keysGenerator: IKeysGenerator): void => {
+        this.keysGenerator = keysGenerator;
+    }
 }
 
 export default IdentityManager;

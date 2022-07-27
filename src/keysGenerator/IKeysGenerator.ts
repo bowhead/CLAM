@@ -1,9 +1,9 @@
-interface IKeysGenerator<T> {
+interface IKeysGenerator {
 
     /**
      * This method generates your keys using PGP.
      */
-    generateKeys(data: any): Promise<T>
+    generateKeys(data: any): any;
 
 }
 

@@ -4,11 +4,10 @@ import { TextEncoder, TextDecoder } from "util";
 
 import IKeysGenerator from "../src/keysGenerator/IKeysGenerator";
 import KeysGeneratorPGP from "../src/keysGenerator/KeysGeneratorPGP";
-import IKeysPGP from "../src/keysGenerator/IKeysPGP";
 
 
 describe('Testing keys generator', () => {
-    const generatorPGP: IKeysGenerator<IKeysPGP> = new KeysGeneratorPGP();
+    const generatorPGP: IKeysGenerator = new KeysGeneratorPGP();
     test('the instance of KeyGeneratorPGP should have a good structure', () => {
         const keys = Object.keys(generatorPGP);
         expect(keys.includes("generateKeys")).toBe(true);
