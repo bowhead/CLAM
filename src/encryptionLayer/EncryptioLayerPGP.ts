@@ -10,6 +10,8 @@ class EncryptionLayerPGP implements IEncryptionLayer {
      * @param data This parameter is the data that will be encrypted.
      */
     ecryptData = async (publicKeyPGP: string, data: string): Promise<string> => {
+
+        if(data.trim().length == 0) throw new Error("The data must have at least one character");
         const publicKey = await readKey({ armoredKey: publicKeyPGP });
         const encrypted = await encrypt({
             message: await createMessage({ text: data }),
@@ -26,6 +28,7 @@ class EncryptionLayerPGP implements IEncryptionLayer {
      * @param dataEncrypted This parameter is the encrypted data that will be decrypted.
      */
     decryptData = async (privateKeyPGP: string, dataEncrypted: string): Promise<string> => {
+        if(dataEncrypted.trim().length == 0) throw new Error("The data must have at least one character");
         const privateKey = await decryptKey({
             privateKey: await readPrivateKey({ armoredKey: privateKeyPGP }),
             passphrase: "passphrase"
