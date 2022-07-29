@@ -1,12 +1,16 @@
-import { ShareableIdentity, IdentityManager, EncryptionLayerPGP } from '../src';
-import KeysGeneratorPGP from '../src/keysGenerator/KeysGeneratorPGP';
+import {
+    ShareableIdentity,
+    IdentityManager,
+    FactoryIdentity
+} from '../src';
 import { TextEncoder, TextDecoder } from "util";
 (global as any).TextEncoder = TextEncoder;
 (global as any).TextDecoder = TextDecoder;
 describe('Testing ShareableIdentity class', () => {
+    const factoryIdentity: FactoryIdentity = new FactoryIdentity();
 
     test('The instance of the ShareableIdentity class should have the correct structure', () => {
-        const mainIdentity: IdentityManager = new IdentityManager();
+        const mainIdentity: IdentityManager = factoryIdentity.generateIdentity("pgp", "pgp");
         const shareable: ShareableIdentity = new ShareableIdentity(mainIdentity);
         const shareableKeys: string[] = Object.keys(shareable);
 
@@ -19,9 +23,7 @@ describe('Testing ShareableIdentity class', () => {
     });
 
     test('should generate 5 identities based on the main identity', async () => {
-        const mainIdentity: IdentityManager = new IdentityManager();
-        mainIdentity.setEncryptionLayer(new EncryptionLayerPGP());
-        mainIdentity.setKeysGenerator(new KeysGeneratorPGP());
+        const mainIdentity: IdentityManager = factoryIdentity.generateIdentity("pgp", "pgp");
         await mainIdentity.generateIdentity();
         const shareable: ShareableIdentity = new ShareableIdentity(mainIdentity);
         await shareable.generateIdentities(5);
@@ -31,7 +33,7 @@ describe('Testing ShareableIdentity class', () => {
 
     test('should not genereta identities if the main identity is not generated', async () => {
         try {
-            const mainIdentity: IdentityManager = new IdentityManager();
+            const mainIdentity: IdentityManager = factoryIdentity.generateIdentity("pgp", "pgp");
             const shareable: ShareableIdentity = new ShareableIdentity(mainIdentity);
             await shareable.generateIdentities(5);
             const { identities } = shareable;
@@ -43,9 +45,8 @@ describe('Testing ShareableIdentity class', () => {
     });
 
     test('should increse by 5 the property lastIdentity when the user wants 4 identities', async () => {
-        const mainIdentity: IdentityManager = new IdentityManager();
-        mainIdentity.setEncryptionLayer(new EncryptionLayerPGP());
-        mainIdentity.setKeysGenerator(new KeysGeneratorPGP());
+        const mainIdentity: IdentityManager = factoryIdentity.generateIdentity("pgp", "pgp")
+
         await mainIdentity.generateIdentity();
         const shareable: ShareableIdentity = new ShareableIdentity(mainIdentity);
         await shareable.generateIdentities(4);
@@ -55,7 +56,7 @@ describe('Testing ShareableIdentity class', () => {
 
     test('should not increse the property lastIdentity when the user wants 4 identities', async () => {
         try {
-            const mainIdentity: IdentityManager = new IdentityManager();
+            const mainIdentity: IdentityManager = factoryIdentity.generateIdentity("pgp", "pgp")
             const shareable: ShareableIdentity = new ShareableIdentity(mainIdentity);
             shareable.generateIdentities(4);
             const { lastIdentity } = shareable;
@@ -67,9 +68,7 @@ describe('Testing ShareableIdentity class', () => {
     });
 
     test('should return an specific IdentityManager by index', async () => {
-        const mainIdentity: IdentityManager = new IdentityManager();
-        mainIdentity.setEncryptionLayer(new EncryptionLayerPGP());
-        mainIdentity.setKeysGenerator(new KeysGeneratorPGP());
+        const mainIdentity: IdentityManager = factoryIdentity.generateIdentity("pgp", "pgp");
         await mainIdentity.generateIdentity();
         const shareable: ShareableIdentity = new ShareableIdentity(mainIdentity);
         await shareable.generateIdentities(4);
@@ -80,7 +79,7 @@ describe('Testing ShareableIdentity class', () => {
 
     test('should return an empty object if the mainIdentity is not generated', async () => {
         try {
-            const mainIdentity: IdentityManager = new IdentityManager();
+            const mainIdentity: IdentityManager = factoryIdentity.generateIdentity("pgp", "pgp")
             const shareable: ShareableIdentity = new ShareableIdentity(mainIdentity);
             await shareable.generateIdentities(4);
             shareable.getIdentityByIndex(1);
@@ -92,7 +91,7 @@ describe('Testing ShareableIdentity class', () => {
     });
     test('should throw an error if the position is less than 1', async () => {
         try {
-            const mainIdentity: IdentityManager = new IdentityManager();
+            const mainIdentity: IdentityManager = factoryIdentity.generateIdentity("pgp", "pgp")
             const shareable: ShareableIdentity = new ShareableIdentity(mainIdentity);
             await shareable.generateIdentities(4);
             shareable.getIdentityByIndex(-1);

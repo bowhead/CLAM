@@ -1,4 +1,5 @@
 import IdentityManager from "./IdentityManager";
+import FactoryIdentity from "../factoryIdentity/FactoryIdentity";
 const { fromMnemonic } = require('ethereum-hdwallet');
 
 /**
@@ -39,9 +40,13 @@ class ShareableIdentity {
                 address = `0x${auxWallet.derive(`m/44'/60'/0'/0/${i}`).getAddress().toString('hex')}`;
                 privateKey = auxWallet.derive(`m/44'/60'/0'/0/${i}`).getPrivateKey(true).toString('hex');
                 publicKey = auxWallet.derive(`m/44'/60'/0'/0/${i}`).getPublicKey(true).toString('hex');
-                const newIdentityChild: IdentityManager = new IdentityManager(this.mainIdentity.mnemonic, address, privateKey, publicKey);
-                newIdentityChild.setEncryptionLayer(this.mainIdentity.encryptionLayer);
-                newIdentityChild.setKeysGenerator(this.mainIdentity.keysGenerator);
+
+                //Setting info
+                const newIdentityChild: IdentityManager = new IdentityManager(this.mainIdentity.encryptionLayer, this.mainIdentity.keysGenerator);
+                newIdentityChild.mnemonic = this.mainIdentity.mnemonic;
+                newIdentityChild.address = address;
+                newIdentityChild.privateKey = privateKey;
+                newIdentityChild.publicKey = publicKey;
                 await newIdentityChild.generateIdentity();
                 this.identities.push(newIdentityChild);
                 this.lastIdentity++;
@@ -57,8 +62,9 @@ class ShareableIdentity {
      * @returns an instance of IdentityManeger class.
      */
     public getIdentityByIndex = (index: number): IdentityManager => {
-        if(index<0) throw new Error("Position must be equal or greater than 0");
-        let identity: IdentityManager = new IdentityManager();
+        if (index < 0) throw new Error("Position must be equal or greater than 0");
+        const factoryIdentity: FactoryIdentity = new FactoryIdentity();
+        let identity: IdentityManager = factoryIdentity.generateIdentity("pgp", "pgp");
         if (index >= 0 && index < this.identities.length) {
             identity = this.identities[index];
             this.identities[index];
