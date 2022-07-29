@@ -14,8 +14,8 @@ describe(`Testing IdentityManager class`, () => {
     expect(objectKeys.includes('address')).toBe(true);
     expect(objectKeys.includes('privateKey')).toBe(true);
     expect(objectKeys.includes('publicKey')).toBe(true);
-    expect(objectKeys.includes('publicKeyPGP')).toBe(true);
-    expect(objectKeys.includes('privateKeyPGP')).toBe(true);
+    expect(objectKeys.includes('publicKeySpecial')).toBe(true);
+    expect(objectKeys.includes('privateKeySpecial')).toBe(true);
     expect(objectKeys.includes('encryptionLayer')).toBe(true);
     expect(objectKeys.includes('keysGenerator')).toBe(true);
     expect(objectKeys.includes('generateIdentity')).toBe(true);
@@ -82,8 +82,8 @@ describe(`Testing IdentityManager class`, () => {
   test(`The publicKeyPGP and privateKeyPGP properties must have a size greater than 0.`, async () => {
     const instance: IdentityManager = factoryIdentity.generateIdentity('pgp', 'pgp');
     await instance.generateIdentity();
-    expect(instance.publicKeyPGP.toString().trim().length).toBeGreaterThan(0);
-    expect(instance.privateKeyPGP.toString().trim().length).toBeGreaterThan(0);
+    expect(instance.publicKeySpecial.toString().trim().length).toBeGreaterThan(0);
+    expect(instance.privateKeySpecial.toString().trim().length).toBeGreaterThan(0);
   });
 
 });

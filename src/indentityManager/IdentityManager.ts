@@ -16,8 +16,8 @@ class IdentityManager {
     public address: string;
     public privateKey: string;
     public publicKey: string;
-    public privateKeyPGP: string;
-    public publicKeyPGP: string;
+    public privateKeySpecial: string;
+    public publicKeySpecial: string;
     public encryptionLayer: IEncryptionLayer;
     public keysGenerator: IKeysGenerator;
 
@@ -32,8 +32,8 @@ class IdentityManager {
         this.address = "";
         this.privateKey = "";
         this.publicKey = "";
-        this.privateKeyPGP = "";
-        this.publicKeyPGP = "";
+        this.privateKeySpecial = "";
+        this.publicKeySpecial = "";
         this.encryptionLayer = encryptionLayer;
         this.keysGenerator = keysGenerator;
     }
@@ -61,8 +61,8 @@ class IdentityManager {
         }
         if (!this.keysGenerator) throw new Error("Please set a specific implementation of keysGenerator");
         const { privateKey, publicKey } = await this.keysGenerator.generateKeys(data);
-        this.privateKeyPGP = privateKey;
-        this.publicKeyPGP = publicKey;
+        this.privateKeySpecial = privateKey;
+        this.publicKeySpecial = publicKey;
     }
 
 }
