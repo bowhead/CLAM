@@ -1,12 +1,14 @@
 import { TextEncoder, TextDecoder } from "util";
 (global as any).TextEncoder = TextEncoder;
 (global as any).TextDecoder = TextDecoder;
-import EncryptionLayerPGP from "../src/encryptionLayer/EncryptioLayerPGP";
-import EncryptioLayerAES from "../src/encryptionLayer/EncryptioLayerAES";
+import { 
+    EncryptionLayerPGP, 
+    EncryptioLayerAES, 
+    IEncryptionLayer,
+    IKeysGenerator,
+    KeysGeneratorPGP 
+} from "../src/";
 
-import IEncryptionLayer from "../src/encryptionLayer/IEncryptionLayer";
-import IKeysGenerator from "../src/keysGenerator/IKeysGenerator"
-import KeysGeneratorPGP from "../src/keysGenerator/KeysGeneratorPGP";
 
 describe('Testing encryption using PGP', () => {
     const keysGeneratos: IKeysGenerator = new KeysGeneratorPGP();
