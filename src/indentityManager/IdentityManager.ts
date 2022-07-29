@@ -2,6 +2,7 @@ import IEncryptionLayer from "../encryptionLayer/IEncryptionLayer";
 import IKeysGenerator from "../keysGenerator/IKeysGenerator";
 const { fromMnemonic } = require('ethereum-hdwallet');
 const { generateMnemonic } = require('eth-hd-wallet');
+import { injectable, inject } from "tsyringe";
 
 /**
  * This class is to create your mnemonic, address, public key and private key to build your identity, 
@@ -9,13 +10,14 @@ const { generateMnemonic } = require('eth-hd-wallet');
  * the IEncryptionLayer interface to generate your PGP keys, with these keys you will be able to 
  * encrypt and decrypt information.
  */
+@injectable()
 class IdentityManager {
     public mnemonic: string;
     public address: string;
     public privateKey: string;
     public publicKey: string;
-    public privateKeyPGP: any;
-    public publicKeyPGP: any;
+    public privateKeyPGP: string;
+    public publicKeyPGP: string;
     public encryptionLayer: IEncryptionLayer;
     public keysGenerator: IKeysGenerator;
 
@@ -27,13 +29,17 @@ class IdentityManager {
      * @param privateKey this parameter is your private key.
      * @param publicKey this parameter is your public key.
      */
-    public constructor(mnemonic: string = "", address: string = "", privateKey: string = "", publicKey: string = "") {
-        this.mnemonic = mnemonic;
-        this.address = address;
-        this.privateKey = privateKey;
-        this.publicKey = publicKey;
+    public constructor(
+        @inject("EncryptionLayer") encryptionLayer: IEncryptionLayer,
+        @inject("KeysGenerator") keysGenerator: IKeysGenerator) {
+        this.mnemonic = "";
+        this.address = "";
+        this.privateKey = "";
+        this.publicKey = "";
         this.privateKeyPGP = "";
         this.publicKeyPGP = "";
+        this.encryptionLayer = encryptionLayer;
+        this.keysGenerator = keysGenerator;
     }
 
     /**
@@ -62,23 +68,6 @@ class IdentityManager {
         this.publicKeyPGP = publicKey;
     }
 
-    /**
-     * This function set the specific implementation of encryptionLayer interface.
-     * 
-     * @param encryptionLayer this parameter is the implementation of the encryptionLayer interface.
-     */
-    public setEncryptionLayer = (encryptionLayer: IEncryptionLayer): void => {
-        this.encryptionLayer = encryptionLayer;
-    }
-
-    /**
-     * This function set the specific implementation of keysGenerator interface.
-     * 
-     * @param keysGenerator this parameter is the implementation of the keysGenerator interface.
-     */
-    public setKeysGenerator = (keysGenerator: IKeysGenerator): void => {
-        this.keysGenerator = keysGenerator;
-    }
 }
 
 export default IdentityManager;

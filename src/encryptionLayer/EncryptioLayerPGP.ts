@@ -1,6 +1,7 @@
 import IEncryptionLayer from "./IEncryptionLayer";
 import { readKey, encrypt, decrypt, readMessage, createMessage, decryptKey, readPrivateKey } from 'openpgp';
-
+import {injectable} from "tsyringe";
+@injectable()
 class EncryptionLayerPGP implements IEncryptionLayer {
     /**
      * This function encrypts the data passed as a parameter using the 

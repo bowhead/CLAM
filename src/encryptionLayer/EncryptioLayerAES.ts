@@ -1,6 +1,7 @@
 import IEncryptionLayer from "./IEncryptionLayer";
 const CryptoJS = require("crypto-js");
-
+import {injectable} from "tsyringe";
+@injectable()
 class EncryptioLayerAES implements IEncryptionLayer {
 
     private keySize: number = 256;
