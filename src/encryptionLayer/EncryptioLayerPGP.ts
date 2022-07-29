@@ -1,4 +1,4 @@
-import IEncryptionLayer from "./IEncryptionLayer";
+import {IEncryptionLayer} from "./";
 import { readKey, encrypt, decrypt, readMessage, createMessage, decryptKey, readPrivateKey } from 'openpgp';
 import {injectable} from "tsyringe";
 @injectable()

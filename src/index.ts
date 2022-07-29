@@ -1,11 +1,12 @@
-import EncryptionLayerPGP from "./encryptionLayer/EncryptioLayerPGP";
-import IdentityManager from "./indentityManager/IdentityManager";
-import ShareableIdentity from "./indentityManager/ShareableIdentity";
-import IEncryptionLayer from "./encryptionLayer/IEncryptionLayer";
-
+import "reflect-metadata";
+import { IEncryptionLayer, EncryptionLayerPGP, EncryptioLayerAES } from "./encryptionLayer";
+import { IdentityManager, ShareableIdentity } from "./indentityManager";
+import FactoryIdentity from "./factoryIdentity/FactoryIdentity";
 export {
     IdentityManager,
     ShareableIdentity,
     EncryptionLayerPGP,
+    EncryptioLayerAES,
+    FactoryIdentity,
     IEncryptionLayer
 };

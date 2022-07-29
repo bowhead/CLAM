@@ -1,5 +1,5 @@
-import IEncryptionLayer from "../encryptionLayer/IEncryptionLayer";
-import IKeysGenerator from "../keysGenerator/IKeysGenerator";
+import { IEncryptionLayer } from "../encryptionLayer";
+import { IKeysGenerator } from "../keysGenerator";
 const { fromMnemonic } = require('ethereum-hdwallet');
 const { generateMnemonic } = require('eth-hd-wallet');
 import { injectable, inject } from "tsyringe";

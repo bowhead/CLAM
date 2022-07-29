@@ -3,7 +3,7 @@ import { container } from "tsyringe";
 import IOption from "./IOption";
 import { EncryptioLayerAES, EncryptionLayerPGP } from "../encryptionLayer";
 import { KeysGeneratorPGP } from "../keysGenerator"
-import IdentityManager from "../indentityManager/IdentityManager";
+import {IdentityManager} from "../indentityManager";
 
 class FactoryIdentity {
     private optionsEncryption: IOption[]
