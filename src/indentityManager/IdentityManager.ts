@@ -24,10 +24,6 @@ class IdentityManager {
     /**
      * Constructor that initializes your identity using the values passed as parameters.
      * 
-     * @param mnemonic this parameter is your 12 words to check your identity.
-     * @param address this parameter is the address of your identity.
-     * @param privateKey this parameter is your private key.
-     * @param publicKey this parameter is your public key.
      */
     public constructor(
         @inject("EncryptionLayer") encryptionLayer: IEncryptionLayer,
@@ -41,6 +37,7 @@ class IdentityManager {
         this.encryptionLayer = encryptionLayer;
         this.keysGenerator = keysGenerator;
     }
+
 
     /**
      * This function generates your mnemonic, address, private key and public key to build your identity.
