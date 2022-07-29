@@ -1,8 +1,8 @@
-
+import { injectable } from "tsyringe";
 import IKeysGenerator from "./IKeysGenerator";
 import IKeys from "./IKeys";
 import { generateKey } from "openpgp";
-
+@injectable()
 class KeysGeneratorPGP implements IKeysGenerator {
 
     public generateKeys = async (data: any): Promise<IKeys> => {

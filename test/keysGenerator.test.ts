@@ -2,9 +2,7 @@ import { TextEncoder, TextDecoder } from "util";
 (global as any).TextEncoder = TextEncoder;
 (global as any).TextDecoder = TextDecoder;
 
-import IKeysGenerator from "../src/keysGenerator/IKeysGenerator";
-import KeysGeneratorPGP from "../src/keysGenerator/KeysGeneratorPGP";
-
+import {IKeysGenerator, KeysGeneratorPGP} from "../src";
 
 describe('Testing keys generator', () => {
     const generatorPGP: IKeysGenerator = new KeysGeneratorPGP();
