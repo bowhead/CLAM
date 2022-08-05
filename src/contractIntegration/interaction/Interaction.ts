@@ -18,7 +18,7 @@ class Interaction implements IConsentInteraction, IAccessInteraction {
         @inject("AccessInteraction") acccessInteraction: IAccessInteraction
     ) {
         this.acccessInteraction = acccessInteraction;
-        this.consentInteraction = consentInteraction;
+        this.consentInteraction = consentInteraction;        
     }
     public setUrlProvider(urlProvider: string): void {
         this.urlProvider = urlProvider;
@@ -27,30 +27,39 @@ class Interaction implements IConsentInteraction, IAccessInteraction {
         this.identity = identity;
     }
     getResourceByConsent(consentId: string): Promise<any> {
+        console.log(consentId);
         throw new Error("Method not implemented.");
     }
     saveConsent(consentId: string, status: boolean): Promise<any> {
+        console.log(consentId, status);
         throw new Error("Method not implemented.");
     }
     cancelConsent(consentId: string, status: boolean): Promise<any> {
+        console.log(consentId, status);
         throw new Error("Method not implemented.");
     }
     getConsentById(consentId: string, owner: string): Promise<any> {
+        console.log(consentId, owner);
         throw new Error("Method not implemented.");
     }
     addKey(consentId: string, addressConsent: string, key: string): Promise<any> {
+        console.log(consentId, addressConsent, key);
         throw new Error("Method not implemented.");
     }
     getKeys(consentId: string): Promise<any> {
+        console.log(consentId);
         throw new Error("Method not implemented.");
     }
     giveAccess(resource: string, consentId: string, account: string): Promise<any> {
+        console.log(resource, consentId, account);
         throw new Error("Method not implemented.");
     }
     revokeAccess(resource: string, consentId: string, account: string): Promise<any> {
+        console.log(resource, consentId, account);
         throw new Error("Method not implemented.");
     }
     checkAccess(resource: string, consentId: string): Promise<any> {
+        console.log(resource, consentId);
         throw new Error("Method not implemented.");
     }
 
