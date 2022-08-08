@@ -11,8 +11,8 @@ class SmartContractInfo{
     public consentResourceABI: any;
     public urlProvider:string;
     public constructor(){
-        this.consentAddress = "0x6838fB97328aCFa0590A6f4f6CFAc95372e33089";
-        this.accessAddress = "0x4ce804103f98D14d76873D55ba8dc13B3bB72906";
+        this.consentAddress = "0x859768B0d2ed33eCe914Fd8B6EbcAE5288fb087a";
+        this.accessAddress = "0xCDb2d33Ac1910BbfcDB0502Bf0d88A1c3495e967";
         this.consetResourceAddress = "0xd7EeA4678B700fB5BA8496C8C1c3B2d6df8Fd384";
 
         this.consentABI = ABIConsent.abi;
