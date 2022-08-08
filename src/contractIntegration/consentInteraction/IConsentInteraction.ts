@@ -1,9 +1,11 @@
+import { IdentityManager } from "../../indentityManager";
+
 interface IConsentInteraction {
-    saveConsent(consentId: string, status: boolean): Promise<any>;
-    cancelConsent(consentId: string, status: boolean): Promise<any>;
-    getConsentById(consentId: string, owner: string): Promise<any>;
-    addKey(consentId: string, addressConsent: string, key: string): Promise<any>;
-    getKeys(consentId: string): Promise<any>
+    saveConsent(consentId: string, identity: IdentityManager): Promise<any>;
+    cancelConsent(consentId: string, identity: IdentityManager): Promise<any>;
+    getConsentById(consentId: string, owner: string, identity: IdentityManager): Promise<any>;
+    addKey(consentId: string, addressConsent: string, key: string, identity: IdentityManager): Promise<any>;
+    getKeys(consentId: string, identity: IdentityManager): Promise<any>
 }
 
 
