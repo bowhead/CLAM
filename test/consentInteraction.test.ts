@@ -17,14 +17,18 @@ describe('Testing consent interaction', () => {
         interaction.setIdentity(identity);
     });
 
-
     test('should add a new consent', async () => {
+        const result = await interaction.consentInteraction.saveConsent("AAA1", interaction.identity);
+        expect(result.result.includes("0x")).toBe(true);
+    });
+
+    test('should not add a new consent', async () => {
         try {
-            const result = await interaction.consentInteraction.saveConsent("AAA1", interaction.identity);
+            const result = await interaction.consentInteraction.saveConsent("", interaction.identity);
             expect(result.result.includes("0x")).toBe(true);
         } catch (error) {
             expect(error).toBeInstanceOf(Error);
-            expect(error.message).toBe("Returned error: VM Exception while processing transaction: revert Status consent is already setted up");
+            expect(error.message).toBe("contentID must have at least 1 character");
         }
     });
 
@@ -33,7 +37,7 @@ describe('Testing consent interaction', () => {
         expect(result.result).toBe(true);
     });
 
-    test('should not get a consent by id', async () => {
+    test('should not get a consent by id (Incorrect consentID)', async () => {
         try {
             const result = await interaction.consentInteraction.getConsentById("AAA2", interaction.identity.address, interaction.identity);
             expect(result.result).toBe(true);
@@ -43,19 +47,115 @@ describe('Testing consent interaction', () => {
         }
     });
 
+    test('should not get a consent by id (empty consentID)', async () => {
+        try {
+            const result = await interaction.consentInteraction.getConsentById("", interaction.identity.address, interaction.identity);
+            expect(result.result).toBe(true);
+        } catch (error) {
+            expect(error).toBeInstanceOf(Error);
+            expect(error.message).toBe("contentID must have at least 1 character");
+        }
+    });
+
+    test('should not get a consent by id (empty owner)', async () => {
+        try {
+            const result = await interaction.consentInteraction.getConsentById("AAA1", "", interaction.identity);
+            expect(result.result).toBe(true);
+        } catch (error) {
+            expect(error).toBeInstanceOf(Error);
+            expect(error.message).toBe("Owner must have at least 1 character");
+        }
+    });
+
+    test('should not get a consent by id (invalid owner)', async () => {
+        try {
+            const result = await interaction.consentInteraction.getConsentById("AAA1", "invalid", interaction.identity);
+            expect(result.result).toBe(true);
+        } catch (error) {
+            expect(error).toBeInstanceOf(Error);
+            expect(error.message).toBe("Invalid owner, the string with has a correct format.");
+        }
+    });
+
     test('should add keys', async () => {
-        const address = "0xE0e572FE2D9675ec8ff8641c9E51D51c624008Ab";
+        const address = "0xbB230b6210C5E4640Cf7d3dC306Cdc5a207C92a6";
         const result = await interaction.consentInteraction.addKey("AAA1", address, "pk1", interaction.identity);
-        console.log(result.result);
+        expect(result.result.includes("0x")).toBe(true);
+    });
+
+    test('should not add keys (empty consentID)', async () => {
+        try {
+            const address = "0xbB230b6210C5E4640Cf7d3dC306Cdc5a207C92a6";
+            const result = await interaction.consentInteraction.addKey("", address, "pk1", interaction.identity);
+            expect(result.result.includes("0x")).toBe(true);
+        } catch (error) {
+            expect(error).toBeInstanceOf(Error);
+            expect(error.message).toBe("contentID must have at least 1 character");
+        }
+    });
+
+    test('should not add keys (empty addressConsent)', async () => {
+        try {
+            const address = "";
+            const result = await interaction.consentInteraction.addKey("AAA1", address, "pk1", interaction.identity);
+            expect(result.result.includes("0x")).toBe(true);
+        } catch (error) {
+            expect(error).toBeInstanceOf(Error);
+            expect(error.message).toBe("AddressConsent must have at least 1 character");
+        }
+    });
+
+    test('should not add keys (invalid addressConsent)', async () => {
+        try {
+            const address = "invalid";
+            const result = await interaction.consentInteraction.addKey("AAA1", address, "pk1", interaction.identity);
+            expect(result.result.includes("0x")).toBe(true);
+        } catch (error) {
+            expect(error).toBeInstanceOf(Error);
+            expect(error.message).toBe("Invalid addressConsent, the string with has a correct format.");
+        }
+    });
+
+    test('should not add keys (empty key)', async () => {
+        try {
+            const address = "0xbB230b6210C5E4640Cf7d3dC306Cdc5a207C92a6";
+            const result = await interaction.consentInteraction.addKey("AAA1", address, "", interaction.identity);
+            expect(result.result.includes("0x")).toBe(true);
+        } catch (error) {
+            expect(error).toBeInstanceOf(Error);
+            expect(error.message).toBe("Key must have at least 1 character");
+        }
     });
 
     test('should get keys', async () => {
         const result = await interaction.consentInteraction.getKeys("AAA1", interaction.identity);
-        console.log(result.result);
+        expect(result.result[0][0]).toBe("0xbB230b6210C5E4640Cf7d3dC306Cdc5a207C92a6");
+        expect(result.result[1][0]).toBe("pk1");
+    });
+
+    test('should not get keys (empty consentID)', async () => {
+        try {
+            const result = await interaction.consentInteraction.getKeys("", interaction.identity);
+            expect(result.result[0][0]).toBe("0xbB230b6210C5E4640Cf7d3dC306Cdc5a207C92a6");
+            expect(result.result[1][0]).toBe("pk1");
+        } catch (error) {
+            expect(error).toBeInstanceOf(Error);
+            expect(error.message).toBe("contentID must have at least 1 character");
+        }
     });
 
     test('should cancel consent', async () => {
         const result = await interaction.consentInteraction.cancelConsent("AAA1", interaction.identity);
         expect(result.result.includes("0x")).toBe(true);
+    });
+
+    test('should not cancel consent', async () => {
+        try {
+            const result = await interaction.consentInteraction.cancelConsent("", interaction.identity);
+            expect(result.result.includes("0x")).toBe(true);
+        } catch (error) {
+            expect(error).toBeInstanceOf(Error);
+            expect(error.message).toBe("contentID must have at least 1 character");
+        }
     });
 });

@@ -14,7 +14,7 @@ class Web3Provider {
     public setUrlProvider (urlProvider: string):void{
         this.urlProvider = urlProvider;
     }
-    public getProvider(){
+    public getProvider(): Web3{
         const objWeb3 = new Web3(new Web3.providers.HttpProvider(this.urlProvider));
         return objWeb3;
     }
