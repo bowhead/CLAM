@@ -19,9 +19,9 @@ describe('Testing consent interaction', () => {
        
 
         const urlProvider= "http://localhost:8545";
-        const consentConfig = { address: "0xD48A409F0b853EA933341366Afb79026a8b96f98", abi: ABIConsent.abi };
-        const accessConfig = { address: "0x859768B0d2ed33eCe914Fd8B6EbcAE5288fb087a", abi: ABIAccess.abi };
-        const consentResourceConfig = { address: "0xCDb2d33Ac1910BbfcDB0502Bf0d88A1c3495e967", abi: ABIConsentResource.abi };
+        const consentConfig = { address: "0x4ce804103f98D14d76873D55ba8dc13B3bB72906", abi: ABIConsent.abi };
+        const accessConfig = { address: "0xd7EeA4678B700fB5BA8496C8C1c3B2d6df8Fd384", abi: ABIAccess.abi };
+        const consentResourceConfig = { address: "0x7564Ee00E0261e92b61ddf2C75CeF440c089dAB8", abi: ABIConsentResource.abi };
         web3Provider.setConfig(urlProvider, consentConfig, accessConfig, consentResourceConfig);
 
         interaction = factoryInteraction.generateInteraction("clam", "clam");
@@ -157,11 +157,6 @@ describe('Testing consent interaction', () => {
         }
     });
 
-    test('should cancel consent', async () => {
-        const result = await interaction.consentInteraction.cancelConsent("AAA1", interaction.identity);
-        expect(result.result.includes("0x")).toBe(true);
-    });
-
     test('should not cancel consent', async () => {
         try {
             const result = await interaction.consentInteraction.cancelConsent("", interaction.identity);
@@ -170,5 +165,10 @@ describe('Testing consent interaction', () => {
             expect(error).toBeInstanceOf(Error);
             expect(error.message).toBe("contentID must have at least 1 character");
         }
+    });
+
+    test('should cancel consent', async () => {
+        const result = await interaction.consentInteraction.cancelConsent("AAA1", interaction.identity);
+        expect(result.result.includes("0x")).toBe(true);
     });
 });
