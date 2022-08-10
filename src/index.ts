@@ -3,6 +3,7 @@ import { IEncryptionLayer, EncryptionLayerPGP, EncryptioLayerAES } from "./encry
 import { IdentityManager, ShareableIdentity } from "./indentityManager";
 import { IKeys, IKeysGenerator, KeysGeneratorPGP } from "./keysGenerator";
 import FactoryIdentity from "./factoryIdentity/FactoryIdentity";
+import { StorageEngine, IStorageEngine } from "./storageEngine";
 
 export {
     IdentityManager,
@@ -13,5 +14,7 @@ export {
     KeysGeneratorPGP,
     IEncryptionLayer,
     IKeys,
-    IKeysGenerator
+    IKeysGenerator,
+    StorageEngine,
+    IStorageEngine
 };

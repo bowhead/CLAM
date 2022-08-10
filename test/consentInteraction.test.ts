@@ -52,7 +52,7 @@ describe('Testing consent interaction', () => {
 
     test('should not get a consent by id (Incorrect consentID)', async () => {
         try {
-            const result = await interaction.consentInteraction.getConsentById("AAA2", interaction.identity.address, interaction.identity);
+            const result = await interaction.consentInteraction.getConsentById("AAA3", interaction.identity.address, interaction.identity);
             expect(result.result).toBe(true);
         } catch (error) {
             expect(error).toBeInstanceOf(Error);
