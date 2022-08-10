@@ -25,6 +25,9 @@
             "pre-commit": "tsdx lint"
         }
     },
+    "jest": {
+        "testEnvironment": "./test/utils/custom-jest-environment.js"
+    },
     "prettier": {
         "printWidth": 80,
         "semi": true,
@@ -49,6 +52,9 @@
         "@tsconfig/recommended": "^1.0.1",
         "@types/jest": "^28.1.4",
         "husky": "^8.0.1",
+        "jest": "24.9.0",
+        "jest-config": "24.9.0",
+        "jest-environment-node": "24.9.0",
         "reflect-metadata": "^0.1.13",
         "size-limit": "^7.0.8",
         "tsdx": "^0.13.3",
@@ -57,9 +63,13 @@
         "typescript": "^3.9.10"
     },
     "dependencies": {
+        "axios": "^0.27.2",
         "crypto-js": "^4.1.1",
         "eth-hd-wallet": "^0.5.1",
         "ethereum-hdwallet": "^0.1.2",
-        "openpgp": "^5.3.1"
+        "ethereumjs-util": "^7.1.5",
+        "form-data": "^4.0.0",
+        "openpgp": "^5.3.1",
+        "web3": "^1.7.5"
     }
 }
