@@ -1,9 +1,9 @@
 import Consent from "./Consent";
-import ConsentInteractionCLAM from "./ConsentInteractionCLAM";
+import ConsentInteraction from "./ConsentInteraction";
 import IConsentInteraction from "./IConsentInteraction";
 
 export {
     Consent,
-    ConsentInteractionCLAM,
+    ConsentInteraction,
     IConsentInteraction
 }

@@ -1,9 +1,9 @@
 import Access from "./Access";
-import AccessInteractionCLAM from "./AccessInteractionCLAM";
+import AccessInteraction from "./AccessInteraction";
 import IAccessInteraction from "./IAccessInteraction";
 
 export {
     Access,
-    AccessInteractionCLAM,
+    AccessInteraction,
     IAccessInteraction
 }

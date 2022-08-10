@@ -1,8 +1,8 @@
 import "reflect-metadata"
 import { container } from "tsyringe";
 import {
-    ConsentInteractionCLAM,
-    AccessInteractionCLAM,
+    ConsentInteraction,
+    AccessInteraction,
     Interaction,
     IOption
 } from "../";
@@ -11,8 +11,8 @@ class FactoryInteraction {
     public optionsConsentInteraction: IOption[];
     public optionsAccessInteraction: IOption[];
     public constructor() {
-        this.optionsConsentInteraction = [{ name: "clam", option: ConsentInteractionCLAM }]
-        this.optionsAccessInteraction = [{ name: "clam", option: AccessInteractionCLAM }]
+        this.optionsConsentInteraction = [{ name: "clam", option: ConsentInteraction }]
+        this.optionsAccessInteraction = [{ name: "clam", option: AccessInteraction }]
     }
     public setOptionConsentInteraction(option: IOption): void {
         if(option.name.trim()==="" && option.name.trim().length===0){

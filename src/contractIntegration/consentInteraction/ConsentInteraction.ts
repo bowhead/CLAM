@@ -1,18 +1,17 @@
 import { injectable } from "tsyringe";
-import { IConsentInteraction } from "./";
+import { IConsentInteraction } from ".";
 import Web3 from "web3";
 import { IdentityManager } from "../../indentityManager";
-import SmartContractInfo from "../utilities/SmartContractInfo";
 import Web3Provider from "../interaction/Wbe3Provider";
-const contractsInfo: SmartContractInfo = new SmartContractInfo();
 @injectable()
-class ConsentInteractionCLAM implements IConsentInteraction {
+class ConsentInteraction implements IConsentInteraction {
 
     saveConsent(consentId: string, identity: IdentityManager): Promise<any> {
         if (consentId.trim() === "" || consentId.trim().length === 0) throw new Error("contentID must have at least 1 character");
 
         const objWeb3 = Web3Provider.getInstance().getProvider();
-        const contract = new objWeb3.eth.Contract(contractsInfo.consentABI, contractsInfo.consentAddress, { from: identity.address });
+        const provider = Web3Provider.getInstance();
+        const contract = new objWeb3.eth.Contract(provider.consentConfig.abi, provider.consentConfig.address, { from: identity.address });
         return new Promise((resolve, reject) => {
             contract.methods.updateConsent(Web3.utils.fromAscii(consentId), true).send(function (error: any, result: any) {
                 if (!error) {
@@ -30,7 +29,8 @@ class ConsentInteractionCLAM implements IConsentInteraction {
         if (consentId.trim() === "" || consentId.trim().length === 0) throw new Error("contentID must have at least 1 character");
 
         const objWeb3 = Web3Provider.getInstance().getProvider();
-        const contract = new objWeb3.eth.Contract(contractsInfo.consentABI, contractsInfo.consentAddress, { from: identity.address });
+        const provider = Web3Provider.getInstance();
+        const contract = new objWeb3.eth.Contract(provider.consentConfig.abi, provider.consentConfig.address, { from: identity.address });
         return new Promise((resolve, reject) => {
             contract.methods.updateConsent(Web3.utils.fromAscii(consentId), false).send(function (error: any, result: any) {
                 if (!error) {
@@ -50,7 +50,8 @@ class ConsentInteractionCLAM implements IConsentInteraction {
         if (!owner.trim().includes("0x")) throw new Error("Invalid owner, the string with has a correct format.");
 
         const objWeb3 = Web3Provider.getInstance().getProvider();
-        const contract = new objWeb3.eth.Contract(contractsInfo.consentABI, contractsInfo.consentAddress, { from: identity.address });
+        const provider = Web3Provider.getInstance();
+        const contract = new objWeb3.eth.Contract(provider.consentConfig.abi, provider.consentConfig.address, { from: identity.address });
         return new Promise((resolve, reject) => {
             contract.methods.getConsent(Web3.utils.fromAscii(consentId), owner).call(function (error: any, result: any) {
                 if (!error) {
@@ -70,7 +71,8 @@ class ConsentInteractionCLAM implements IConsentInteraction {
         if (key.trim().length === 0 || key.trim() === "") throw new Error("Key must have at least 1 character");
 
         const objWeb3 = Web3Provider.getInstance().getProvider();
-        const contract = new objWeb3.eth.Contract(contractsInfo.consentABI, contractsInfo.consentAddress, { from: identity.address });
+        const provider = Web3Provider.getInstance();
+        const contract = new objWeb3.eth.Contract(provider.consentConfig.abi, provider.consentConfig.address, { from: identity.address });
         return new Promise((resolve, reject) => {
             contract.methods.addPGPKey(Web3.utils.fromAscii(consentId), addressConsent, key).send({ gas: '1000000' }, function (error: any, result: any) {
                 if (!error) {
@@ -87,7 +89,8 @@ class ConsentInteractionCLAM implements IConsentInteraction {
         if (consentId.trim() === "" || consentId.trim().length === 0) throw new Error("contentID must have at least 1 character");
 
         const objWeb3 = Web3Provider.getInstance().getProvider();
-        const contract = new objWeb3.eth.Contract(contractsInfo.consentABI, contractsInfo.consentAddress, { from: identity.address });
+        const provider = Web3Provider.getInstance();
+        const contract = new objWeb3.eth.Contract(provider.consentConfig.abi, provider.consentConfig.address, { from: identity.address });
         return new Promise((resolve, reject) => {
             contract.methods.getPGPKeys(Web3.utils.fromAscii(consentId)).call(function (error: any, result: any) {
                 if (!error) {
@@ -102,4 +105,4 @@ class ConsentInteractionCLAM implements IConsentInteraction {
 
 }
 
-export default ConsentInteractionCLAM;
+export default ConsentInteraction;

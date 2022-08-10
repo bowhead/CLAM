@@ -2,6 +2,12 @@ import { FactoryInteraction, Interaction } from "../src/contractIntegration";
 import { FactoryIdentity, IdentityManager } from "../src/";
 import Web3Provider from "../src/contractIntegration/interaction/Wbe3Provider";
 import Web3 from "web3";
+
+import ABIConsent from "../src/contractIntegration/utilities/Consent.json";
+import ABIAccess from "../src/contractIntegration/utilities/Access.json";
+import ABIConsentResource from "../src/contractIntegration/utilities/Consent.json";
+
+
 describe('Testing access interaction', () => {
     let factoryInteraction: FactoryInteraction;
     let factoryIdentity: FactoryIdentity;
@@ -11,12 +17,18 @@ describe('Testing access interaction', () => {
         factoryInteraction = new FactoryInteraction();
         factoryIdentity = new FactoryIdentity();
         web3Provider = Web3Provider.getInstance();
-        web3Provider.setUrlProvider("http://localhost:8545");
+       
+
+        const urlProvider= "http://localhost:8545";
+        const consentConfig = { address: "0xD48A409F0b853EA933341366Afb79026a8b96f98", abi: ABIConsent.abi };
+        const accessConfig = { address: "0x859768B0d2ed33eCe914Fd8B6EbcAE5288fb087a", abi: ABIAccess.abi };
+        const consentResourceConfig = { address: "0xCDb2d33Ac1910BbfcDB0502Bf0d88A1c3495e967", abi: ABIConsentResource.abi };
+        web3Provider.setConfig(urlProvider, consentConfig, accessConfig, consentResourceConfig);
+
         interaction = factoryInteraction.generateInteraction("clam", "clam");
         const identity: IdentityManager = factoryIdentity.generateIdentity("pgp", "pgp");
         identity.address = "0x751bdD89dDD33849507334d9C802a15aAE05D826";
         interaction.setIdentity(identity);
-
     });
     test('should acept consent', async () => {
         await interaction.consentInteraction.saveConsent("AAA1", interaction.identity);

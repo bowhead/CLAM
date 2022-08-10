@@ -1,6 +1,9 @@
 import Web3 from "web3";
 class Web3Provider {
     public urlProvider: string;
+    public consentConfig: {address: string, abi: any}
+    public accessConfig: {address: string, abi: any}
+    public consentResourceConfig: {address: string, abi: any}
     public static instance: Web3Provider;
 
     private constructor() {}
@@ -11,8 +14,11 @@ class Web3Provider {
         }
         return this.instance;
     }
-    public setUrlProvider (urlProvider: string):void{
+    public setConfig (urlProvider: string, consentConfig: any, accessConfig: any,consentResourceConfig: any):void{
         this.urlProvider = urlProvider;
+        this.consentConfig = consentConfig;
+        this.accessConfig = accessConfig;
+        this.consentResourceConfig = consentResourceConfig;
     }
     public getProvider(): Web3{
         const objWeb3 = new Web3(new Web3.providers.HttpProvider(this.urlProvider));

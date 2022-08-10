@@ -1,13 +1,13 @@
 import "reflect-metadata"
-import { Access, AccessInteractionCLAM, IAccessInteraction } from "./accessInteraction/";
-import { Consent, ConsentInteractionCLAM, IConsentInteraction } from "./consentInteraction";
+import { Access, AccessInteraction, IAccessInteraction } from "./accessInteraction/";
+import { Consent, ConsentInteraction, IConsentInteraction } from "./consentInteraction";
 import { Interaction, FactoryInteraction, IOption } from "./interaction";
 
 export {
     Consent,
     Access,
-    ConsentInteractionCLAM,
-    AccessInteractionCLAM,
+    ConsentInteraction,
+    AccessInteraction,
     IConsentInteraction,
     IAccessInteraction,
     Interaction,
