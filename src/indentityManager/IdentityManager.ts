@@ -1,8 +1,11 @@
-import { IEncryptionLayer } from "../encryptionLayer";
-import { IKeysGenerator } from "../keysGenerator";
+/* eslint-disable no-undef */
+/* eslint-disable @typescript-eslint/no-var-requires */
+
+import { IEncryptionLayer } from '../encryptionLayer';
+import { IKeysGenerator } from '../keysGenerator';
 const { fromMnemonic } = require('ethereum-hdwallet');
 const { generateMnemonic } = require('eth-hd-wallet');
-import { injectable, inject } from "tsyringe";
+import { injectable, inject } from 'tsyringe';
 
 /**
  * This class is to create your mnemonic, address, public key and private key to build your identity, 
@@ -22,44 +25,42 @@ class IdentityManager {
     public keysGenerator: IKeysGenerator;
 
     /**
-     * Constructor that initializes your identity using the values passed as parameters.
+     * This constructor initializes the class instance with the values passed as parameters.
      * 
+     * @param  {IEncryptionLayer} encryptionLayer this parameter is the EncryptionLayer implementation.
+     * @param {IKeysGenerator} keysGenerator this is parameter is the KeysGenerator implementation.
      */
     public constructor(
-        @inject("EncryptionLayer") encryptionLayer: IEncryptionLayer,
-        @inject("KeysGenerator") keysGenerator: IKeysGenerator) {
-        this.mnemonic = "";
-        this.address = "";
-        this.privateKey = "";
-        this.publicKey = "";
-        this.privateKeySpecial = "";
-        this.publicKeySpecial = "";
+        @inject('EncryptionLayer') encryptionLayer: IEncryptionLayer,
+        @inject('KeysGenerator') keysGenerator: IKeysGenerator) {
+        this.mnemonic = '';
+        this.address = '';
+        this.privateKey = '';
+        this.publicKey = '';
+        this.privateKeySpecial = '';
+        this.publicKeySpecial = '';
         this.encryptionLayer = encryptionLayer;
         this.keysGenerator = keysGenerator;
     }
-
 
     /**
      * This function generates your mnemonic, address, private key and public key to build your identity.
      * 
      */
     public generateIdentity = async (): Promise<void> => {
-
-        if (this.mnemonic.trim() === "" && this.address.trim() === "" &&
-            this.privateKey.trim() === "" && this.publicKey.trim() == "") {
+        if (this.mnemonic.trim() === '' && this.address.trim() === '' &&
+            this.privateKey.trim() === '' && this.publicKey.trim() == '') {
             this.mnemonic = generateMnemonic();
-            const hdwallet: any = fromMnemonic(this.mnemonic);
-            this.address = `0x${hdwallet.derive(`m/44'/60'/0'/0/0`).getAddress().toString('hex')}`;
-            this.privateKey = hdwallet.derive(`m/44'/60'/0'/0/0`).getPrivateKey(true).toString('hex');
-            this.publicKey = hdwallet.derive(`m/44'/60'/0'/0/0`).getPublicKey(true).toString('hex');
-
+            const hdwallet = fromMnemonic(this.mnemonic);
+            this.address = `0x${hdwallet.derive('m/44\'/60\'/0\'/0/0').getAddress().toString('hex')}`;
+            this.privateKey = hdwallet.derive('m/44\'/60\'/0\'/0/0').getPrivateKey(true).toString('hex');
+            this.publicKey = hdwallet.derive('m/44\'/60\'/0\'/0/0').getPublicKey(true).toString('hex');
         }
-
         const data = {
             name: this.address,
             email: `${this.address}@localhost.com`
-        }
-        if (!this.keysGenerator) throw new Error("Please set a specific implementation of keysGenerator");
+        };
+        if (!this.keysGenerator) throw new Error('Please set a specific implementation of keysGenerator');
         const { privateKey, publicKey } = await this.keysGenerator.generateKeys(data);
         this.privateKeySpecial = privateKey;
         this.publicKeySpecial = publicKey;

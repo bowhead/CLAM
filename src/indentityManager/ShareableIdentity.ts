@@ -1,5 +1,8 @@
-import IdentityManager from "./IdentityManager";
-import FactoryIdentity from "../factoryIdentity/FactoryIdentity";
+/* eslint-disable no-undef */
+/* eslint-disable @typescript-eslint/no-var-requires */
+
+import IdentityManager from './IdentityManager';
+import FactoryIdentity from '../factoryIdentity/FactoryIdentity';
 const { fromMnemonic } = require('ethereum-hdwallet');
 
 /**
@@ -15,7 +18,7 @@ class ShareableIdentity {
      * Constructor that initializes your ShareableIdentity component
      * using the values passed as parameters.
      * 
-     * @param mainIdentity This parameter is the main identity for instantiating many identities.
+     * @param {IdentityManager} mainIdentity This parameter is the main identity for instantiating many identities.
      */
     public constructor(mainIdentity: IdentityManager) {
         this.mainIdentity = mainIdentity;
@@ -26,16 +29,16 @@ class ShareableIdentity {
     /**
      * This function generates N identities based on the main identity.
      * 
-     * @param count this parameter is the number of identities that will be 
+     * @param {number} count this parameter is the number of identities that will be 
      * instantiated from the main identity.
      */
     public generateIdentities = async (count: number): Promise<void> => {
-        if (count === 0 || count < 1) throw new Error("The count must be greater than 0");
+        if (count === 0 || count < 1) throw new Error('The count must be greater than 0');
         if (this.mainIdentity.mnemonic.length != 0) {
             const auxWallet = fromMnemonic(this.mainIdentity.mnemonic);
-            let address: string = ""
-            let privateKey: string = ""
-            let publicKey: string = ""
+            let address = '';
+            let privateKey = '';
+            let publicKey = '';
             for (let i: number = this.lastIdentity; i <= count; i++) {
                 address = `0x${auxWallet.derive(`m/44'/60'/0'/0/${i}`).getAddress().toString('hex')}`;
                 privateKey = auxWallet.derive(`m/44'/60'/0'/0/${i}`).getPrivateKey(true).toString('hex');
@@ -58,20 +61,19 @@ class ShareableIdentity {
     /**
      * This function returns a specific indetity.
      * 
-     * @param index This parameter is the specific position in your identities.
-     * @returns an instance of IdentityManeger class.
+     * @param {number} index This parameter is the specific position in your identities.
+     * @returns {IdentityManager} an instance of IdentityManeger class.
      */
     public getIdentityByIndex = (index: number): IdentityManager => {
-        if (index < 0) throw new Error("Position must be equal or greater than 0");
+        if (index < 0) throw new Error('Position must be equal or greater than 0');
         const factoryIdentity: FactoryIdentity = new FactoryIdentity();
-        let identity: IdentityManager = factoryIdentity.generateIdentity("pgp", "pgp");
+        let identity: IdentityManager = factoryIdentity.generateIdentity('pgp', 'pgp');
         if (index >= 0 && index < this.identities.length) {
             identity = this.identities[index];
             this.identities[index];
         }
         return identity;
     }
-
 }
 
 export default ShareableIdentity;
