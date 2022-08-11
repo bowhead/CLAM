@@ -10,6 +10,7 @@ module.exports = {
       "prettier",
     ],
     "rules": {
+      "prefixWithI": "always" ,
         "indent": [
             "error",
             4
