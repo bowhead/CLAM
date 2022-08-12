@@ -10,7 +10,7 @@ module.exports = {
       "prettier",
     ],
     "rules": {
-      "prefixWithI": "always" ,
+        "prefixWithI": "always",
         "indent": [
             "error",
             4
@@ -33,7 +33,7 @@ module.exports = {
         ],
         "max-params": [
           "error",
-          4
+          6
         ],
         "require-jsdoc": [
           "error",
@@ -60,6 +60,7 @@ module.exports = {
         "curly": [
           2,
           "multi-line"
-        ]
+        ],
+        // "prefixWithI": "always" ,
     }
 }	
