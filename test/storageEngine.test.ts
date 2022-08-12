@@ -1,17 +1,18 @@
-import { StorageEngine, IStorageEngine } from "../src";
+/*global describe, test, expect, __dirname, Buffer */
+import { StorageEngine, IStorageEngine } from '../src';
 import * as fs from 'fs';
 import path from 'path';
 import IPFSManagement from './utils/IPFSManagementHelper';
 
 describe('Testing storage engine using IPFS service as default', () => {
-    const storageEngine : IStorageEngine = new StorageEngine({
+    const storageEngine: IStorageEngine = new StorageEngine({
         URL: 'http://localhost:3000',
         ApiKey: 'wXW9c5NObnsrZIY1J3Tqhvz4cZ7YQrrKnbJpo9xOqJM='
-    })
+    });
     const ipfsManagement = new IPFSManagement('IPFSManagement', '0x57BCD4edE564B699eAA9e8A758628a5B295DC1eB', '0x7EEc887Ff77e28D7Cbd2057E1da4251F48B81336', 'bebefc9fd249df72a5b010e92adac9353ea11cc5825e5c710ef2da831e948c74');
     let cid: string;
     const address = '0x7EEc887Ff77e28D7Cbd2057E1da4251F48B81336';
-    const privateKey = 'bebefc9fd249df72a5b010e92adac9353ea11cc5825e5c710ef2da831e948c74'
+    const privateKey = 'bebefc9fd249df72a5b010e92adac9353ea11cc5825e5c710ef2da831e948c74';
 
     test('Should add new file', async () => {
         const options = {
@@ -20,23 +21,23 @@ describe('Testing storage engine using IPFS service as default', () => {
             fileName: 'test.txt'
         };
 
-        cid = await storageEngine.saveFile(options)
+        cid = await storageEngine.saveFile(options);
 
         await ipfsManagement.addFile(cid, options.fileName);
 
-        expect(cid).not.toBe('')
-    })
+        expect(cid).not.toBe('');
+    });
 
     test('Should get file by CID', async () => {
         const options = {
             address: address,
             cid: cid
-        }
+        };
 
         const file = await storageEngine.getFile(options);
 
-        expect(Buffer.from(file, 'base64').toString()).toBe('testv10')
-    })
+        expect(Buffer.from(file, 'base64').toString()).toBe('testv10');
+    });
 
     test('Should update file by CID', async () => {
         const options = {
@@ -51,11 +52,11 @@ describe('Testing storage engine using IPFS service as default', () => {
         const getOptions = {
             address: address,
             cid: cid
-        }
+        };
 
         const file = await storageEngine.getFile(getOptions);
 
-        expect(Buffer.from(file, 'base64').toString()).toBe('testv11')
+        expect(Buffer.from(file, 'base64').toString()).toBe('testv11');
     });
 
     test('Should delete file by CID', async () => {
@@ -63,14 +64,14 @@ describe('Testing storage engine using IPFS service as default', () => {
             address: address,
             cid: cid,
             privateKey: privateKey
-        }
+        };
 
         await storageEngine.deleteFile(options);
 
         const getOptions = {
             address: address,
             cid: cid
-        }
+        };
 
         const file = await storageEngine.getFile(getOptions);
 
@@ -89,7 +90,7 @@ describe('Testing storage engine using IPFS service as default', () => {
             await storageEngine.updateFile(options);
         } catch (error) {
             expect(error).toBeInstanceOf(Error);
-            expect(error.message).toBe("File not found");
+            expect(error.message).toBe('File not found');
         }
     });
 
@@ -99,12 +100,12 @@ describe('Testing storage engine using IPFS service as default', () => {
                 address: address,
                 cid: cid,
                 privateKey: privateKey
-            }
+            };
     
             await storageEngine.deleteFile(options);
         } catch (error) {
             expect(error).toBeInstanceOf(Error);
-            expect(error.message).toBe("File not found");
+            expect(error.message).toBe('File not found');
         }
     });
 });
