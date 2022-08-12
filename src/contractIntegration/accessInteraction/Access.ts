@@ -1,3 +1,6 @@
+/**
+ * This clase represent the access estructure.
+ */
 class Access {
     public user: string;
     public accountsShared: string[];
@@ -5,6 +8,17 @@ class Access {
     public sharedDate: Date;
     public shared: boolean;
     public index: number;
+
+    /**
+     * Constructor that initializes the class intent with the values passed as parameters.
+     * 
+     * @param {string} user This parameter is the user address. 
+     * @param {string[]} accountsShared This parameter are the users shared.
+     * @param {string} resourceShared This parameter is the resource shared.
+     * @param {Date} sharedDate This parameter is the exact date the resource was shared.
+     * @param {boolean} shared This parameter is the status of the access.
+     * @param {number} index This parameter is the index of the acess.
+     */
     public constructor(
         user: string,
         accountsShared: string[],

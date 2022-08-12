@@ -1,4 +1,4 @@
-import { IdentityManager } from "../../indentityManager";
+import { IdentityManager } from '../../indentityManager';
 
 interface IAccessInteraction {
     giveAccess(resource: string, consentId: string, account: string, identity: IdentityManager): Promise<any>;

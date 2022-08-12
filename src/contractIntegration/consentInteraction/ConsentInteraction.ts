@@ -17,7 +17,7 @@ class ConsentInteraction implements IConsentInteraction {
      * 
      * @param {string} consentId This parameter is the consentID to identify consent.
      * @param {IdentityManager} identity This parameter is the Identity to configurate the smart contract interaction.
-     * @returns {Promise<any>} return the address transaction.
+     * @returns {Promise<any>} return the address of the transaction.
      */
     saveConsent(consentId: string, identity: IdentityManager): Promise<any> {
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('contentID must have at least 1 character');
@@ -43,7 +43,7 @@ class ConsentInteraction implements IConsentInteraction {
      * 
      * @param {string} consentId This parameter is the consentID to identify consent.
      * @param {IdentityManager} identity This parameter is the Identity to configurate the smart contract interaction.
-     * @returns {Promise<any>} return the address transaction.
+     * @returns {Promise<any>} return the address of the transaction.
      */
     async cancelConsent(consentId: string, identity: IdentityManager): Promise<any> {
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('contentID must have at least 1 character');
@@ -100,7 +100,7 @@ class ConsentInteraction implements IConsentInteraction {
      * @param {string} addressConsent This parameter is the adressConsent to indentify the consent.
      * @param {string} key  This parameter is the key to be added in the consent.
      * @param {IdentityManager} identity This parameter is the Identity to configurate the smart contract interaction. 
-     * @returns {Promise<any>}  return the address transaction.  
+     * @returns {Promise<any>}  return the address of the transaction.  
      */
     addKey(consentId: string, addressConsent: string, key: string, identity: IdentityManager): Promise<any> {
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('contentID must have at least 1 character');
