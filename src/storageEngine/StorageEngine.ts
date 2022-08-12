@@ -1,10 +1,12 @@
+/*global console, Buffer*/
 import IStorageEngine from './IStorageEngine';
 import { injectable } from 'tsyringe';
 import axios from 'axios';
 import { ecsign } from 'ethereumjs-util';
 import FormData from 'form-data';
-
-
+/**
+ * This class represent the implementation of StorageEngine
+ */
 @injectable()
 class StorageEngine implements IStorageEngine {
     private instance: any;
@@ -26,10 +28,10 @@ class StorageEngine implements IStorageEngine {
 
     /**
      * Save file in a specific storage engine
-     * @param {any} options - File to save and additional parameters
+     * @param {object} options - File to save and additional parameters
      * @returns {Promise<string>} returns the file identifier or location
      */
-    async saveFile(options: any): Promise<string> {
+    async saveFile(options: object): Promise<string> {
         try {
             const body = options as IIPFSSave;
             const formData = new FormData();
@@ -47,10 +49,11 @@ class StorageEngine implements IStorageEngine {
     /**
      * Get file from storage engine.
      * 
-     * @param {any} options - File identifier or location and additional parameters.
+     * @param {object} options - File identifier or location and additional parameters.
      * @returns {Promise<string>} returns the file.
      */
-    async getFile(options: any): Promise<string> {
+    async getFile(options: object): Promise<string> {
+
         try {
             const params = options as IIPFSDocument;
             const file = await this.instance.get(`/file?address=${params.address}&cid=${params.cid}`);
@@ -62,14 +65,16 @@ class StorageEngine implements IStorageEngine {
                 throw Error(error.message);
             }
         }
+
+
     }
 
     /**
      * Update file stored.
      * 
-     * @param {any} options - File identifier or location and additional parameters.
+     * @param {object} options - File identifier or location and additional parameters.
      */
-    async updateFile(options: any): Promise<void> {
+    async updateFile(options: object): Promise<void> {
         try {
             const body = options as IIPFSUpdate;
             const formData = new FormData();
@@ -95,9 +100,9 @@ class StorageEngine implements IStorageEngine {
     /**
      * Delete file from storage engine.
      * 
-     * @param {unknown} options - Identifier of the file to delete and additional parameters.
+     * @param {object} options - Identifier of the file to delete and additional parameters.
      */
-    async deleteFile(options: unknown): Promise<void> {
+    async deleteFile(options: object): Promise<void> {
         try {
             const params = options as IIPFSDelete;
             const serverHash = await this.getChallenge(params.address);
@@ -126,11 +131,11 @@ class StorageEngine implements IStorageEngine {
      * @param {string} address - User address.
      * @returns {Promise<string>} returns hash made by user address.
      */
-    private async getChallenge(address: string) {
+    private async getChallenge(address: string): Promise<string> {
         try {
             const res = await this.instance.get(`/challenge?address=${address}`);
             return res.data.hash;
-        } catch (error) {
+        } catch (error: any) {
             throw ('Error');
         }
     }
@@ -140,9 +145,9 @@ class StorageEngine implements IStorageEngine {
      * 
      * @param {string} serverHash - Hash.
      * @param {string} privateKey - Private key.
-     * @returns Signature.
+     * @returns {IIPFSSignature} Signature.
      */
-    private generateSignature(serverHash: string, privateKey: string) {
+    private generateSignature(serverHash: string, privateKey: string): IIPFSSignature {
         const hash = Buffer.from(serverHash, 'hex');
         const privateKeyBuffer = Buffer.from(privateKey, 'hex');
         const { v, r, s } = ecsign(hash, privateKeyBuffer);
