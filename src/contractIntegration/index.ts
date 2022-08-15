@@ -3,6 +3,7 @@ import { Access, AccessInteraction, IAccessInteraction } from './accessInteracti
 import { Consent, ConsentInteraction, IConsentInteraction } from './consentInteraction';
 import { Interaction, FactoryInteraction, IOption } from './interaction';
 
+
 export {
     Consent,
     Access,
@@ -14,3 +15,4 @@ export {
     FactoryInteraction,
     IOption
 };
+

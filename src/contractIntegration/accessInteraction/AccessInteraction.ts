@@ -30,6 +30,7 @@ class AccessInteraction implements IAccessInteraction {
         if (account.trim() === '' || account.trim().length === 0) throw new Error('The account must have at least one character');
         if (!account.trim().includes('0x')) throw new Error('The account format is invalid');
 
+
         const objWeb3 = Web3Provider.getInstance().getProvider();
         const provider = Web3Provider.getInstance();
         const contract = new objWeb3.eth.Contract(provider.accessConfig.abi, provider.accessConfig.address, { from: identity.address });
@@ -64,6 +65,7 @@ class AccessInteraction implements IAccessInteraction {
         if (account.trim() === '' || account.trim().length === 0) throw new Error('The account must have at least one character');
         if (!account.trim().includes('0x')) throw new Error('The account format is invalid');
 
+
         const objWeb3 = Web3Provider.getInstance().getProvider();
         const provider = Web3Provider.getInstance();
         const contract = new objWeb3.eth.Contract(provider.accessConfig.abi, provider.accessConfig.address, { from: identity.address });
@@ -93,6 +95,7 @@ class AccessInteraction implements IAccessInteraction {
         if (resource.trim() === '' || resource.trim().length === 0) throw new Error('The resource must have at least one character');
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('The consentID must have at least one character');
 
+
         const objWeb3 = Web3Provider.getInstance().getProvider();
         const provider = Web3Provider.getInstance();
         const contract = new objWeb3.eth.Contract(provider.accessConfig.abi, provider.accessConfig.address, { from: identity.address });
@@ -121,6 +124,7 @@ class AccessInteraction implements IAccessInteraction {
     async getResourceByConsent(consentId: string, identity: IdentityManager): Promise<IAccessResource> {
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('The consentID must have at least one character');
 
+
         const objWeb3 = Web3Provider.getInstance().getProvider();
         const provider = Web3Provider.getInstance();
         const contract = new objWeb3.eth.Contract(provider.accessConfig.abi, provider.accessConfig.address, { from: identity.address });
@@ -136,6 +140,7 @@ class AccessInteraction implements IAccessInteraction {
                 }
             });
         });
+
     }
 
 }

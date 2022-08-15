@@ -9,6 +9,7 @@ import { IdentityManager } from '../../';
  * This class is used to interact with the blockchain by making use 
  * of consent and access interaction instances.
  */
+
 @injectable()
 class Interaction {
 
@@ -27,6 +28,7 @@ class Interaction {
     public constructor(
         @inject('ConsentInteraction') consentInteraction: IConsentInteraction,
         @inject('AccessInteraction') acccessInteraction: IAccessInteraction
+
     ) {
         this.acccessInteraction = acccessInteraction;
         this.consentInteraction = consentInteraction;
@@ -46,6 +48,7 @@ class Interaction {
      * 
      * @param {IdentityManager} identity This parameter is the identity that will be used to interact with the web.
      */
+
     public setIdentity(identity: IdentityManager): void {
         this.identity = identity;
     }

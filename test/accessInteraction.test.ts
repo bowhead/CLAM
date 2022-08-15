@@ -10,6 +10,7 @@ import ABIAccess from './utilities/Access.json';
 import ABIConsentResource from './utilities/Consent.json';
 
 
+
 describe('Testing access interaction', () => {
     let factoryInteraction: FactoryInteraction;
     let factoryIdentity: FactoryIdentity;
@@ -39,6 +40,7 @@ describe('Testing access interaction', () => {
         const account = '0xbB230b6210C5E4640Cf7d3dC306Cdc5a207C92a6';
         const result = await interaction.acccessInteraction.giveAccess('BBB1', 'AAA2', account, interaction.identity);
         expect(result.includes('0x')).toBe(true);
+
     });
 
 
@@ -55,6 +57,7 @@ describe('Testing access interaction', () => {
         const result = await interaction.acccessInteraction.getResourceByConsent('AAA2', interactionX.identity);
         expect(result[0][0]).toBe('0x751bdD89dDD33849507334d9C802a15aAE05D826');
         expect(Web3.utils.toAscii(result[1][0]).includes('BBB1')).toBe(true);
+
 
     });
 
@@ -98,6 +101,7 @@ describe('Testing access interaction', () => {
         } catch (error) {
             expect(error).toBeInstanceOf(Error);
             expect(error.message).toBe('The consentID must have at least one character');
+
         }
     });
     test('should not give and revoke access (empty account)', async () => {
@@ -134,6 +138,7 @@ describe('Testing access interaction', () => {
         } catch (error) {
             expect(error).toBeInstanceOf(Error);
             expect(error.message).toBe('The account format is invalid');
+
         }
     });
 
@@ -146,6 +151,7 @@ describe('Testing access interaction', () => {
         } catch (error) {
             expect(error).toBeInstanceOf(Error);
             expect(error.message).toBe('The resource must have at least one character');
+
         }
     });
     test('should not check access (empty consentID)', async () => {
@@ -157,6 +163,7 @@ describe('Testing access interaction', () => {
         } catch (error) {
             expect(error).toBeInstanceOf(Error);
             expect(error.message).toBe('The consentID must have at least one character');
+
         }
     });
 
@@ -170,12 +177,14 @@ describe('Testing access interaction', () => {
         } catch (error) {
             expect(error).toBeInstanceOf(Error);
             expect(error.message).toBe('The consentID must have at least one character');
+
         }
     });
 
-    
+
     test('should cancel consent', async () => {
         await interaction.consentInteraction.cancelConsent('AAA2', interaction.identity);
+
     });
 
 

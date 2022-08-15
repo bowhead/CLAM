@@ -25,6 +25,7 @@ class Web3Provider {
      */
     public static getInstance(): Web3Provider {
         if (!Web3Provider.instance) {
+
             Web3Provider.instance = new Web3Provider();
         }
         return this.instance;
@@ -39,6 +40,7 @@ class Web3Provider {
      * @param {any} consentResourceConfig This parameter is the consentResource configuration to connect with the contract.
      */
     public setConfig(urlProvider: string, consentConfig: any, accessConfig: any, consentResourceConfig: any): void {
+
         this.urlProvider = urlProvider;
         this.consentConfig = consentConfig;
         this.accessConfig = accessConfig;
@@ -51,6 +53,7 @@ class Web3Provider {
      * @returns {Web3} returna instance of Web3 using the configuration.
      */
     public getProvider(): Web3 {
+
         const objWeb3 = new Web3(new Web3.providers.HttpProvider(this.urlProvider));
         return objWeb3;
     }

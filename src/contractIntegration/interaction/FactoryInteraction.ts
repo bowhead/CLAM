@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import { container } from 'tsyringe';
+
 import {
     ConsentInteraction,
     AccessInteraction,
@@ -25,7 +26,7 @@ class FactoryInteraction {
      * @param {IOption} option This parameter contains the name and class of the new implementation.
      */
     public setOptionConsentInteraction(option: IOption): void {
-        if(option.name.trim()==='' && option.name.trim().length===0){
+        if (option.name.trim() === '' && option.name.trim().length === 0) {
             throw new Error('The name must have at least one character');
         }
         const optionConsentExist = this.optionsConsentInteraction.find(optionAux => optionAux.name === option.name);
@@ -41,7 +42,7 @@ class FactoryInteraction {
      * @param {IOption} option This parameter contains the name and class of the new implementation.
      */
     public setOptionAccessInteraction(option: IOption): void {
-        if(option.name.trim()==='' && option.name.trim().length===0){
+        if (option.name.trim() === '' && option.name.trim().length === 0) {
             throw new Error('The name must have at least one character');
         }
         const optionAccessExist = this.optionsAccessInteraction.find(optionAux => optionAux.name === option.name);
@@ -50,7 +51,7 @@ class FactoryInteraction {
         }
         this.optionsAccessInteraction.push(option);
     }
-    
+
     /**
      * This function generate a new instance of Interaction class using the implementations
      * passed in the parameter.
@@ -60,11 +61,12 @@ class FactoryInteraction {
      * @returns {Interaction} return a new instance of Interaction class.
      */
     public generateInteraction(consentType: string, accessType: string): Interaction {
-        if(consentType.trim()==='' && consentType.trim().length===0){
+        if (consentType.trim() === '' && consentType.trim().length === 0) {
             throw new Error('The consent implementation name must have a minimum of one character');
         }
-        if(accessType.trim()==='' && accessType.trim().length===0){
+        if (accessType.trim() === '' && accessType.trim().length === 0) {
             throw new Error('The access implementation name must have a minimum of one character');
+
         }
         const consent = this.optionsConsentInteraction.find(option => option.name.toLowerCase() === consentType.toLowerCase());
         const access = this.optionsAccessInteraction.find(option => option.name.toLowerCase() === accessType.toLowerCase());
@@ -77,6 +79,7 @@ class FactoryInteraction {
         }
         container.register('ConsentInteraction', consent.option);
         container.register('AccessInteraction', access.option);
+
 
         const interaction: Interaction = container.resolve(Interaction);
 

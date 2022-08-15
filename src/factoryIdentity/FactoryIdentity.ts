@@ -5,6 +5,7 @@ import { EncryptioLayerAES, EncryptionLayerPGP } from '../encryptionLayer';
 import { KeysGeneratorPGP } from '../keysGenerator';
 import { IdentityManager } from '../indentityManager';
 
+
 /**
  * This class is used to generate identities based on the EncryptionLayer 
  * and KeysGenerator implementations making use of inject containers.
@@ -12,6 +13,7 @@ import { IdentityManager } from '../indentityManager';
 class FactoryIdentity {
     private optionsEncryptionLayer: IOption[];
     private optionsKeysGenerator: IOption[];
+
 
     /**
      * Constructor that initializes the class instance, setting two options for 
@@ -38,17 +40,15 @@ class FactoryIdentity {
 
         this.optionsEncryptionLayer.push(option);
     }
-    /**
-     * This function sets a new implemnetation for KeysGenerator.
-     * 
-     * @param {IOption} option This parameter contains the name and class of the new implementation.
-     */
-    setOptionKeysGenerator(option: IOption): void {
-        const optionKeysGenerator = this.optionsKeysGenerator.find(optionAux => optionAux.name === option.name);
-        if (optionKeysGenerator) throw new Error('This option already exists.');
 
+    setOptionKeysGenerator(option: IOption) {
+        const optionKeysGenerator = this.optionsKeysGenerator.find(optionAux => optionAux.name === option.name);
+        if (optionKeysGenerator) {
+            throw new Error("This option already exists.");
+        }
         this.optionsKeysGenerator.push(option);
     }
+
     /**
      * This function generates a new identity with past implementations as parameters.
      * 

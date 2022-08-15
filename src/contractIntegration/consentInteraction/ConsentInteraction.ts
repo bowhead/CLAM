@@ -23,6 +23,7 @@ class ConsentInteraction implements IConsentInteraction {
     saveConsent(consentId: string, identity: IdentityManager): Promise<string> {
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('contentID must have at least 1 character');
 
+
         const objWeb3 = Web3Provider.getInstance().getProvider();
         const provider = Web3Provider.getInstance();
         const contract = new objWeb3.eth.Contract(provider.consentConfig.abi, provider.consentConfig.address, { from: identity.address });
@@ -78,6 +79,7 @@ class ConsentInteraction implements IConsentInteraction {
         if (owner.trim() === '' || owner.trim().length === 0) throw new Error('Owner must have at least 1 character');
         if (!owner.trim().includes('0x')) throw new Error('Invalid owner, the string with has a correct format.');
 
+
         const objWeb3 = Web3Provider.getInstance().getProvider();
         const provider = Web3Provider.getInstance();
         const contract = new objWeb3.eth.Contract(provider.consentConfig.abi, provider.consentConfig.address, { from: identity.address });
@@ -109,6 +111,7 @@ class ConsentInteraction implements IConsentInteraction {
         if (!addressConsent.trim().includes('0x')) throw new Error('Invalid addressConsent, the string with has a correct format.');
         if (key.trim().length === 0 || key.trim() === '') throw new Error('Key must have at least 1 character');
 
+
         const objWeb3 = Web3Provider.getInstance().getProvider();
         const provider = Web3Provider.getInstance();
         const contract = new objWeb3.eth.Contract(provider.consentConfig.abi, provider.consentConfig.address, { from: identity.address });
@@ -134,6 +137,7 @@ class ConsentInteraction implements IConsentInteraction {
     getKeys(consentId: string, identity: IdentityManager): Promise<IConsentKeys> {
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('contentID must have at least 1 character');
 
+
         const objWeb3 = Web3Provider.getInstance().getProvider();
         const provider = Web3Provider.getInstance();
         const contract = new objWeb3.eth.Contract(provider.consentConfig.abi, provider.consentConfig.address, { from: identity.address });
@@ -147,6 +151,7 @@ class ConsentInteraction implements IConsentInteraction {
                 }
             });
         });
+
     }
 
 }

@@ -1,6 +1,7 @@
 /**
  * This clase represent the access estructure.
  */
+
 class Access {
     public user: string;
     public accountsShared: string[];
