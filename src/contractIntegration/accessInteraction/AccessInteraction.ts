@@ -5,6 +5,7 @@ import { IAccessInteraction } from '.';
 import Web3 from 'web3';
 import { IdentityManager } from '../../indentityManager';
 import Web3Provider from '../interaction/Wbe3Provider';
+import IAccessResource from './IAccessResource';
 
 /**
  * This class is the implementation of IAccessInteraction inteface,
@@ -23,7 +24,7 @@ class AccessInteraction implements IAccessInteraction {
      * @param {string} identity This parameter is the Identity to configurate the smart contract interaction. 
      * @returns {Promise<any>} Return the trasaction address.
      */
-    async giveAccess(resource: string, consentId: string, account: string, identity: IdentityManager): Promise<any> {
+    async giveAccess(resource: string, consentId: string, account: string, identity: IdentityManager): Promise<string> {
         if (resource.trim() === '' || resource.trim().length === 0) throw new Error('The resource must have at least one character');
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('The consentID must have at least one character');
         if (account.trim() === '' || account.trim().length === 0) throw new Error('The account must have at least one character');
@@ -36,9 +37,9 @@ class AccessInteraction implements IAccessInteraction {
         return new Promise((resolve, reject) => {
             const resourceBytes = Web3.utils.fromAscii(resource);
             const consentIdBytes = Web3.utils.fromAscii(consentId);
-            contract.methods.giveAccess(resourceBytes, consentIdBytes, account).send({ gas: '1000000' }, function (error: any, result: any) {
+            contract.methods.giveAccess(resourceBytes, consentIdBytes, account).send({ gas: '1000000' }, function (error: Error, result: string) {
                 if (!error) {
-                    resolve({ result });
+                    resolve(result);
                 }
                 else {
                     reject(error);
@@ -56,7 +57,7 @@ class AccessInteraction implements IAccessInteraction {
      * @param {IdentityManager} identity This parameter is the Identity to configurate the smart contract interaction. 
      * @returns {Promise<any>} Return the trasaction address.
      */
-    async revokeAccess(resource: string, consentId: string, account: string, identity: IdentityManager): Promise<any> {
+    async revokeAccess(resource: string, consentId: string, account: string, identity: IdentityManager): Promise<string> {
 
         if (resource.trim() === '' || resource.trim().length === 0) throw new Error('The resource must have at least one character');
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('The consentID must have at least one character');
@@ -70,9 +71,9 @@ class AccessInteraction implements IAccessInteraction {
         return new Promise((resolve, reject) => {
             const resourceBytes = Web3.utils.fromAscii(resource);
             const consentIdBytes = Web3.utils.fromAscii(consentId);
-            contract.methods.revokeAccess(resourceBytes, consentIdBytes, account).send({ gas: '1000000' }, function (error: any, result: any) {
+            contract.methods.revokeAccess(resourceBytes, consentIdBytes, account).send({ gas: '1000000' }, function (error: Error, result: string) {
                 if (!error) {
-                    resolve({ result });
+                    resolve(result);
                 }
                 else {
                     reject(error);
@@ -88,7 +89,7 @@ class AccessInteraction implements IAccessInteraction {
      * @param {IdentityManager} identity This parameter is the Identity to configurate the smart contract interaction. 
      * @returns {Promise<any>} Return if the user has access in this consent.
      */
-    async checkAccess(resource: string, consentId: string, identity: IdentityManager): Promise<any> {
+    async checkAccess(resource: string, consentId: string, identity: IdentityManager): Promise<boolean> {
         if (resource.trim() === '' || resource.trim().length === 0) throw new Error('The resource must have at least one character');
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('The consentID must have at least one character');
 
@@ -99,9 +100,9 @@ class AccessInteraction implements IAccessInteraction {
         return new Promise((resolve, reject) => {
             const resourceBytes = Web3.utils.fromAscii(resource);
             const consentIdBytes = Web3.utils.fromAscii(consentId);
-            contract.methods.checkAccess(resourceBytes, consentIdBytes).call(function (error: any, result: any) {
+            contract.methods.checkAccess(resourceBytes, consentIdBytes).call(function (error: Error, result: boolean) {
                 if (!error) {
-                    resolve({ result });
+                    resolve(result);
                 }
                 else {
                     reject(error);
@@ -117,7 +118,7 @@ class AccessInteraction implements IAccessInteraction {
      * @param {IdentityManager} identity This parameter is the Identity to configurate the smart contract interaction. 
      * @returns {Promise<any>} Return addres and state of the user in this consent.
      */
-    async getResourceByConsent(consentId: string, identity: IdentityManager): Promise<any> {
+    async getResourceByConsent(consentId: string, identity: IdentityManager): Promise<IAccessResource> {
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('The consentID must have at least one character');
 
         const objWeb3 = Web3Provider.getInstance().getProvider();
@@ -126,9 +127,9 @@ class AccessInteraction implements IAccessInteraction {
 
         return new Promise((resolve, reject) => {
             const consentIdBytes = Web3.utils.fromAscii(consentId);
-            contract.methods.getResourceByConsent(consentIdBytes).call(function (error: any, result: any) {
+            contract.methods.getResourceByConsent(consentIdBytes).call(function (error: Error, result: IAccessResource) {
                 if (!error) {
-                    resolve({ result });
+                    resolve(result);
                 }
                 else {
                     reject(error);
