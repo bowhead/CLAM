@@ -47,7 +47,7 @@ class EncryptioLayerAES implements IEncryptionLayer {
      * @param {string} data This paramater is the data encrypted to be decrypted.
      * @returns {string} return a string promise, when resolve it returns a string representing the decrypted data.
      */
-    decryptData(key: any, data: string): Promise<string> {
+    decryptData(key: string, data: string): Promise<string> {
         if (key.trim().length === 0 || key.trim().length < 3) throw new Error('Error, the length of the key to decrypt the data must be greater than 5');
         if (data.trim().length === 0) throw new Error('The data must have at least one character');
 

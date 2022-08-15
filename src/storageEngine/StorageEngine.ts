@@ -32,18 +32,13 @@ class StorageEngine implements IStorageEngine {
      * @returns {Promise<string>} returns the file identifier or location
      */
     async saveFile(options: object): Promise<string> {
-        try {
-            const body = options as IIPFSSave;
-            const formData = new FormData();
-            formData.append('file', body.file);
-            formData.append('address', body.address);
-            formData.append('fileName', body.fileName);
-            const cid = await this.instance.post('/file', formData);
-            return cid.data.CID;
-        } catch (error: any) {
-            console.error(error);
-            throw new Error('Catch not implemented.');
-        }
+        const body = options as IIPFSSave;
+        const formData = new FormData();
+        formData.append('file', body.file);
+        formData.append('address', body.address);
+        formData.append('fileName', body.fileName);
+        const cid = await this.instance.post('/file', formData);
+        return cid.data.CID;
     }
 
     /**
@@ -53,20 +48,9 @@ class StorageEngine implements IStorageEngine {
      * @returns {Promise<string>} returns the file.
      */
     async getFile(options: object): Promise<string> {
-
-        try {
-            const params = options as IIPFSDocument;
-            const file = await this.instance.get(`/file?address=${params.address}&cid=${params.cid}`);
-            return file.data.file;
-        } catch (error: any) {
-            if (error.response.status === 404) {
-                return '';
-            } else {
-                throw Error(error.message);
-            }
-        }
-
-
+        const params = options as IIPFSDocument;
+        const file = await this.instance.get(`/file?address=${params.address}&cid=${params.cid}`);
+        return file.data.file;
     }
 
     /**
@@ -75,26 +59,18 @@ class StorageEngine implements IStorageEngine {
      * @param {object} options - File identifier or location and additional parameters.
      */
     async updateFile(options: object): Promise<void> {
-        try {
-            const body = options as IIPFSUpdate;
-            const formData = new FormData();
-            const serverHash = await this.getChallenge(body.address);
-            const signature = this.generateSignature(serverHash, body.privateKey);
-            formData.append('file', body.file);
-            formData.append('address', body.address);
-            formData.append('cid', body.cid || '');
-            formData.append('sigV', signature.sigV.toString());
-            formData.append('sigR', signature.sigR);
-            formData.append('sigS', signature.sigS);
-            formData.append('hash', serverHash);
-            await this.instance.put('/file', formData);
-        } catch (error: any) {
-            if (error.response.status !== 500) {
-                throw new Error(error.response.data.message);
-            } else {
-                throw new Error(error);
-            }
-        }
+        const body = options as IIPFSUpdate;
+        const formData = new FormData();
+        const serverHash = await this.getChallenge(body.address);
+        const signature = this.generateSignature(serverHash, body.privateKey);
+        formData.append('file', body.file);
+        formData.append('address', body.address);
+        formData.append('cid', body.cid || '');
+        formData.append('sigV', signature.sigV.toString());
+        formData.append('sigR', signature.sigR);
+        formData.append('sigS', signature.sigS);
+        formData.append('hash', serverHash);
+        await this.instance.put('/file', formData);
     }
 
     /**
@@ -103,26 +79,18 @@ class StorageEngine implements IStorageEngine {
      * @param {object} options - Identifier of the file to delete and additional parameters.
      */
     async deleteFile(options: object): Promise<void> {
-        try {
-            const params = options as IIPFSDelete;
-            const serverHash = await this.getChallenge(params.address);
-            const signature = this.generateSignature(serverHash, params.privateKey);
-            const body = {
-                address: params.address,
-                cid: params.cid,
-                hash: serverHash,
-                sigV: signature.sigV,
-                sigR: signature.sigR,
-                sigS: signature.sigS
-            };
-            await this.instance.delete('/file', { data: body });
-        } catch (error: any) {
-            if (error.response.status !== 500) {
-                throw new Error(error.response.data.message);
-            } else {
-                throw new Error(error);
-            }
-        }
+        const params = options as IIPFSDelete;
+        const serverHash = await this.getChallenge(params.address);
+        const signature = this.generateSignature(serverHash, params.privateKey);
+        const body = {
+            address: params.address,
+            cid: params.cid,
+            hash: serverHash,
+            sigV: signature.sigV,
+            sigR: signature.sigR,
+            sigS: signature.sigS
+        };
+        await this.instance.delete('/file', { data: body });
     }
 
     /**
@@ -132,12 +100,8 @@ class StorageEngine implements IStorageEngine {
      * @returns {Promise<string>} returns hash made by user address.
      */
     private async getChallenge(address: string): Promise<string> {
-        try {
-            const res = await this.instance.get(`/challenge?address=${address}`);
-            return res.data.hash;
-        } catch (error: any) {
-            throw ('Error');
-        }
+        const res = await this.instance.get(`/challenge?address=${address}`);
+        return res.data.hash;
     }
 
     /**
