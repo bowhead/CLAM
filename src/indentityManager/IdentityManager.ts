@@ -44,6 +44,29 @@ class IdentityManager {
     }
 
     /**
+     * This function re-establish a identity bassed in yhe mnemonic.
+     * 
+     * @param {string} mnemonic This parameter are the 12 word. 
+     */
+    public reestablishIdentity = async(mnemonic: string): Promise<void>=>{
+        if(mnemonic.trim().length===0) throw new Error('Invalid mnemonic');
+        const wallet = fromMnemonic(mnemonic);
+        this.mnemonic = mnemonic;
+        this.address = `0x${wallet.derive('m/44\'/60\'/0\'/0/0').getAddress().toString('hex')}`;
+        this.privateKey = wallet.derive('m/44\'/60\'/0\'/0/0').getPrivateKey(true).toString('hex');
+        this.publicKey = wallet.derive('m/44\'/60\'/0\'/0/0').getPublicKey(true).toString('hex');
+        
+        const data = {
+            name: this.address,
+            email: `${this.address}@localhost.com`
+        };
+        const { privateKey, publicKey } = await this.keysGenerator.generateKeys(data);
+        this.privateKeySpecial = privateKey;
+        this.publicKeySpecial = publicKey;
+    }
+
+
+    /**
      * This function generates your mnemonic, address, private key and public key to build your identity.
      * 
      */
