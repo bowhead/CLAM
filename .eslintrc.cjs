@@ -61,6 +61,5 @@ module.exports = {
           2,
           "multi-line"
         ],
-        // "prefixWithI": "always" ,
     }
 }	

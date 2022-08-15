@@ -35,7 +35,7 @@ class EncryptionLayerLULU implements IEncryptionLayer {
      * @returns {Promise<string>} return string 
      */
     async decryptData(key: string, data: string): Promise<string> {
-        key = '';
+        console.log(key);
         const dataDecrypted: string = data.split('-')[1];
         return dataDecrypted;
     }
