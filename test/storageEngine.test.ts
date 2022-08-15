@@ -7,7 +7,8 @@ import nock from "nock";
 describe('Testing storage engine using IPFS service as default', () => {
     const storageEngine: IStorageEngine = new StorageEngine({
         URL: 'http://localhost:3000',
-        ApiKey: 'wXW9c5NObnsrZIY1J3Tqhvz4cZ7YQrrKnbJpo9xOqJM='
+        ApiKey: 'wXW9c5NObnsrZIY1J3Tqhvz4cZ7YQrrKnbJpo9xOqJM=',
+        timeout: 2000
     })
     let cid: string;
     const address = '0x7EEc887Ff77e28D7Cbd2057E1da4251F48B81336';
@@ -151,7 +152,8 @@ describe('Testing storage engine using IPFS service as default', () => {
             await storageEngine.updateFile(options);
         } catch (error) {
             expect(error).toBeInstanceOf(Error);
-            expect(error.message).toBe('File not found');
+            expect(error.response.status).toBe(404);
+            expect(error.response.data.message).toBe('File not found');
         }
     });
 
@@ -179,7 +181,8 @@ describe('Testing storage engine using IPFS service as default', () => {
             await storageEngine.deleteFile(options);
         } catch (error) {
             expect(error).toBeInstanceOf(Error);
-            expect(error.message).toBe('File not found');
+            expect(error.response.status).toBe(404);
+            expect(error.response.data.message).toBe('File not found');
         }
     });
 });
