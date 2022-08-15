@@ -1,7 +1,7 @@
-import StorageEngine from "./StorageEngine";
-import IStorageEngine from "./IStorageEngine";
+import StorageEngine from './StorageEngine';
+import IStorageEngine from './IStorageEngine';
 
 export {
     StorageEngine,
     IStorageEngine
-}
+};

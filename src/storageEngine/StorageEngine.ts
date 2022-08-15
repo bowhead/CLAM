@@ -28,6 +28,7 @@ class StorageEngine implements IStorageEngine {
         });
     }
 
+
     /**
      * Save file in a specific storage engine
      * @param {object} options - File to save and additional parameters
@@ -35,7 +36,7 @@ class StorageEngine implements IStorageEngine {
      * @throws {BadRequestError} File was not save on IPFS
      * @throws {InternaServerError} Internal server error
      */
-    async saveFile(options: object): Promise<string> {
+     async saveFile(options: object): Promise<string> {
         const body = options as IIPFSSave;
         
         const formData = new FormData();

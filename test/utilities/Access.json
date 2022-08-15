@@ -20305,15 +20305,14 @@
     "version": "0.8.2+commit.661d1103.Linux.g++"
   },
   "networks": {
-    "1660144913074": {
+    "1660511151953": {
       "events": {},
       "links": {},
-      "address": "0xd7EeA4678B700fB5BA8496C8C1c3B2d6df8Fd384",
-      "transactionHash": "0x297886f028e8058b08d1d1b5c178756ed50bd1a449fcfafec73194d970959430"
+      "address": "0xC152fb199e0C9CAB597BbBc55638f78C3b729656"
     }
   },
   "schemaVersion": "3.4.7",
-  "updatedAt": "2022-08-10T15:25:21.081Z",
+  "updatedAt": "2022-08-14T23:38:25.957Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",

@@ -1,18 +1,22 @@
-import {IEncryptionLayer} from "./";
+import { IEncryptionLayer } from './';
 import { readKey, encrypt, decrypt, readMessage, createMessage, decryptKey, readPrivateKey } from 'openpgp';
-import {injectable} from "tsyringe";
+import { injectable } from 'tsyringe';
+/**
+ * This class is the implementation of EncryptionLayer using the PGP algorithm.
+ */
 @injectable()
 class EncryptionLayerPGP implements IEncryptionLayer {
     /**
      * This function encrypts the data passed as a parameter using the 
      * public key passed as a parameter.
      * 
-     * @param publicKeyPGP This parameter is the public key to encrypt the data.
-     * @param data This parameter is the data that will be encrypted.
+     * @param {string} publicKeyPGP This parameter is the public key to encrypt the data.
+     * @param {string} data This parameter is the data that will be encrypted.
+     * @returns {string} returns a string promise, when resolved it returns a string representing the encrypted data.
      */
     ecryptData = async (publicKeyPGP: string, data: string): Promise<string> => {
 
-        if(data.trim().length == 0) throw new Error("The data must have at least one character");
+        if (data.trim().length == 0) throw new Error('The data must have at least one character');
         const publicKey = await readKey({ armoredKey: publicKeyPGP });
         const encrypted = await encrypt({
             message: await createMessage({ text: data }),
@@ -25,14 +29,15 @@ class EncryptionLayerPGP implements IEncryptionLayer {
      * This function decrypt the data passed as a parameter using the
      * private key passed as a parameter.
      * 
-     * @param privateKeyPGP This parameter is the private key to decrypt the data.
-     * @param dataEncrypted This parameter is the encrypted data that will be decrypted.
+     * @param {string} privateKeyPGP This parameter is the private key to decrypt the data.
+     * @param {string} dataEncrypted This parameter is the encrypted data that will be decrypted.
+     * @returns {string} return a string promise, when resolve it returns a string representing the decrypted data.
      */
     decryptData = async (privateKeyPGP: string, dataEncrypted: string): Promise<string> => {
-        if(dataEncrypted.trim().length == 0) throw new Error("The data must have at least one character");
+        if (dataEncrypted.trim().length == 0) throw new Error('The data must have at least one character');
         const privateKey = await decryptKey({
             privateKey: await readPrivateKey({ armoredKey: privateKeyPGP }),
-            passphrase: "passphrase"
+            passphrase: 'passphrase'
         });
         const message = await readMessage({
             armoredMessage: dataEncrypted

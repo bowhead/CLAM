@@ -1,4 +1,4 @@
-import IKeys from "./IKeys";
+import IKeys from './IKeys';
 
 interface IKeysGenerator {
 

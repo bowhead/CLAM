@@ -1,24 +1,29 @@
-import IEncryptionLayer from "./IEncryptionLayer";
-const CryptoJS = require("crypto-js");
-import {injectable} from "tsyringe";
+/* eslint-disable no-undef */
+/* eslint-disable @typescript-eslint/no-var-requires */
+import IEncryptionLayer from './IEncryptionLayer';
+const CryptoJS = require('crypto-js');
+import { injectable } from 'tsyringe';
+/**
+ * This class is the implementation of EncryptionLayer using the AES algorithm.
+ */
 @injectable()
 class EncryptioLayerAES implements IEncryptionLayer {
 
-    private keySize: number = 256;
-    private iterations: number = 100;
+    private keySize = 256;
+    private iterations = 100;
 
     /**
      * This function encrypts the data passed as a parameter 
      * using the key passed as a parameter with the AES-25 algorithm.
      * 
-     * @param key This parameter is the key with which the information will be encrypted.
-     * @param data This parameter is the information to be encrypted.
-     * @returns returns a string promise, when resolved it returns a string representing the encrypted data.
+     * @param {string} key This parameter is the key with which the information will be encrypted.
+     * @param {string} data This parameter is the information to be encrypted.
+     * @returns {string} returns a string promise, when resolved it returns a string representing the encrypted data.
      */
     ecryptData(key: string, data: string): Promise<string> {
 
-        if (key.trim().length === 0 || key.trim().length < 3) throw new Error("Error, the length of the key to encrypt the data must be greater than 5");
-        if (data.trim().length === 0) throw new Error("The data must have at least one character");
+        if (key.trim().length === 0 || key.trim().length < 3) throw new Error('Error, the length of the key to encrypt the data must be greater than 5');
+        if (data.trim().length === 0) throw new Error('The data must have at least one character');
 
         const salt = CryptoJS.lib.WordArray.random(128 / 8);
         const keyEncrypt = CryptoJS.PBKDF2(key, salt, {
@@ -38,13 +43,13 @@ class EncryptioLayerAES implements IEncryptionLayer {
      * This function decrypt the data passed as a perameter
      * using the key passed as a parameter.
      * 
-     * @param key This parameter is the key which the information will be decrypted.
-     * @param data This paramater is the data encrypted to be decrypted.
-     * @returns return a string promise, when resolve it returns a string representing the decrypted data.
+     * @param {string} key This parameter is the key which the information will be decrypted.
+     * @param {string} data This paramater is the data encrypted to be decrypted.
+     * @returns {string} return a string promise, when resolve it returns a string representing the decrypted data.
      */
-    decryptData(key: any, data: string): Promise<string> {
-        if (key.trim().length === 0 || key.trim().length < 3) throw new Error("Error, the length of the key to decrypt the data must be greater than 5");
-        if (data.trim().length === 0) throw new Error("The data must have at least one character");
+    decryptData(key: string, data: string): Promise<string> {
+        if (key.trim().length === 0 || key.trim().length < 3) throw new Error('Error, the length of the key to decrypt the data must be greater than 5');
+        if (data.trim().length === 0) throw new Error('The data must have at least one character');
 
         const salt = CryptoJS.enc.Hex.parse(data.substr(0, 32));
         const iv = CryptoJS.enc.Hex.parse(data.substr(32, 32));
