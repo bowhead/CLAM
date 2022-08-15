@@ -18,7 +18,7 @@ class ConsentInteraction implements IConsentInteraction {
      * 
      * @param {string} consentId This parameter is the consentID to identify consent.
      * @param {IdentityManager} identity This parameter is the Identity to configurate the smart contract interaction.
-     * @returns {Promise<any>} return the address of the transaction.
+     * @returns {Promise<string>} return the address of the transaction.
      */
     saveConsent(consentId: string, identity: IdentityManager): Promise<string> {
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('contentID must have at least 1 character');
@@ -44,7 +44,7 @@ class ConsentInteraction implements IConsentInteraction {
      * 
      * @param {string} consentId This parameter is the consentID to identify consent.
      * @param {IdentityManager} identity This parameter is the Identity to configurate the smart contract interaction.
-     * @returns {Promise<any>} return the address of the transaction.
+     * @returns {Promise<string>} return the address of the transaction.
      */
     async cancelConsent(consentId: string, identity: IdentityManager): Promise<string> {
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('contentID must have at least 1 character');
@@ -71,7 +71,7 @@ class ConsentInteraction implements IConsentInteraction {
      * @param {string} consentId This parameters is the consentID to indentify the consent.
      * @param {string} owner This parameter is the owner addres.
      * @param {IdentityManager} identity This parameter is the Identity to configurate the smart contract interaction.
-     * @returns {Promise<any>} return the consent status. 
+     * @returns {Promise<boolean>} return the consent status. 
      */
     getConsentById(consentId: string, owner: string, identity: IdentityManager): Promise<boolean> {
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('contentID must have at least 1 character');
@@ -101,7 +101,7 @@ class ConsentInteraction implements IConsentInteraction {
      * @param {string} addressConsent This parameter is the adressConsent to indentify the consent.
      * @param {string} key  This parameter is the key to be added in the consent.
      * @param {IdentityManager} identity This parameter is the Identity to configurate the smart contract interaction. 
-     * @returns {Promise<any>}  return the address of the transaction.  
+     * @returns {Promise<string>}  return the address of the transaction.  
      */
     addKey(consentId: string, addressConsent: string, key: string, identity: IdentityManager): Promise<string> {
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('contentID must have at least 1 character');
@@ -129,11 +129,11 @@ class ConsentInteraction implements IConsentInteraction {
      * 
      * @param {string} consentId This parameter is the consentID to indentify the consent.
      * @param {IdentityManager} identity This parameter is the Identity to configurate the smart contract interaction. 
-     * @returns {Promise<any>} return the addres's and keys's
+     * @returns {Promise<IConsentKeys>} return the addres's and keys's
      */
     getKeys(consentId: string, identity: IdentityManager): Promise<IConsentKeys> {
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('contentID must have at least 1 character');
-        
+
         const objWeb3 = Web3Provider.getInstance().getProvider();
         const provider = Web3Provider.getInstance();
         const contract = new objWeb3.eth.Contract(provider.consentConfig.abi, provider.consentConfig.address, { from: identity.address });

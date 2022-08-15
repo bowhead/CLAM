@@ -22,7 +22,7 @@ class AccessInteraction implements IAccessInteraction {
      * @param {string} consentId This parameter is the id of the consent. 
      * @param {string} account This parameter is the account to give access.
      * @param {string} identity This parameter is the Identity to configurate the smart contract interaction. 
-     * @returns {Promise<any>} Return the trasaction address.
+     * @returns {Promise<string>} Return the trasaction address.
      */
     async giveAccess(resource: string, consentId: string, account: string, identity: IdentityManager): Promise<string> {
         if (resource.trim() === '' || resource.trim().length === 0) throw new Error('The resource must have at least one character');
@@ -55,7 +55,7 @@ class AccessInteraction implements IAccessInteraction {
      * @param {string} consentId This parameter is the id of the consent to revoke access.
      * @param {string} account This parameter is the account that will be revoked.
      * @param {IdentityManager} identity This parameter is the Identity to configurate the smart contract interaction. 
-     * @returns {Promise<any>} Return the trasaction address.
+     * @returns {Promise<string>} Return the trasaction address.
      */
     async revokeAccess(resource: string, consentId: string, account: string, identity: IdentityManager): Promise<string> {
 
@@ -87,7 +87,7 @@ class AccessInteraction implements IAccessInteraction {
      * @param {string} resource This parameter is the resource to be checked. 
      * @param {string} consentId This parameter is the id of the consent to be checked.
      * @param {IdentityManager} identity This parameter is the Identity to configurate the smart contract interaction. 
-     * @returns {Promise<any>} Return if the user has access in this consent.
+     * @returns {Promise<boolean>} Return if the user has access in this consent.
      */
     async checkAccess(resource: string, consentId: string, identity: IdentityManager): Promise<boolean> {
         if (resource.trim() === '' || resource.trim().length === 0) throw new Error('The resource must have at least one character');
@@ -116,7 +116,7 @@ class AccessInteraction implements IAccessInteraction {
      * 
      * @param {string} consentId This parameter is the resource to be returned. 
      * @param {IdentityManager} identity This parameter is the Identity to configurate the smart contract interaction. 
-     * @returns {Promise<any>} Return addres and state of the user in this consent.
+     * @returns {Promise<IAccessResource>} Return addres and state of the user in this consent.
      */
     async getResourceByConsent(consentId: string, identity: IdentityManager): Promise<IAccessResource> {
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('The consentID must have at least one character');
