@@ -20,9 +20,8 @@ describe('Testing IdentityManager class', () => {
         expect(objectKeys.includes('privateKeySpecial')).toBe(true);
         expect(objectKeys.includes('encryptionLayer')).toBe(true);
         expect(objectKeys.includes('keysGenerator')).toBe(true);
-        expect(objectKeys.includes('reestablishIdentity')).toBe(true);
         expect(objectKeys.includes('generateIdentity')).toBe(true);
-        expect(objectKeys.length).toBe(10);
+        expect(objectKeys.length).toBe(9);
     });
 
 
@@ -92,7 +91,7 @@ describe('Testing IdentityManager class', () => {
     test('should reestablish address, public and private keys bassed in mnemonic', async () => {
         const mnemonic = 'delay balance merry once cheese proof game casual empty tired flavor stove';
         const identity: IdentityManager = factoryIdentity.generateIdentity('pgp', 'pgp');
-        await identity.reestablishIdentity(mnemonic);
+        await identity.generateIdentity(mnemonic);
         const identityExpected = {
             mnemonic,
             address: '0xe55ee741311d6cf9a7528612cb88d17f18558e6f',
