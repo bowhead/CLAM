@@ -22,9 +22,9 @@ describe('Testing access interaction', () => {
         web3Provider = Web3Provider.getInstance();
 
         const urlProvider = 'http://localhost:8545';
-        const consentConfig = { address: '0xd7EeA4678B700fB5BA8496C8C1c3B2d6df8Fd384', abi: ABIConsent.abi };
-        const accessConfig = { address: '0xC152fb199e0C9CAB597BbBc55638f78C3b729656', abi: ABIAccess.abi };
-        const consentResourceConfig = { address: '0x7564Ee00E0261e92b61ddf2C75CeF440c089dAB8', abi: ABIConsentResource.abi };
+        const consentConfig = { address: '0xD48A409F0b853EA933341366Afb79026a8b96f98', abi: ABIConsent.abi };
+        const accessConfig = { address: '0x859768B0d2ed33eCe914Fd8B6EbcAE5288fb087a', abi: ABIAccess.abi };
+        const consentResourceConfig = { address: '0xCDb2d33Ac1910BbfcDB0502Bf0d88A1c3495e967', abi: ABIConsentResource.abi };
         web3Provider.setConfig(urlProvider, consentConfig, accessConfig, consentResourceConfig);
 
         interaction = factoryInteraction.generateInteraction('clam', 'clam');
