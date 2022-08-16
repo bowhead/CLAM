@@ -4,6 +4,7 @@ import { IdentityManager, ShareableIdentity } from './indentityManager';
 import { IKeys, IKeysGenerator, KeysGeneratorPGP } from './keysGenerator';
 import FactoryIdentity from './factoryIdentity/FactoryIdentity';
 import { StorageEngine, IStorageEngine } from './storageEngine';
+import { DocumentSharing, IDocumentSharing } from './documentSharing';
 
 export {
     IdentityManager,
@@ -16,5 +17,7 @@ export {
     IKeys,
     IKeysGenerator,
     StorageEngine,
-    IStorageEngine
+    IStorageEngine,
+    DocumentSharing,
+    IDocumentSharing
 };
