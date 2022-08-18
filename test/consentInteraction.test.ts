@@ -8,7 +8,6 @@ import ABIAccess from './utilities/Access.json';
 import ABIConsentResource from './utilities/Consent.json';
 import Web3 from 'web3';
 
-
 describe('Testing consent interaction', () => {
     let factoryInteraction: FactoryInteraction;
     let factoryIdentity: FactoryIdentity;
@@ -24,23 +23,12 @@ describe('Testing consent interaction', () => {
         factoryIdentity = new FactoryIdentity();
         web3Provider = Web3Provider.getInstance();
 
-
         const web3 = new Web3(getProvider());
         accounts = await web3.eth.getAccounts();
-
         const consentDeployConfig = { abi: JSON.stringify(ABIConsent.abi), bytecode: ABIConsent.bytecode }
-        const accessDeployConfig = { abi: JSON.stringify(ABIAccess.abi), bytecode: ABIAccess.bytecode }
-        const consentResourceDeployConfig = { abi: JSON.stringify(ABIConsentResource.abi), bytecode: ABIConsentResource.bytecode }
-
         let consentDeployContract = new web3.eth.Contract(JSON.parse(consentDeployConfig.abi));
-        let accessDeployContract = new web3.eth.Contract(JSON.parse(accessDeployConfig.abi));
-        let consentResourceDeployContract = new web3.eth.Contract(JSON.parse(consentResourceDeployConfig.abi));
-
         const account = accounts[0];
         let payloadConsent = { data: consentDeployConfig.bytecode }
-        let payloadAccess = { data: accessDeployConfig.bytecode }
-        let payloadConsentResource = { data: consentResourceDeployConfig.bytecode }
-
         let parameter = {
             from: account,
             gas: 6721975,
@@ -49,22 +37,12 @@ describe('Testing consent interaction', () => {
         let consentAddress: string = "";
         let accessAddress: string = "";
         let consentResourceAddress: string = "";
-
         await consentDeployContract.deploy(payloadConsent).send(parameter, (_err, transactionHash) => {
             return transactionHash;
         }).on('confirmation', () => { }).then((newContractInstance) => {
             consentAddress = newContractInstance.options.address;
         })
-        await accessDeployContract.deploy(payloadAccess).send(parameter, (_err, transactionHash) => {
-            return transactionHash;
-        }).on('confirmation', () => { }).then((newContractInstance) => {
-            accessAddress = newContractInstance.options.address;
-        })
-        await consentResourceDeployContract.deploy(payloadConsentResource).send(parameter, (_err, transactionHash) => {
-            return transactionHash;
-        }).on('confirmation', () => { }).then((newContractInstance) => {
-            consentResourceAddress = newContractInstance.options.address;
-        })
+
 
         const consentConfig = { address: consentAddress, abi: ABIConsent.abi };
         const accessConfig = { address: accessAddress, abi: ABIAccess.abi };
