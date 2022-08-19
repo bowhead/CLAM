@@ -20,24 +20,14 @@ class ConsentInteraction implements IConsentInteraction {
      * @param {IdentityManager} identity This parameter is the Identity to configurate the smart contract interaction.
      * @returns {Promise<string>} return the address of the transaction.
      */
-    saveConsent(consentId: string, identity: IdentityManager): Promise<string> {
+    async saveConsent(consentId: string, identity: IdentityManager): Promise<boolean> {
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('contentID must have at least 1 character');
-
-
         const objWeb3 = Web3Provider.getInstance().getProvider();
         const provider = Web3Provider.getInstance();
         const contract = new objWeb3.eth.Contract(provider.consentConfig.abi, provider.consentConfig.address, { from: identity.address });
-        return new Promise((resolve, reject) => {
-            contract.methods.updateConsent(Web3.utils.fromAscii(consentId), true).send(function (error: Error, result: string) {
-                if (!error) {
-                    resolve(result);
-                }
-                else {
-                    reject(error);
-                }
-            });
-        });
-
+        const transaction = contract.methods.updateConsent(Web3.utils.fromAscii(consentId), true);
+        const receipt = await this.send(transaction, objWeb3, identity);
+        return receipt.status;
     }
 
     /**
@@ -47,22 +37,14 @@ class ConsentInteraction implements IConsentInteraction {
      * @param {IdentityManager} identity This parameter is the Identity to configurate the smart contract interaction.
      * @returns {Promise<string>} return the address of the transaction.
      */
-    async cancelConsent(consentId: string, identity: IdentityManager): Promise<string> {
+    async cancelConsent(consentId: string, identity: IdentityManager): Promise<boolean> {
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('contentID must have at least 1 character');
-
         const objWeb3 = Web3Provider.getInstance().getProvider();
         const provider = Web3Provider.getInstance();
         const contract = new objWeb3.eth.Contract(provider.consentConfig.abi, provider.consentConfig.address, { from: identity.address });
-        return new Promise((resolve, reject) => {
-            contract.methods.updateConsent(Web3.utils.fromAscii(consentId), false).send(function (error: Error, result: string) {
-                if (!error) {
-                    resolve(result);
-                }
-                else {
-                    reject(error);
-                }
-            });
-        });
+        const transaction = contract.methods.updateConsent(Web3.utils.fromAscii(consentId), false);
+        const receipt = await this.send(transaction, objWeb3, identity);
+        return receipt.status;
 
     }
 
@@ -78,8 +60,6 @@ class ConsentInteraction implements IConsentInteraction {
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('contentID must have at least 1 character');
         if (owner.trim() === '' || owner.trim().length === 0) throw new Error('Owner must have at least 1 character');
         if (!owner.trim().includes('0x')) throw new Error('Invalid owner, the string with has a correct format.');
-
-
         const objWeb3 = Web3Provider.getInstance().getProvider();
         const provider = Web3Provider.getInstance();
         const contract = new objWeb3.eth.Contract(provider.consentConfig.abi, provider.consentConfig.address, { from: identity.address });
@@ -105,7 +85,7 @@ class ConsentInteraction implements IConsentInteraction {
      * @param {IdentityManager} identity This parameter is the Identity to configurate the smart contract interaction. 
      * @returns {Promise<string>}  return the address of the transaction.  
      */
-    addKey(consentId: string, addressConsent: string, key: string, identity: IdentityManager): Promise<string> {
+    async addKey(consentId: string, addressConsent: string, key: string, identity: IdentityManager): Promise<boolean> {
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('contentID must have at least 1 character');
         if (addressConsent.trim() === '' || addressConsent.trim().length === 0) throw new Error('AddressConsent must have at least 1 character');
         if (!addressConsent.trim().includes('0x')) throw new Error('Invalid addressConsent, the string with has a correct format.');
@@ -115,16 +95,10 @@ class ConsentInteraction implements IConsentInteraction {
         const objWeb3 = Web3Provider.getInstance().getProvider();
         const provider = Web3Provider.getInstance();
         const contract = new objWeb3.eth.Contract(provider.consentConfig.abi, provider.consentConfig.address, { from: identity.address });
-        return new Promise((resolve, reject) => {
-            contract.methods.addPGPKey(Web3.utils.fromAscii(consentId), addressConsent, key).send({ gas: '1000000' }, function (error: Error, result: string) {
-                if (!error) {
-                    resolve(result);
-                }
-                else {
-                    reject(error);
-                }
-            });
-        });
+        const transaction = contract.methods.addPGPKey(Web3.utils.fromAscii(consentId), addressConsent, key);
+        const receipt = await this.send(transaction, objWeb3, identity);
+        return receipt.status;
+
     }
 
     /**
@@ -152,6 +126,18 @@ class ConsentInteraction implements IConsentInteraction {
             });
         });
 
+    }
+
+    private async send(transaction: any, web3: Web3, identity: IdentityManager) {
+        const options = {
+            to: transaction._parent._address,
+            data: transaction.encodeABI(),
+            gas: await transaction.estimateGas({ from: identity.address }),
+            gasPrice: web3.utils.toHex(web3.utils.toWei('30', 'gwei'))
+        };
+        const signed = await web3.eth.accounts.signTransaction(options, identity.privateKey);
+        const receipt = await web3.eth.sendSignedTransaction(signed.rawTransaction as string);
+        return receipt;
     }
 
 }
