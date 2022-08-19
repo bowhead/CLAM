@@ -186,5 +186,4 @@ describe('Testing access interaction', () => {
         expect(result).toBe(true);
     });
 
-
 });
