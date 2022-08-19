@@ -28,9 +28,9 @@ interface IDocumentSharing {
      * Shared file 
      * @param {IdentityManager} identity - User identity 
      * @param {object} options - File identifier or location and additional paramters
-     * @param {string} userId - User id to share file
+     * @param {string} userIds - Users id to share file
      */
-    sharedFile(identity: IdentityManager, options: object, userId: string): Promise<void>;
+    sharedFile(identity: IdentityManager, options: object, userIds: string): Promise<string>;
 
     /**
      * Get shared file 
