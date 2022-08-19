@@ -2,8 +2,8 @@ import { IdentityManager } from '../../indentityManager';
 import IAccessResource from './IAccessResource';
 
 interface IAccessInteraction {
-    giveAccess(resource: string, consentId: string, account: string, identity: IdentityManager): Promise<string>;
-    revokeAccess(resource: string, consentId: string, account: string, identity: IdentityManager): Promise<string>;
+    giveAccess(resource: string, consentId: string, account: string, identity: IdentityManager): Promise<boolean>;
+    revokeAccess(resource: string, consentId: string, account: string, identity: IdentityManager): Promise<boolean>;
     checkAccess(resource: string, consentId: string, identity: IdentityManager): Promise<boolean>;
     getResourceByConsent(consentId: string, identity: IdentityManager): Promise<IAccessResource>;
 }

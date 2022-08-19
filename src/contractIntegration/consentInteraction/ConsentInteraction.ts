@@ -27,7 +27,7 @@ class ConsentInteraction implements IConsentInteraction {
         const contract = new objWeb3.eth.Contract(provider.consentConfig.abi, provider.consentConfig.address, { from: identity.address });
         const transaction = contract.methods.updateConsent(Web3.utils.fromAscii(consentId), true);
         const receipt = await this.send(transaction, objWeb3, identity);
-        return receipt.status;
+        return receipt;
     }
 
     /**
@@ -44,7 +44,7 @@ class ConsentInteraction implements IConsentInteraction {
         const contract = new objWeb3.eth.Contract(provider.consentConfig.abi, provider.consentConfig.address, { from: identity.address });
         const transaction = contract.methods.updateConsent(Web3.utils.fromAscii(consentId), false);
         const receipt = await this.send(transaction, objWeb3, identity);
-        return receipt.status;
+        return receipt;
 
     }
 
@@ -97,7 +97,7 @@ class ConsentInteraction implements IConsentInteraction {
         const contract = new objWeb3.eth.Contract(provider.consentConfig.abi, provider.consentConfig.address, { from: identity.address });
         const transaction = contract.methods.addPGPKey(Web3.utils.fromAscii(consentId), addressConsent, key);
         const receipt = await this.send(transaction, objWeb3, identity);
-        return receipt.status;
+        return receipt;
 
     }
 
@@ -127,8 +127,15 @@ class ConsentInteraction implements IConsentInteraction {
         });
 
     }
-
-    private async send(transaction: any, web3: Web3, identity: IdentityManager) {
+    /**
+     * This function sign the transaction.
+     * 
+     * @param {any} transaction This parameter is the transaction object. 
+     * @param {Web3} web3 This parameter is the Web3 Provider to sign the transaction. 
+     * @param {IdentityManager} identity This parameter is the identity to sign the transaction with it's privateKey. 
+     * @returns {Promise<boolean>} Return true if the transaction was successful, false otherwise.
+     */
+    private async send(transaction: any, web3: Web3, identity: IdentityManager): Promise<boolean> {
         const options = {
             to: transaction._parent._address,
             data: transaction.encodeABI(),
@@ -137,7 +144,7 @@ class ConsentInteraction implements IConsentInteraction {
         };
         const signed = await web3.eth.accounts.signTransaction(options, identity.privateKey);
         const receipt = await web3.eth.sendSignedTransaction(signed.rawTransaction as string);
-        return receipt;
+        return receipt.status;
     }
 
 }

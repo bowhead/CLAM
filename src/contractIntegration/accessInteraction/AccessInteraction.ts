@@ -24,30 +24,22 @@ class AccessInteraction implements IAccessInteraction {
      * @param {string} identity This parameter is the Identity to configurate the smart contract interaction. 
      * @returns {Promise<string>} Return the trasaction address.
      */
-    async giveAccess(resource: string, consentId: string, account: string, identity: IdentityManager): Promise<string> {
+    async giveAccess(resource: string, consentId: string, account: string, identity: IdentityManager): Promise<boolean> {
         if (resource.trim() === '' || resource.trim().length === 0) throw new Error('The resource must have at least one character');
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('The consentID must have at least one character');
         if (account.trim() === '' || account.trim().length === 0) throw new Error('The account must have at least one character');
         if (!account.trim().includes('0x')) throw new Error('The account format is invalid');
 
-
         const objWeb3 = Web3Provider.getInstance().getProvider();
         const provider = Web3Provider.getInstance();
         const contract = new objWeb3.eth.Contract(provider.accessConfig.abi, provider.accessConfig.address, { from: identity.address });
-
-        return new Promise((resolve, reject) => {
-            const resourceBytes = Web3.utils.fromAscii(resource);
-            const consentIdBytes = Web3.utils.fromAscii(consentId);
-            contract.methods.giveAccess(resourceBytes, consentIdBytes, account).send({ gas: '1000000' }, function (error: Error, result: string) {
-                if (!error) {
-                    resolve(result);
-                }
-                else {
-                    reject(error);
-                }
-            });
-        });
+        const resourceBytes = Web3.utils.fromAscii(resource);
+        const consentIdBytes = Web3.utils.fromAscii(consentId);
+        const transaction = contract.methods.giveAccess(resourceBytes, consentIdBytes, account);
+        const receipt = await this.send(transaction, objWeb3, identity);
+        return receipt;
     }
+
 
     /**
      * This function revoke the acces in the resouce using the values passed as parameters.
@@ -58,30 +50,20 @@ class AccessInteraction implements IAccessInteraction {
      * @param {IdentityManager} identity This parameter is the Identity to configurate the smart contract interaction. 
      * @returns {Promise<string>} Return the trasaction address.
      */
-    async revokeAccess(resource: string, consentId: string, account: string, identity: IdentityManager): Promise<string> {
-
+    async revokeAccess(resource: string, consentId: string, account: string, identity: IdentityManager): Promise<boolean> {
         if (resource.trim() === '' || resource.trim().length === 0) throw new Error('The resource must have at least one character');
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('The consentID must have at least one character');
         if (account.trim() === '' || account.trim().length === 0) throw new Error('The account must have at least one character');
         if (!account.trim().includes('0x')) throw new Error('The account format is invalid');
 
-
         const objWeb3 = Web3Provider.getInstance().getProvider();
         const provider = Web3Provider.getInstance();
         const contract = new objWeb3.eth.Contract(provider.accessConfig.abi, provider.accessConfig.address, { from: identity.address });
-
-        return new Promise((resolve, reject) => {
-            const resourceBytes = Web3.utils.fromAscii(resource);
-            const consentIdBytes = Web3.utils.fromAscii(consentId);
-            contract.methods.revokeAccess(resourceBytes, consentIdBytes, account).send({ gas: '1000000' }, function (error: Error, result: string) {
-                if (!error) {
-                    resolve(result);
-                }
-                else {
-                    reject(error);
-                }
-            });
-        });
+        const resourceBytes = Web3.utils.fromAscii(resource);
+        const consentIdBytes = Web3.utils.fromAscii(consentId);
+        const transaction =  contract.methods.revokeAccess(resourceBytes, consentIdBytes, account);
+        const receipt = await this.send(transaction, objWeb3, identity);
+        return receipt;
     }
     /**
      * This function check the access in the resource using the consent id and the user address.
@@ -141,6 +123,25 @@ class AccessInteraction implements IAccessInteraction {
             });
         });
 
+    }
+    /**
+     * This function sign the transaction.
+     * 
+     * @param {any} transaction This parameter is the transaction object. 
+     * @param {Web3} web3 This parameter is the Web3 Provider to sign the transaction. 
+     * @param {IdentityManager} identity This parameter is the identity to sign the transaction with it's privateKey. 
+     * @returns {Promise<boolean>} Return true if the transaction was successful, false otherwise.
+     */
+    private async send(transaction: any, web3: Web3, identity: IdentityManager): Promise<boolean> {
+        const options = {
+            to: transaction._parent._address,
+            data: transaction.encodeABI(),
+            gas: await transaction.estimateGas({ from: identity.address }),
+            gasPrice: web3.utils.toHex(web3.utils.toWei('30', 'gwei'))
+        };
+        const signed = await web3.eth.accounts.signTransaction(options, identity.privateKey);
+        const receipt = await web3.eth.sendSignedTransaction(signed.rawTransaction as string);
+        return receipt.status;
     }
 
 }
