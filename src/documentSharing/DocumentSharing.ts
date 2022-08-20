@@ -31,7 +31,11 @@ class DocumentSharing implements IDocumentSharing {
         const body = options as IDocumentSharingSave;
 
         if(!body.file) throw new Error('File parameter is missing');
+
+        const consentApproved = await body.contractInteraction.consentInteraction.getConsentById(body.consentId, identity.address, identity); 
         
+        if (!consentApproved) throw new Error('Consent is not approved');
+
         let chunks = []
 
         for await (const chunk of body.file) {
@@ -124,6 +128,10 @@ class DocumentSharing implements IDocumentSharing {
 
         if(!body.file) throw new Error('File parameter is missing');
 
+        const consentApproved = await body.contractInteraction.consentInteraction.getConsentById(body.consentId, identity.address, identity); 
+        
+        if (!consentApproved) throw new Error('Consent is not approved');
+
         userIds += `,${identity.publicKeySpecial}`;
 
         let chunks = []
@@ -159,6 +167,10 @@ class DocumentSharing implements IDocumentSharing {
         const info = options as IDocumentSharingFile;
 
         if (!info.cid) throw new Error('File identifier is missing');
+
+        const access = await info.contractInteraction.acccessInteraction.checkAccess(info.cid, info.consentId, identity);
+
+        if (!access) throw new Error('You do not have access to the resource');
 
         const params = {
             cid: info.cid,
