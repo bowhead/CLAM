@@ -38,7 +38,7 @@ describe('Testing access interaction', () => {
 
     test('should give access', async () => {
         const account = '0xbB230b6210C5E4640Cf7d3dC306Cdc5a207C92a6';
-        const result = await interaction.acccessInteraction.giveAccess('BBB1', 'AAA2', account, interaction.identity);
+        const result = await interaction.acccessInteraction.giveAccess('BBB1', 'AAA2', [account], 'test.txt', interaction.identity);
         expect(result.includes('0x')).toBe(true);
 
     });
@@ -61,84 +61,47 @@ describe('Testing access interaction', () => {
 
     });
 
-    test('should revoke Access', async () => {
-        const result = await interaction.acccessInteraction.revokeAccess('BBB1', 'AAA2', '0xbB230b6210C5E4640Cf7d3dC306Cdc5a207C92a6', interaction.identity);
-        expect(result.includes('0x')).toBe(true);
-    });
-
-
-    test('should not give and revoke access (empty resource)', async () => {
+    test('should not give access (empty resource)', async () => {
         try {
             const account = '0xbB230b6210C5E4640Cf7d3dC306Cdc5a207C92a6';
-            const result = await interaction.acccessInteraction.giveAccess('', 'AAA2', account, interaction.identity);
-            expect(result.includes('0x')).toBe(true);
-        } catch (error) {
-            expect(error).toBeInstanceOf(Error);
-            expect(error.message).toBe('The resource must have at least one character');
-        }
-        try {
-            const account = '0xbB230b6210C5E4640Cf7d3dC306Cdc5a207C92a6';
-            const result = await interaction.acccessInteraction.revokeAccess('', 'AAA2', account, interaction.identity);
+            const result = await interaction.acccessInteraction.giveAccess('', 'AAA2', [account], 'test.txt', interaction.identity);
             expect(result.includes('0x')).toBe(true);
         } catch (error) {
             expect(error).toBeInstanceOf(Error);
             expect(error.message).toBe('The resource must have at least one character');
         }
     });
+
     test('should not give and revoke access (empty consentID)', async () => {
         try {
             const account = '0xbB230b6210C5E4640Cf7d3dC306Cdc5a207C92a6';
-            const result = await interaction.acccessInteraction.giveAccess('BBB1', '', account, interaction.identity);
+            const result = await interaction.acccessInteraction.giveAccess('BBB1', '', [account], 'test.txt', interaction.identity);
             expect(result.includes('0x')).toBe(true);
         } catch (error) {
             expect(error).toBeInstanceOf(Error);
             expect(error.message).toBe('The consentID must have at least one character');
-        }
-        try {
-            const account = '0xbB230b6210C5E4640Cf7d3dC306Cdc5a207C92a6';
-            const result = await interaction.acccessInteraction.revokeAccess('BBB1', '', account, interaction.identity);
-            expect(result.includes('0x')).toBe(true);
-        } catch (error) {
-            expect(error).toBeInstanceOf(Error);
-            expect(error.message).toBe('The consentID must have at least one character');
-
         }
     });
+
     test('should not give and revoke access (empty account)', async () => {
         try {
             const account = '';
-            const result = await interaction.acccessInteraction.giveAccess('BBB1', 'AAA2', account, interaction.identity);
+            const result = await interaction.acccessInteraction.giveAccess('BBB1', 'AAA2', [], 'test.txt', interaction.identity);
             expect(result.includes('0x')).toBe(true);
         } catch (error) {
             expect(error).toBeInstanceOf(Error);
-            expect(error.message).toBe('The account must have at least one character');
-        }
-        try {
-            const account = '';
-            const result = await interaction.acccessInteraction.revokeAccess('BBB1', 'AAA2', account, interaction.identity);
-            expect(result.includes('0x')).toBe(true);
-        } catch (error) {
-            expect(error).toBeInstanceOf(Error);
-            expect(error.message).toBe('The account must have at least one character');
+            expect(error.message).toBe('Accounts must have at least one element');
         }
     });
+
     test('should not give and revoke access (invalid account)', async () => {
         try {
             const account = 'invalid account';
-            const result = await interaction.acccessInteraction.giveAccess('BBB1', 'AAA2', account, interaction.identity);
+            const result = await interaction.acccessInteraction.giveAccess('BBB1', 'AAA2', [account], 'test.txt', interaction.identity);
             expect(result.includes('0x')).toBe(true);
         } catch (error) {
             expect(error).toBeInstanceOf(Error);
-            expect(error.message).toBe('The account format is invalid');
-        }
-        try {
-            const account = 'invalid account';
-            const result = await interaction.acccessInteraction.revokeAccess('BBB1', 'AAA2', account, interaction.identity);
-            expect(result.includes('0x')).toBe(true);
-        } catch (error) {
-            expect(error).toBeInstanceOf(Error);
-            expect(error.message).toBe('The account format is invalid');
-
+            expect(error.message.includes('INVALID_ARGUMENT')).toBe(true);
         }
     });
 
@@ -154,6 +117,7 @@ describe('Testing access interaction', () => {
 
         }
     });
+    
     test('should not check access (empty consentID)', async () => {
         try {
             const interactionX = { ...interaction };
