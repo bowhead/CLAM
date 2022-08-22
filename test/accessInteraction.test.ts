@@ -15,34 +15,38 @@ describe('Testing access interaction', () => {
     let factoryIdentity: FactoryIdentity;
     let web3Provider: Web3Provider;
     let interaction: Interaction;
-    beforeEach(() => {
+
+    beforeEach(async () => {
         factoryInteraction = new FactoryInteraction();
         factoryIdentity = new FactoryIdentity();
         web3Provider = Web3Provider.getInstance();
 
-        const urlProvider = 'http://localhost:8545';
-        const consentConfig = { address: '0xd7EeA4678B700fB5BA8496C8C1c3B2d6df8Fd384', abi: ABIConsent.abi };
-        const accessConfig = { address: '0xC152fb199e0C9CAB597BbBc55638f78C3b729656', abi: ABIAccess.abi };
-        const consentResourceConfig = { address: '0x7564Ee00E0261e92b61ddf2C75CeF440c089dAB8', abi: ABIConsentResource.abi };
+        const web3 = new Web3('http://localhost:8545');
+        const consentConfig = { address: '0xD48A409F0b853EA933341366Afb79026a8b96f98', abi: ABIConsent.abi };
+        const accessConfig = { address: '0x859768B0d2ed33eCe914Fd8B6EbcAE5288fb087a', abi: ABIAccess.abi };
+        const consentResourceConfig = { address: '0xCDb2d33Ac1910BbfcDB0502Bf0d88A1c3495e967', abi: ABIConsentResource.abi };
         const IPFSManagementConfig = { address: '0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6', abi: ABIIPFSManagement.abi };
-        web3Provider.setConfig(urlProvider, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
+        web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
+        
+        interaction = factoryInteraction.generateInteraction('clam', 'clam');
 
-        interaction = factoryInteraction.generateInteraction('clam', 'clam','clam');
         const identity: IdentityManager = factoryIdentity.generateIdentity('pgp', 'pgp');
+        await identity.generateIdentity();
         identity.address = '0x751bdD89dDD33849507334d9C802a15aAE05D826';
+        identity.privateKey = '0x2bc3604040467f2db3a9a768fd1dca94d7e2d410ef4f65e6fccf0b80b9754ac2';
         interaction.setIdentity(identity);
     });
-    test('should acept consent', async () => {
-        await interaction.consentInteraction.saveConsent('AAA2', interaction.identity);
+
+    test('should add a new consent', async () => {
+        const result = await interaction.consentInteraction.saveConsent('AAA2', interaction.identity);
+        expect(result).toBe(true);
     });
 
     test('should give access', async () => {
         const account = '0xbB230b6210C5E4640Cf7d3dC306Cdc5a207C92a6';
         const result = await interaction.acccessInteraction.giveAccess('BBB1', 'AAA2', [account], 'test.txt', interaction.identity);
-        expect(result.includes('0x')).toBe(true);
-
+        expect(result).toBe(true);
     });
-
 
     test('should check Access', async () => {
         const interactionX = { ...interaction };
@@ -57,15 +61,13 @@ describe('Testing access interaction', () => {
         const result = await interaction.acccessInteraction.getResourceByConsent('AAA2', interactionX.identity);
         expect(result[0][0]).toBe('0x751bdD89dDD33849507334d9C802a15aAE05D826');
         expect(Web3.utils.toAscii(result[1][0]).includes('BBB1')).toBe(true);
-
-
     });
 
-    test('should not give access (empty resource)', async () => {
+    test('should not give and revoke access (empty resource)', async () => {
         try {
             const account = '0xbB230b6210C5E4640Cf7d3dC306Cdc5a207C92a6';
             const result = await interaction.acccessInteraction.giveAccess('', 'AAA2', [account], 'test.txt', interaction.identity);
-            expect(result.includes('0x')).toBe(true);
+            expect(result).toBe(true);
         } catch (error) {
             expect(error).toBeInstanceOf(Error);
             expect(error.message).toBe('The resource must have at least one character');
@@ -76,7 +78,7 @@ describe('Testing access interaction', () => {
         try {
             const account = '0xbB230b6210C5E4640Cf7d3dC306Cdc5a207C92a6';
             const result = await interaction.acccessInteraction.giveAccess('BBB1', '', [account], 'test.txt', interaction.identity);
-            expect(result.includes('0x')).toBe(true);
+            expect(result).toBe(true);
         } catch (error) {
             expect(error).toBeInstanceOf(Error);
             expect(error.message).toBe('The consentID must have at least one character');
@@ -87,7 +89,7 @@ describe('Testing access interaction', () => {
         try {
             const account = '';
             const result = await interaction.acccessInteraction.giveAccess('BBB1', 'AAA2', [], 'test.txt', interaction.identity);
-            expect(result.includes('0x')).toBe(true);
+            expect(result).toBe(true);
         } catch (error) {
             expect(error).toBeInstanceOf(Error);
             expect(error.message).toBe('Accounts must have at least one element');
@@ -98,7 +100,7 @@ describe('Testing access interaction', () => {
         try {
             const account = 'invalid account';
             const result = await interaction.acccessInteraction.giveAccess('BBB1', 'AAA2', [account], 'test.txt', interaction.identity);
-            expect(result.includes('0x')).toBe(true);
+            expect(result).toBe(true);
         } catch (error) {
             expect(error).toBeInstanceOf(Error);
             expect(error.message.includes('INVALID_ARGUMENT')).toBe(true);
@@ -117,7 +119,7 @@ describe('Testing access interaction', () => {
 
         }
     });
-    
+
     test('should not check access (empty consentID)', async () => {
         try {
             const interactionX = { ...interaction };
@@ -145,11 +147,9 @@ describe('Testing access interaction', () => {
         }
     });
 
-
     test('should cancel consent', async () => {
-        await interaction.consentInteraction.cancelConsent('AAA2', interaction.identity);
-
+        const result = await interaction.consentInteraction.cancelConsent('AAA2', interaction.identity);
+        expect(result).toBe(true);
     });
-
 
 });

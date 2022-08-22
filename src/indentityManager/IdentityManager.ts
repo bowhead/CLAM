@@ -44,13 +44,15 @@ class IdentityManager {
     }
 
     /**
-     * This function generates your mnemonic, address, private key and public key to build your identity.
+     * This function generates an identity based on the mnemonic passed as parameters, in case of not passing 
+     * the mnemonic a new identity will be created based on a totally new mnemonic.
      * 
+     * @param {string} mnemonic This parameter is the 12 words that will be used to generate the identity information. 
      */
-    public generateIdentity = async (): Promise<void> => {
+    public generateIdentity = async (mnemonic: string = ""): Promise<void> => {
         if (this.mnemonic.trim() === '' && this.address.trim() === '' &&
             this.privateKey.trim() === '' && this.publicKey.trim() == '') {
-            this.mnemonic = generateMnemonic();
+            this.mnemonic = mnemonic.trim() === "" ? generateMnemonic() : mnemonic;
             const hdwallet = fromMnemonic(this.mnemonic);
             this.address = `0x${hdwallet.derive('m/44\'/60\'/0\'/0/0').getAddress().toString('hex')}`;
             this.privateKey = hdwallet.derive('m/44\'/60\'/0\'/0/0').getPrivateKey(true).toString('hex');
