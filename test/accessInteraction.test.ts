@@ -8,8 +8,7 @@ import Web3 from 'web3';
 import ABIConsent from './utilities/Consent.json';
 import ABIAccess from './utilities/Access.json';
 import ABIConsentResource from './utilities/Consent.json';
-
-
+import ABIIPFSManagement from './utilities/IPFSManagement.json';
 
 describe('Testing access interaction', () => {
     let factoryInteraction: FactoryInteraction;
@@ -25,9 +24,10 @@ describe('Testing access interaction', () => {
         const consentConfig = { address: '0xd7EeA4678B700fB5BA8496C8C1c3B2d6df8Fd384', abi: ABIConsent.abi };
         const accessConfig = { address: '0xC152fb199e0C9CAB597BbBc55638f78C3b729656', abi: ABIAccess.abi };
         const consentResourceConfig = { address: '0x7564Ee00E0261e92b61ddf2C75CeF440c089dAB8', abi: ABIConsentResource.abi };
-        web3Provider.setConfig(urlProvider, consentConfig, accessConfig, consentResourceConfig);
+        const IPFSManagementConfig = { address: '0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6', abi: ABIIPFSManagement.abi };
+        web3Provider.setConfig(urlProvider, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
 
-        interaction = factoryInteraction.generateInteraction('clam', 'clam');
+        interaction = factoryInteraction.generateInteraction('clam', 'clam','clam');
         const identity: IdentityManager = factoryIdentity.generateIdentity('pgp', 'pgp');
         identity.address = '0x751bdD89dDD33849507334d9C802a15aAE05D826';
         interaction.setIdentity(identity);

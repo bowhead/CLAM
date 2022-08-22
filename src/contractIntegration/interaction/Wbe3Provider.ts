@@ -7,6 +7,7 @@ class Web3Provider {
     public urlProvider: string;
     public consentConfig: { address: string; abi: any }
     public accessConfig: { address: string; abi: any }
+    public IPFSManagementConfig: { address: string; abi: any }
     public consentResourceConfig: { address: string; abi: any }
     public static instance: Web3Provider;
 
@@ -38,13 +39,15 @@ class Web3Provider {
      * @param {any} consentConfig This parameter is the consent configuration to connect with the contract.
      * @param {any} accessConfig This parameter is the access configuration to connect with the contract.
      * @param {any} consentResourceConfig This parameter is the consentResource configuration to connect with the contract.
+     * @param {any} IPFSManagementConfig This parameter is the IPFSManagement configuration to connect with the contract.
      */
-    public setConfig(urlProvider: string, consentConfig: any, accessConfig: any, consentResourceConfig: any): void {
+    public setConfig(urlProvider: string, consentConfig: any, accessConfig: any, consentResourceConfig: any, IPFSManagementConfig: any): void {
 
         this.urlProvider = urlProvider;
         this.consentConfig = consentConfig;
         this.accessConfig = accessConfig;
         this.consentResourceConfig = consentResourceConfig;
+        this.IPFSManagementConfig = IPFSManagementConfig
     }
 
     /**

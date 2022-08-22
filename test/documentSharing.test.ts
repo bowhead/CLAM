@@ -14,6 +14,7 @@ import path from 'path';
 import ABIConsent from './utilities/Consent.json';
 import ABIAccess from './utilities/Access.json';
 import ABIConsentResource from './utilities/ConsentResource.json';
+import ABIIPFSManagement from './utilities/IPFSManagement.json';
 import Web3Provider from '../src/contractIntegration/interaction/Wbe3Provider';
 import { AccessInteraction, ConsentInteraction, FactoryInteraction ,Interaction } from '../src/contractIntegration';
 import nock from "nock";
@@ -56,9 +57,10 @@ describe('Testing document sharing', () => {
         const consentConfig = { address: '0x0E801D84Fa97b50751Dbf25036d067dCf18858bF', abi: ABIConsent.abi };
         const accessConfig = { address: '0x5eb3Bc0a489C5A8288765d2336659EbCA68FCd00', abi: ABIAccess.abi };
         const consentResourceConfig = { address: '0x8f86403A4DE0BB5791fa46B8e795C547942fE4Cf', abi: ABIConsentResource.abi };
-        web3Provider.setConfig(urlProvider, consentConfig, accessConfig, consentResourceConfig);
+        const IPFSManagementConfig = { address: '0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6', abi: ABIIPFSManagement.abi };
+        web3Provider.setConfig(urlProvider, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
 
-        interaction = factoryInteraction.generateInteraction('clam', 'clam');
+        interaction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
 
         aesInstance.address = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266';
         aesInstance.privateKey = 'ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80';
