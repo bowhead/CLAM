@@ -18,7 +18,7 @@ describe('Testing storage engine using IPFS service as default', () => {
         nock('http://localhost:3000')
             .post('/file')
             .reply(200, {
-                    CID: 'fe5c3e7fa0f43b8cbfed5e69c9a19c722c1900ff893ce7fa6b40646b88e46f48.txt'
+                CID: 'fe5c3e7fa0f43b8cbfed5e69c9a19c722c1900ff893ce7fa6b40646b88e46f48.txt'
             })
 
         const options = {
@@ -44,7 +44,7 @@ describe('Testing storage engine using IPFS service as default', () => {
             .get('/file')
             .query({ address: address, cid: cid })
             .reply(200, {
-                    file: 'dGVzdHYxMA=='
+                file: 'dGVzdHYxMA=='
             })
 
         const file = await storageEngine.getFile(options);
@@ -78,11 +78,12 @@ describe('Testing storage engine using IPFS service as default', () => {
             cid: cid
         };
 
+
         nock('http://localhost:3000')
             .get('/file')
             .query({ address: address, cid: cid })
             .reply(200, {
-                    file: 'dGVzdHYxMQ=='
+                file: 'dGVzdHYxMQ=='
             })
 
         const file = await storageEngine.getFile(getOptions);
@@ -96,6 +97,7 @@ describe('Testing storage engine using IPFS service as default', () => {
             cid: cid,
             privateKey: privateKey
         };
+
 
         nock('http://localhost:3000')
             .get('/challenge')
@@ -115,11 +117,12 @@ describe('Testing storage engine using IPFS service as default', () => {
             cid: cid
         };
 
+
         nock('http://localhost:3000')
             .get('/file')
             .query({ address: address, cid: cid })
             .reply(200, {
-                    file: ''
+                file: ''
             })
 
         const file = await storageEngine.getFile(getOptions);
@@ -149,11 +152,12 @@ describe('Testing storage engine using IPFS service as default', () => {
                     code: 404,
                     message: 'File not found'
                 });
-    
+
             await storageEngine.updateFile(options);
         } catch (error) {
             expect(error).toBeInstanceOf(Error);
-            expect(error.message).toBe('File not found');
+            expect(error.response.status).toBe(404);
+            expect(error.response.data.message).toBe('File not found');
         }
     });
 
@@ -163,6 +167,7 @@ describe('Testing storage engine using IPFS service as default', () => {
                 address: address,
                 cid: cid,
                 privateKey: privateKey
+
             }
 
             nock('http://localhost:3000')
@@ -178,11 +183,12 @@ describe('Testing storage engine using IPFS service as default', () => {
                     code: 404,
                     message: 'File not found'
                 });
-    
+
             await storageEngine.deleteFile(options);
         } catch (error) {
             expect(error).toBeInstanceOf(Error);
-            expect(error.message).toBe('File not found');
+            expect(error.response.status).toBe(404);
+            expect(error.response.data.message).toBe('File not found');
         }
     });
 });
