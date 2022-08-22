@@ -6,6 +6,7 @@ import Web3Provider from '../src/contractIntegration/interaction/Wbe3Provider';
 import ABIConsent from './utilities/Consent.json';
 import ABIAccess from './utilities/Access.json';
 import ABIConsentResource from './utilities/Consent.json';
+import ABIIPFSManagement from './utilities/IPFSManagement.json';
 import Web3 from 'web3';
 
 describe('Testing consent interaction', () => {
@@ -18,12 +19,16 @@ describe('Testing consent interaction', () => {
         factoryInteraction = new FactoryInteraction();
         factoryIdentity = new FactoryIdentity();
         web3Provider = Web3Provider.getInstance();
+
         const web3 = new Web3('http://localhost:8545');
         const consentConfig = { address: '0xD48A409F0b853EA933341366Afb79026a8b96f98', abi: ABIConsent.abi };
         const accessConfig = { address: '0x859768B0d2ed33eCe914Fd8B6EbcAE5288fb087a', abi: ABIAccess.abi };
         const consentResourceConfig = { address: '0xCDb2d33Ac1910BbfcDB0502Bf0d88A1c3495e967', abi: ABIConsentResource.abi };
-        web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig);
-        interaction = factoryInteraction.generateInteraction('clam', 'clam');
+        const IPFSManagementConfig = { address: '0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6', abi: ABIIPFSManagement.abi };
+        web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
+        
+        interaction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
+
         const identity: IdentityManager = factoryIdentity.generateIdentity('pgp', 'pgp');
         await identity.generateIdentity();
         identity.address = '0x751bdD89dDD33849507334d9C802a15aAE05D826';

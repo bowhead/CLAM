@@ -79,12 +79,13 @@ class AccessInteractionOther implements IAccessInteraction {
      * 
      * @param {string} resource This parameter is the resource to be shared. 
      * @param {string} consentId This parameter is the id of the consent. 
-     * @param {string} account This parameter is the account to give access.
+     * @param {string} accounts This parameter is the accounts to give access.
+     * @param {string} resourceName This parameter is the resource name.
      * @param {string} identity This parameter is the Identity to configurate the smart contract interaction. 
      * @returns {Promise<any>} Return the trasaction address.
      */
-    async giveAccess(resource: string, consentId: string, account: string, identity: IdentityManager): Promise<any> {
-        return resource + consentId + account + identity;
+    async giveAccess(resource: string, consentId: string, accounts: string[], resourceName: string, identity: IdentityManager): Promise<any> {
+        return resource + consentId + accounts + resourceName + identity;
     }
 
     /**

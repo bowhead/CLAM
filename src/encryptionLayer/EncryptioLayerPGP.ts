@@ -17,10 +17,14 @@ class EncryptionLayerPGP implements IEncryptionLayer {
     ecryptData = async (publicKeyPGP: string, data: string): Promise<string> => {
 
         if (data.trim().length == 0) throw new Error('The data must have at least one character');
-        const publicKey = await readKey({ armoredKey: publicKeyPGP });
+        const pubKeys = publicKeyPGP.split(',');
+        const publicKeys = pubKeys.map(async (key) => {
+            return (await readKey({ armoredKey: key }))
+        });
+        
         const encrypted = await encrypt({
             message: await createMessage({ text: data }),
-            encryptionKeys: publicKey,
+            encryptionKeys: await Promise.all(publicKeys),
         });
         return encrypted.toString();
     }
@@ -35,16 +39,21 @@ class EncryptionLayerPGP implements IEncryptionLayer {
      */
     decryptData = async (privateKeyPGP: string, dataEncrypted: string): Promise<string> => {
         if (dataEncrypted.trim().length == 0) throw new Error('The data must have at least one character');
-        const privateKey = await decryptKey({
-            privateKey: await readPrivateKey({ armoredKey: privateKeyPGP }),
-            passphrase: 'passphrase'
+        
+        const privKeys = privateKeyPGP.split(',');
+        const privateKeys = privKeys.map(async (key) => {
+            return await decryptKey({
+                privateKey: await readPrivateKey({ armoredKey: key}),
+                passphrase: 'passphrase'
+            });
         });
+
         const message = await readMessage({
             armoredMessage: dataEncrypted
         });
         const { data: decrypted } = await decrypt({
             message,
-            decryptionKeys: privateKey
+            decryptionKeys: await Promise.all(privateKeys)
         });
         return decrypted.toString();
     }

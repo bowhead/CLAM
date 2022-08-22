@@ -148,7 +148,8 @@ describe('Testing storage engine using IPFS service as default', () => {
 
             nock('http://localhost:3000')
                 .put('/file')
-                .reply(404, {
+                .replyWithError({
+                    code: 404,
                     message: 'File not found'
                 });
 
@@ -178,7 +179,8 @@ describe('Testing storage engine using IPFS service as default', () => {
 
             nock('http://localhost:3000')
                 .delete('/file')
-                .reply(404, {
+                .replyWithError({
+                    code: 404,
                     message: 'File not found'
                 });
 
