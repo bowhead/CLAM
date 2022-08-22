@@ -36,10 +36,10 @@ describe('User owned file flow', () => {
         web3Provider = Web3Provider.getInstance();
 
         const urlProvider = 'http://localhost:8545';
-        const consentConfig = { address: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512', abi: ABIConsent.abi };
-        const accessConfig = { address: '0x5FC8d32690cc91D4c39d9d3abcBD16989F875707', abi: ABIAccess.abi };
-        const consentResourceConfig = { address: '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9', abi: ABIConsentResource.abi };
-        const IPFSManagementConfig = { address: '0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6', abi: ABIIPFSManagement.abi };
+        const consentConfig = { address: '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9', abi: ABIConsent.abi };
+        const accessConfig = { address: '0xa513E6E4b8f2a923D98304ec87F64353C4D5C853', abi: ABIAccess.abi };
+        const consentResourceConfig = { address: '0x5FC8d32690cc91D4c39d9d3abcBD16989F875707', abi: ABIConsentResource.abi };
+        const IPFSManagementConfig = { address: '0x8A791620dd6260079BF849Dc5567aDC3F2FdC318', abi: ABIIPFSManagement.abi };
         web3Provider.setConfig(urlProvider, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
 
         interaction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
@@ -58,9 +58,13 @@ describe('User owned file flow', () => {
             consentId: 'AAA1'
         };
 
-        let consentApproved = await interaction.consentInteraction.getConsentById(options.consentId, aesInstance.address, aesInstance);
+        try {
+            let consentApproved = await interaction.consentInteraction.getConsentById(options.consentId, aesInstance.address, aesInstance);
 
-        if (!consentApproved) {
+            if (!consentApproved) {
+                await interaction.consentInteraction.saveConsent(options.consentId, aesInstance);
+            }
+        } catch (error) {
             await interaction.consentInteraction.saveConsent(options.consentId, aesInstance);
         }
              
@@ -132,8 +136,8 @@ describe('User sharing files flow', () => {
     const pgpInstanceToShare: IdentityManager = factoryIdentity.generateIdentity('pgp', 'pgp');
     pgpInstanceToShare.generateIdentity();
 
-    const pgpInstanceNotShare: IdentityManager = factoryIdentity.generateIdentity('pgp', 'pgp');
-    pgpInstanceNotShare.generateIdentity();
+    const pgpSecondInstanceToShare: IdentityManager = factoryIdentity.generateIdentity('pgp', 'pgp');
+    pgpSecondInstanceToShare.generateIdentity();
 
     const storageEngine: IStorageEngine = new StorageEngine({
         URL: 'http://localhost:3000',
@@ -151,10 +155,10 @@ describe('User sharing files flow', () => {
         web3Provider = Web3Provider.getInstance();
 
         const urlProvider = 'http://localhost:8545';
-        const consentConfig = { address: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512', abi: ABIConsent.abi };
-        const accessConfig = { address: '0x5FC8d32690cc91D4c39d9d3abcBD16989F875707', abi: ABIAccess.abi };
-        const consentResourceConfig = { address: '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9', abi: ABIConsentResource.abi };
-        const IPFSManagementConfig = { address: '0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6', abi: ABIIPFSManagement.abi };
+        const consentConfig = { address: '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9', abi: ABIConsent.abi };
+        const accessConfig = { address: '0xa513E6E4b8f2a923D98304ec87F64353C4D5C853', abi: ABIAccess.abi };
+        const consentResourceConfig = { address: '0x5FC8d32690cc91D4c39d9d3abcBD16989F875707', abi: ABIConsentResource.abi };
+        const IPFSManagementConfig = { address: '0x8A791620dd6260079BF849Dc5567aDC3F2FdC318', abi: ABIIPFSManagement.abi };
         web3Provider.setConfig(urlProvider, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
 
         interaction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
@@ -164,6 +168,9 @@ describe('User sharing files flow', () => {
 
         pgpInstanceToShare.address = '0x70997970C51812dc3A010C7d01b50e0d17dc79C8';
         pgpInstanceToShare.privateKey = '59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d';
+
+        pgpSecondInstanceToShare.address = '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC';
+        pgpSecondInstanceToShare.privateKey = '5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a';
 
         interaction.setIdentity(pgpInstance);
     });
@@ -235,5 +242,60 @@ describe('User sharing files flow', () => {
             expect(error).toBeInstanceOf(Error);
             expect(error.data.message).toBe(`Error: VM Exception while processing transaction: reverted with reason string 'You don't have permission over this resource'`);
         }
+    });
+
+    test(`Should approve consent,
+        add users allowed to get shared file,
+        encrypt shared file with multiple keys,
+        save register on IPFS management contract 
+        add user accounts allowed on access contract
+        and decrypt file with different keys`, async () => {
+        const options = {
+            file: fs.createReadStream(path.resolve(__dirname, './resources/test.txt')),
+            fileName: 'test.txt',
+            contractInteraction: interaction,
+            consentId: 'SHARED1'
+        };
+
+        try {
+            let consentApproved = await interaction.consentInteraction.getConsentById(options.consentId, pgpInstance.address, pgpInstance);
+
+            if (!consentApproved) {
+                await interaction.consentInteraction.saveConsent(options.consentId, pgpInstance);
+            }
+        } catch (error) {
+            await interaction.consentInteraction.saveConsent(options.consentId, pgpInstance);
+        }
+
+        await interaction.consentInteraction.addKey(options.consentId, pgpInstanceToShare.address, pgpInstanceToShare.publicKeySpecial, pgpInstance);
+
+        await interaction.consentInteraction.addKey(options.consentId, pgpSecondInstanceToShare.address, pgpSecondInstanceToShare.publicKeySpecial, pgpInstance);
+
+        const usersToShare = await interaction.consentInteraction.getKeys(options.consentId, pgpInstance);
+
+        const pgpKeys = usersToShare[1].join(',');
+
+        cidShared = await documentSharing.sharedFile(pgpInstance, options, pgpKeys);
+
+        expect(cidShared).not.toBe('');
+
+        await interaction.IPFSManagementInteraction.addFile(cidShared, options.fileName, pgpInstance);
+
+        await interaction.acccessInteraction.giveAccess(cidShared, options.consentId, usersToShare[0], options.fileName, pgpInstance);
+
+        const getOptions = {
+            cid: cidShared,
+            owner: pgpInstance.address,
+            contractInteraction: interaction,
+            consentId: 'SHARED1'
+        }
+
+        const fileShared1 = await documentSharing.getSharedFile(pgpInstanceToShare, getOptions);
+
+        expect(Buffer.from(fileShared1, 'base64').toString()).toBe('testv10');
+
+        const fileShared2 = await documentSharing.getSharedFile(pgpSecondInstanceToShare, getOptions);
+
+        expect(Buffer.from(fileShared2, 'base64').toString()).toBe('testv10');
     });
 });
