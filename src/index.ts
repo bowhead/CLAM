@@ -6,6 +6,7 @@ import FactoryIdentity from './factoryIdentity/FactoryIdentity';
 import { StorageEngine, IStorageEngine } from './storageEngine';
 import {FactoryInteraction} from "./contractIntegration"
 import Web3Provider from './contractIntegration/interaction/Wbe3Provider';
+import { DocumentSharing, IDocumentSharing } from './documentSharing';
 
 export {
     IdentityManager,
@@ -20,5 +21,7 @@ export {
     IKeysGenerator,
     StorageEngine,
     Web3Provider,
-    IStorageEngine
+    IStorageEngine,
+    DocumentSharing,
+    IDocumentSharing
 };
