@@ -13,6 +13,7 @@ import ABIConsentResource from './utilities/ConsentResource.json';
 import ABIIPFSManagement from './utilities/IPFSManagement.json';
 import Web3Provider from '../src/contractIntegration/interaction/Wbe3Provider';
 import { FactoryInteraction ,Interaction } from '../src/contractIntegration';
+import Web3 from 'web3';
 
 describe('User owned file flow', () => {
     const factoryIdentity: FactoryIdentity = new FactoryIdentity();
@@ -35,12 +36,12 @@ describe('User owned file flow', () => {
         factoryInteraction = new FactoryInteraction();
         web3Provider = Web3Provider.getInstance();
 
-        const urlProvider = 'http://localhost:8545';
+        const web3 = new Web3('http://localhost:8545');
         const consentConfig = { address: '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9', abi: ABIConsent.abi };
         const accessConfig = { address: '0xa513E6E4b8f2a923D98304ec87F64353C4D5C853', abi: ABIAccess.abi };
         const consentResourceConfig = { address: '0x5FC8d32690cc91D4c39d9d3abcBD16989F875707', abi: ABIConsentResource.abi };
         const IPFSManagementConfig = { address: '0x8A791620dd6260079BF849Dc5567aDC3F2FdC318', abi: ABIIPFSManagement.abi };
-        web3Provider.setConfig(urlProvider, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
+        web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
 
         interaction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
 
@@ -154,12 +155,12 @@ describe('User sharing files flow', () => {
         factoryInteraction = new FactoryInteraction();
         web3Provider = Web3Provider.getInstance();
 
-        const urlProvider = 'http://localhost:8545';
+        const web3 = new Web3('http://localhost:8545');
         const consentConfig = { address: '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9', abi: ABIConsent.abi };
         const accessConfig = { address: '0xa513E6E4b8f2a923D98304ec87F64353C4D5C853', abi: ABIAccess.abi };
         const consentResourceConfig = { address: '0x5FC8d32690cc91D4c39d9d3abcBD16989F875707', abi: ABIConsentResource.abi };
         const IPFSManagementConfig = { address: '0x8A791620dd6260079BF849Dc5567aDC3F2FdC318', abi: ABIIPFSManagement.abi };
-        web3Provider.setConfig(urlProvider, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
+        web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
 
         interaction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
 
