@@ -42,7 +42,6 @@ class AccessInteraction implements IAccessInteraction {
         return receipt;
     }
 
-
     /**
      * This function check the access in the resource using the consent id and the user address.
      * 

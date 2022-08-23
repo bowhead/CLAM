@@ -20,7 +20,7 @@ describe('Testing access interaction', () => {
         factoryInteraction = new FactoryInteraction();
         factoryIdentity = new FactoryIdentity();
         web3Provider = Web3Provider.getInstance();
-
+        
         const web3 = new Web3('http://localhost:8545');
         const consentConfig = { address: '0xD48A409F0b853EA933341366Afb79026a8b96f98', abi: ABIConsent.abi };
         const accessConfig = { address: '0x859768B0d2ed33eCe914Fd8B6EbcAE5288fb087a', abi: ABIAccess.abi };
@@ -67,6 +67,7 @@ describe('Testing access interaction', () => {
         try {
             const account = '0xbB230b6210C5E4640Cf7d3dC306Cdc5a207C92a6';
             const result = await interaction.acccessInteraction.giveAccess('', 'AAA2', [account], 'test.txt', interaction.identity);
+            
             expect(result).toBe(true);
         } catch (error) {
             expect(error).toBeInstanceOf(Error);
@@ -78,6 +79,7 @@ describe('Testing access interaction', () => {
         try {
             const account = '0xbB230b6210C5E4640Cf7d3dC306Cdc5a207C92a6';
             const result = await interaction.acccessInteraction.giveAccess('BBB1', '', [account], 'test.txt', interaction.identity);
+            
             expect(result).toBe(true);
         } catch (error) {
             expect(error).toBeInstanceOf(Error);
@@ -89,6 +91,7 @@ describe('Testing access interaction', () => {
         try {
             const account = '';
             const result = await interaction.acccessInteraction.giveAccess('BBB1', 'AAA2', [], 'test.txt', interaction.identity);
+            
             expect(result).toBe(true);
         } catch (error) {
             expect(error).toBeInstanceOf(Error);
@@ -100,6 +103,7 @@ describe('Testing access interaction', () => {
         try {
             const account = 'invalid account';
             const result = await interaction.acccessInteraction.giveAccess('BBB1', 'AAA2', [account], 'test.txt', interaction.identity);
+            
             expect(result).toBe(true);
         } catch (error) {
             expect(error).toBeInstanceOf(Error);
