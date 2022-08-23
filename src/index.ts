@@ -5,6 +5,7 @@ import { IKeys, IKeysGenerator, KeysGeneratorPGP } from './keysGenerator';
 import FactoryIdentity from './factoryIdentity/FactoryIdentity';
 import { StorageEngine, IStorageEngine } from './storageEngine';
 import {FactoryInteraction} from "./contractIntegration"
+import Web3Provider from './contractIntegration/interaction/Wbe3Provider';
 
 export {
     IdentityManager,
@@ -18,5 +19,6 @@ export {
     IKeys,
     IKeysGenerator,
     StorageEngine,
+    Web3Provider,
     IStorageEngine
 };
