@@ -40,7 +40,7 @@ class Web3Provider {
      * @param {any} IPFSManagementConfig This parameter is the IPFSManagement configuration to connect with the contract.
      */
 
-    public setConfig(urlProvider: string, consentConfig: any, accessConfig: any, consentResourceConfig: any, IPFSManagementConfig: any): void {
+    public setConfig(web3Object: Web3, consentConfig: any, accessConfig: any, consentResourceConfig: any, IPFSManagementConfig: any): void {
         this.web3Object = web3Object;
         this.consentConfig = consentConfig;
         this.accessConfig = accessConfig;

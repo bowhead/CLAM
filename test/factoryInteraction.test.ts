@@ -137,7 +137,7 @@ describe('Testing interaction component using the CLAM implementation', () => {
     });
     test('should generate an interaction with the clam implementations', () => {
         const factoryInteraction: FactoryInteraction = new FactoryInteraction();
-        const interaction = factoryInteraction.generateInteraction('clam', 'clam');
+        const interaction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
         const keys = Object.keys(interaction);
         expect(keys.includes('acccessInteraction')).toBe(true);
         expect(keys.includes('consentInteraction')).toBe(true);
@@ -147,7 +147,7 @@ describe('Testing interaction component using the CLAM implementation', () => {
     test('should not generate an interaction if we dont specifie the consentInteraction type', () => {
         try {
             const factoryInteraction: FactoryInteraction = new FactoryInteraction();
-            factoryInteraction.generateInteraction('not', 'clam');
+            factoryInteraction.generateInteraction('not', 'clam', 'clam');
         } catch (error) {
             expect(error).toBeInstanceOf(Error);
             expect(error.message).toBe('The consentInteraction type doesn\'t exist');
@@ -157,7 +157,7 @@ describe('Testing interaction component using the CLAM implementation', () => {
     test('should not generate an interaction if we dont specifie the accessInteraction type', () => {
         try {
             const factoryInteraction: FactoryInteraction = new FactoryInteraction();
-            factoryInteraction.generateInteraction('clam', 'not');
+            factoryInteraction.generateInteraction('clam', 'not', 'clam');
         } catch (error) {
             expect(error).toBeInstanceOf(Error);
             expect(error.message).toBe('The accessInteraction type doesn\'t exist');
@@ -173,14 +173,14 @@ describe('Testing interaction component using the CLAM implementation', () => {
     test('should generate an instance of interaction based on the new consent implementation.', () => {
         const factoryInteraction: FactoryInteraction = new FactoryInteraction();
         factoryInteraction.setOptionConsentInteraction({ name: 'other', option: ConsentInteractionOther });
-        const interactionOther = factoryInteraction.generateInteraction('other', 'clam');
+        const interactionOther = factoryInteraction.generateInteraction('other', 'clam', 'clam');
 
         expect(interactionOther).not.toBe(null);
     });
     test('should generate an instance of interaction based on the new access implementation.', () => {
         const factoryInteraction: FactoryInteraction = new FactoryInteraction();
         factoryInteraction.setOptionAccessInteraction({ name: 'other', option: AccessInteractionOther });
-        const interactionOther = factoryInteraction.generateInteraction('clam', 'other');
+        const interactionOther = factoryInteraction.generateInteraction('clam', 'other', 'clam');
 
         expect(interactionOther).not.toBe(null);
     });
@@ -188,7 +188,7 @@ describe('Testing interaction component using the CLAM implementation', () => {
         const factoryInteraction: FactoryInteraction = new FactoryInteraction();
         factoryInteraction.setOptionAccessInteraction({ name: 'other', option: AccessInteractionOther });
         factoryInteraction.setOptionConsentInteraction({ name: 'other', option: ConsentInteractionOther });
-        const interactionOther = factoryInteraction.generateInteraction('other', 'other');
+        const interactionOther = factoryInteraction.generateInteraction('other', 'other', 'clam');
 
         expect(interactionOther).not.toBe(null);
     });
@@ -237,7 +237,7 @@ describe('Testing interaction component using the CLAM implementation', () => {
     test('should throw an error if we want to generate an interaction without consent type ', () => {
         try {
             const factoryInteraction: FactoryInteraction = new FactoryInteraction();
-            factoryInteraction.generateInteraction('', 'clam');
+            factoryInteraction.generateInteraction('', 'clam', 'clam');
         } catch (error) {
             expect(error).toBeInstanceOf(Error);
             expect(error.message).toBe('The consent implementation name must have a minimum of one character');
@@ -247,7 +247,7 @@ describe('Testing interaction component using the CLAM implementation', () => {
     test('should throw an error if we want to generate an interaction without access type ', () => {
         try {
             const factoryInteraction: FactoryInteraction = new FactoryInteraction();
-            factoryInteraction.generateInteraction('clam', '');
+            factoryInteraction.generateInteraction('clam', '', 'clam');
         } catch (error) {
             expect(error).toBeInstanceOf(Error);
             expect(error.message).toBe('The access implementation name must have a minimum of one character');

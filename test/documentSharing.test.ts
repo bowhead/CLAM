@@ -18,6 +18,7 @@ import ABIIPFSManagement from './utilities/IPFSManagement.json';
 import Web3Provider from '../src/contractIntegration/interaction/Wbe3Provider';
 import { AccessInteraction, ConsentInteraction, FactoryInteraction ,Interaction } from '../src/contractIntegration';
 import nock from "nock";
+import Web3 from 'web3';
 
 describe('Testing document sharing', () => {
     const factoryIdentity: FactoryIdentity = new FactoryIdentity();
@@ -53,12 +54,12 @@ describe('Testing document sharing', () => {
         factoryInteraction = new FactoryInteraction();
         web3Provider = Web3Provider.getInstance();
 
-        const urlProvider = 'http://localhost:8545';
+        const web3 = new Web3('http://localhost:8545');
         const consentConfig = { address: '0x0E801D84Fa97b50751Dbf25036d067dCf18858bF', abi: ABIConsent.abi };
         const accessConfig = { address: '0x5eb3Bc0a489C5A8288765d2336659EbCA68FCd00', abi: ABIAccess.abi };
         const consentResourceConfig = { address: '0x8f86403A4DE0BB5791fa46B8e795C547942fE4Cf', abi: ABIConsentResource.abi };
         const IPFSManagementConfig = { address: '0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6', abi: ABIIPFSManagement.abi };
-        web3Provider.setConfig(urlProvider, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
+        web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
 
         interaction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
 
@@ -200,7 +201,7 @@ describe('Testing document sharing', () => {
 
         expect(cidShared).not.toBe('');
 
-        jest.spyOn(AccessInteraction.prototype, 'giveAccess').mockImplementation(async() => await '');
+        jest.spyOn(AccessInteraction.prototype, 'giveAccess').mockImplementation(async() => await true);
         await interaction.acccessInteraction.giveAccess(cidShared, 'AAA1', [pgpInstanceToShare.address], 'test.txt', pgpInstance);
 
         nock('http://localhost:3000')
