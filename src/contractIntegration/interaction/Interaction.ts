@@ -2,6 +2,7 @@ import { injectable, inject } from 'tsyringe';
 import {
     IConsentInteraction,
     IAccessInteraction,
+    IIPFSManagementInteraction
 } from '../';
 import { IdentityManager } from '../../';
 
@@ -15,23 +16,26 @@ class Interaction {
 
     public acccessInteraction: IAccessInteraction;
     public consentInteraction: IConsentInteraction;
+    public IPFSManagementInteraction: IIPFSManagementInteraction;
     public urlProvider: string;
     public identity: IdentityManager;
 
     /**
      * This constructor initializes the intent by injecting a specific 
-     * implementation of consent and access.
+     * implementation of consent, access and IPFS management.
      * 
      * @param {IConsentInteraction} consentInteraction This parameter is the implementation of ConsentInteraction.
      * @param {IAccessInteraction} acccessInteraction This parameter is the implementation of AccessInteration.
+     * @param {IIPFSManagementInteraction} IPFSManagementInteraction This parameter is the implementation of IPFSManagementInteraction.
      */
     public constructor(
         @inject('ConsentInteraction') consentInteraction: IConsentInteraction,
-        @inject('AccessInteraction') acccessInteraction: IAccessInteraction
-
+        @inject('AccessInteraction') acccessInteraction: IAccessInteraction,
+        @inject('IPFSManagementInteraction') IPFSManagementInteraction: IIPFSManagementInteraction
     ) {
         this.acccessInteraction = acccessInteraction;
         this.consentInteraction = consentInteraction;
+        this.IPFSManagementInteraction = IPFSManagementInteraction;
     }
     /**
      * This function set a new URL provider of web 3

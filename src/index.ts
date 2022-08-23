@@ -5,6 +5,7 @@ import { IKeys, IKeysGenerator, KeysGeneratorPGP } from './keysGenerator';
 import FactoryIdentity from './factoryIdentity/FactoryIdentity';
 import { StorageEngine, IStorageEngine } from './storageEngine';
 import {FactoryInteraction} from "./contractIntegration"
+import { DocumentSharing, IDocumentSharing } from './documentSharing';
 
 export {
     IdentityManager,
@@ -18,5 +19,7 @@ export {
     IKeys,
     IKeysGenerator,
     StorageEngine,
-    IStorageEngine
+    IStorageEngine,
+    DocumentSharing,
+    IDocumentSharing
 };

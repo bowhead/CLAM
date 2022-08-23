@@ -77,6 +77,23 @@ describe('Testing encryption using PGP', () => {
         }
     });
 
+    test('should encrypt message with multiple key', async () => {
+        const mainKeys = await keysGeneratos.generateKeys({ name: 'Name', email: 'email@email.com' });
+        const secondaryKeys = await keysGeneratos.generateKeys({name: 'Name2', email: 'email@email.com'});
+
+        const publicKey = `${mainKeys.publicKey},${secondaryKeys.publicKey}`;
+
+        const message = 'hello bowhaed';
+        const messageEncrypted: string = await encryptionPGP.ecryptData(publicKey, message);
+
+        expect(messageEncrypted.length).toBeGreaterThan(0);
+
+        let messageDecrypted: string = await encryptionPGP.decryptData(mainKeys.privateKey, messageEncrypted);
+        expect(messageDecrypted).toBe('hello bowhaed');
+
+        messageDecrypted = await encryptionPGP.decryptData(secondaryKeys.privateKey, messageEncrypted);
+        expect(messageDecrypted).toBe('hello bowhaed');
+    });
 });
 
 
