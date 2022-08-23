@@ -4,6 +4,7 @@ import { IdentityManager, ShareableIdentity } from './indentityManager';
 import { IKeys, IKeysGenerator, KeysGeneratorPGP } from './keysGenerator';
 import FactoryIdentity from './factoryIdentity/FactoryIdentity';
 import { StorageEngine, IStorageEngine } from './storageEngine';
+import {FactoryInteraction} from "./contractIntegration"
 
 export {
     IdentityManager,
@@ -11,6 +12,7 @@ export {
     EncryptionLayerPGP,
     EncryptioLayerAES,
     FactoryIdentity,
+    FactoryInteraction,
     KeysGeneratorPGP,
     IEncryptionLayer,
     IKeys,
