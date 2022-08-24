@@ -1,7 +1,6 @@
 /**
- * This clase represent the access estructure.
+ * This class represent the access structure.
  */
-
 class Access {
     public user: string;
     public accountsShared: string[];
@@ -18,7 +17,7 @@ class Access {
      * @param {string} resourceShared This parameter is the resource shared.
      * @param {Date} sharedDate This parameter is the exact date the resource was shared.
      * @param {boolean} shared This parameter is the status of the access.
-     * @param {number} index This parameter is the index of the acess.
+     * @param {number} index This parameter is the index of the access.
      */
     public constructor(
         user: string,

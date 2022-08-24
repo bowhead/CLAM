@@ -8,7 +8,7 @@ import Web3Provider from '../interaction/Wbe3Provider';
 import IAccessResource from './IAccessResource';
 
 /**
- * This class is the implementation of IAccessInteraction inteface,
+ * This class is the implementation of IAccessInteraction interface,
  * this class is used to communicate with Access smart contract.
  * 
  */
@@ -25,7 +25,6 @@ class AccessInteraction implements IAccessInteraction {
      * @param {string} identity This parameter is the Identity to configurate the smart contract interaction. 
      * @returns {Promise<string>} Return the trasaction address.
      */
-
     async giveAccess(resource: string, consentId: string, accounts: string[], resourceName: string, identity: IdentityManager): Promise<boolean> {
         if (resource.trim() === '' || resource.trim().length === 0) throw new Error('The resource must have at least one character');
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('The consentID must have at least one character');

@@ -24,7 +24,7 @@ class FactoryInteraction {
         this.optionsIPFSManagementInteraction = [{ name: 'clam', option: IPFSManagementInteraction }];
     }
     /**
-     * This function set a new implementation of ConsentInteraction.
+     * This function sets a new implementation of ConsentInteraction.
      * 
      * @param {IOption} option This parameter contains the name and class of the new implementation.
      */
@@ -40,7 +40,7 @@ class FactoryInteraction {
     }
 
     /**
-     * This function set a new implementation of AccessInteraction.
+     * This function sets a new implementation of AccessInteraction.
      * 
      * @param {IOption} option This parameter contains the name and class of the new implementation.
      */
@@ -56,7 +56,7 @@ class FactoryInteraction {
     }
 
     /**
-     * This function set a new implementation of IPFSManagementInteraction.
+     * This function sets a new implementation of IPFSManagementInteraction.
      * 
      * @param {IOption} option This parameter contains the name and class of the new implementation.
      */
@@ -75,7 +75,7 @@ class FactoryInteraction {
      * This function generate a new instance of Interaction class using the implementations
      * passed in the parameter.
      * 
-     * @param {string} consentType This parameter is the option of consenInteraction implementation.
+     * @param {string} consentType This parameter is the option of consentInteraction implementation.
      * @param {string} accessType This parameter is the option of accessInteraction Implementation.
      * @param {string} IPFSManagementType This parameter is the option of IPFSManagementInteraction Implementation.
      * @returns {Interaction} return a new instance of Interaction class.

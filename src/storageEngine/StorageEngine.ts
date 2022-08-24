@@ -14,7 +14,7 @@ class StorageEngine implements IStorageEngine {
     private instance: AxiosInstance;
 
     /**
-     * Storage engine costructor
+     * Storage engine constructor
      * Using to initialize the axios instance
      * @param {IIPFSConstructor} options - Connection options
      */
@@ -34,9 +34,9 @@ class StorageEngine implements IStorageEngine {
      * @param {object} options - File to save and additional parameters
      * @returns {string} returns the file identifier or location
      * @throws {BadRequestError} File was not save on IPFS
-     * @throws {InternaServerError} Internal server error
+     * @throws {InternalServerError} Internal server error
      */
-     async saveFile(options: object): Promise<string> {
+    async saveFile(options: object): Promise<string> {
         const body = options as IIPFSSave;
         
         const formData = new FormData();
@@ -55,7 +55,7 @@ class StorageEngine implements IStorageEngine {
      * @param {object} options - File identifier or location and additional parameters
      * @returns {string} returns the file
      * @throws {NotFoundError} File not found in IPFS
-     * @throws {InternaServerError} Internal server error
+     * @throws {InternalServerError} Internal server error
      */
     async getFile(options: object): Promise<string> {
         const params = options as IIPFSDocument;
@@ -70,7 +70,7 @@ class StorageEngine implements IStorageEngine {
      * @param {object} options - File identifier or location and additional parameters
      * @throws {NotFoundError} File not found in IPFS or not registered in smart contract
      * @throws {ForbiddenError} User is not the owner of the file
-     * @throws {InternaServerError} Internal server error
+     * @throws {InternalServerError} Internal server error
      */
     async updateFile(options: object): Promise<void> {
         const body = options as IIPFSUpdate;
@@ -97,7 +97,7 @@ class StorageEngine implements IStorageEngine {
      * @param {object} options - Identifier of the file to delete and additional parameters
      * @throws {NotFoundError} File not found in IPFS or not registered in smart contract
      * @throws {ForbiddenError} User is not the owner of the file
-     * @throws {InternaServerError} Internal server error
+     * @throws {InternalServerError} Internal server error
      */
     async deleteFile(options: object): Promise<void> {
         const params = options as IIPFSDelete;

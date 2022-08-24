@@ -31,7 +31,7 @@ class ConsentInteraction implements IConsentInteraction {
     }
 
     /**
-     * This function cancel a consent based in the consentID passed in th eparameter.
+     * This function cancel a consent based in the consentID passed in the parameter.
      * 
      * @param {string} consentId This parameter is the consentID to identify consent.
      * @param {IdentityManager} identity This parameter is the Identity to configurate the smart contract interaction.
