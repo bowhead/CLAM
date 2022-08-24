@@ -3,14 +3,15 @@ module.exports = {
     "parser": "@typescript-eslint/parser",
     "plugins": [
       "@typescript-eslint",
+      "spellcheck"
     ],
     "extends": [
       "eslint:recommended",
+      "plugin:@typescript-eslint/eslint-recommended",
       "plugin:@typescript-eslint/recommended",
       "prettier",
     ],
     "rules": {
-        "prefixWithI": "always",
         "indent": [
             "error",
             4
@@ -61,5 +62,32 @@ module.exports = {
           2,
           "multi-line"
         ],
+        "@typescript-eslint/naming-convention": [
+          "error",
+          {
+            "selector": "interface",
+            "prefix": ["I"],
+            "format": ["StrictPascalCase"]
+          }
+        ],
+        "spellcheck/spell-checker": [
+          "warn",
+          {
+            "skipWords": [
+              'dict',
+              'axios',
+              'utils',
+              'eth',
+              'Ascii',
+              'abi',
+              'cid',
+              'sigV',
+              'sigR',
+              'sigS',
+              'sig',
+              'gwei'
+            ],
+          }
+        ]
     }
 }	
