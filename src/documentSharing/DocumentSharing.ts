@@ -36,17 +36,17 @@ class DocumentSharing implements IDocumentSharing {
         
         if (!consentApproved) throw new Error('Consent is not approved');
 
-        let chunks = []
+        // let chunks = []
 
-        for await (const chunk of body.file) {
-            chunks.push(chunk)
-        }
+        // for await (const chunk of body.file) {
+        //     chunks.push(chunk)
+        // }
 
-        const result = Buffer.concat(chunks);
+        // const result = Buffer.concat(chunks);
 
-        const fileBase64 = result.toString('base64')
+        // const fileBase64 = result.toString('base64')
 
-        const fileEncrypted = await identity.encryptionLayer.ecryptData(identity.privateKey, fileBase64)
+        const fileEncrypted = await identity.encryptionLayer.ecryptData(identity.privateKey, body?.file64 || '');
 
         const data = {
             file: fileEncrypted,

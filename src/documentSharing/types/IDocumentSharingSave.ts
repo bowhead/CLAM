@@ -6,4 +6,5 @@ export interface IDocumentSharingSave {
     fileName: string;
     consentId: string;
     contractInteraction: Interaction;
+    file64?: string;
 }
