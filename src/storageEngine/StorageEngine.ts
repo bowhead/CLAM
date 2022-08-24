@@ -45,7 +45,11 @@ class StorageEngine implements IStorageEngine {
         formData.append('address', body.address);
         formData.append('fileName', body.fileName);
         
-        const res = await this.instance.post('/file', formData);
+        const res = await this.instance.post('/file', formData, {
+            headers: {
+                'x-api-key': 'wXW9c5NObnsrZIY1J3Tqhvz4cZ7YQrrKnbJpo9xOqJM='
+            }
+        });
         
         return res.data.CID;
     }
