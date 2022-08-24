@@ -1,10 +1,8 @@
-import { ReadStream } from 'fs';
 import { Interaction } from '../../contractIntegration';
 
 export interface IDocumentSharingSave {
-    file: ReadStream;
+    file: string;
     fileName: string;
     consentId: string;
     contractInteraction: Interaction;
-    file64?: string;
 }
