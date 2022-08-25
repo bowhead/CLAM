@@ -1,4 +1,5 @@
 interface IIPFSSave extends IIPFSDocument {
-    file: File;
+    file: string;
     fileName: string;
+    keepOriginalName: boolean;
 }

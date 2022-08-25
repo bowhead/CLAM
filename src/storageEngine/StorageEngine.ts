@@ -44,7 +44,8 @@ class StorageEngine implements IStorageEngine {
         formData.append('file', body.file);
         formData.append('address', body.address);
         formData.append('fileName', body.fileName);
-        
+        formData.append('keepOriginalName', String(body.keepOriginalName));
+
         const res = await this.instance.post('/file', formData);
         
         return res.data.CID;
