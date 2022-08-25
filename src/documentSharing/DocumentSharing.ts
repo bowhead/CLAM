@@ -36,17 +36,7 @@ class DocumentSharing implements IDocumentSharing {
         
         if (!consentApproved) throw new Error('Consent is not approved');
 
-        let chunks = []
-
-        for await (const chunk of body.file) {
-            chunks.push(chunk)
-        }
-
-        const result = Buffer.concat(chunks);
-
-        const fileBase64 = result.toString('base64')
-
-        const fileEncrypted = await identity.encryptionLayer.ecryptData(identity.privateKey, fileBase64)
+        const fileEncrypted = await identity.encryptionLayer.ecryptData(identity.privateKey, body.file || '');
 
         const data = {
             file: fileEncrypted,
@@ -93,18 +83,8 @@ class DocumentSharing implements IDocumentSharing {
         const body = options as IDocumentSharingFile;
 
         if(!body.file) throw new Error('File parameter is missing');
-        
-        let chunks = []
 
-        for await (const chunk of body.file) {
-            chunks.push(chunk)
-        }
-
-        const result = Buffer.concat(chunks);
-
-        const fileBase64 = result.toString('base64')
-
-        const fileEncrypted = await identity.encryptionLayer.ecryptData(identity.privateKey, fileBase64)
+        const fileEncrypted = await identity.encryptionLayer.ecryptData(identity.privateKey, body.file)
 
         const data = {
             file: fileEncrypted,
@@ -134,17 +114,7 @@ class DocumentSharing implements IDocumentSharing {
 
         userIds += `,${identity.publicKeySpecial}`;
 
-        let chunks = []
-
-        for await (const chunk of body.file) {
-            chunks.push(chunk)
-        }
-
-        const result = Buffer.concat(chunks);
-
-        const fileBase64 = result.toString('base64')
-
-        const fileEncrypted = await identity.encryptionLayer.ecryptData(userIds, fileBase64)
+        const fileEncrypted = await identity.encryptionLayer.ecryptData(userIds, body.file)
 
         const data = {
             file: fileEncrypted,
