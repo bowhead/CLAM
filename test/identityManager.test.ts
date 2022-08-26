@@ -24,17 +24,6 @@ describe('Testing IdentityManager class', () => {
         expect(objectKeys.length).toBe(9);
     });
 
-
-    test('should throw an error if the keyGenerator property is not implemented.', async () => {
-        try {
-            const instance: IdentityManager = factoryIdentity.generateIdentity('pgp', 'pgp');
-            await instance.generateIdentity();
-        } catch (error) {
-            expect(error).toBeInstanceOf(Error);
-            expect(error.message).toBe('Please set a specific implementation of keysGenerator');
-        }
-
-    });
     test('should the mnmonic property length be equal to 0', () => {
         const instance: IdentityManager = factoryIdentity.generateIdentity('pgp', 'pgp');
         expect(instance.mnemonic.length).toBe(0);
