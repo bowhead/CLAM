@@ -41,7 +41,8 @@ class DocumentSharing implements IDocumentSharing {
         const data = {
             file: fileEncrypted,
             address: identity.address,
-            fileName: body.fileName
+            fileName: body.fileName,
+            keepOriginalName: body.keepOriginalName || false
         };
 
         let cid = await this.storageEngine.saveFile(data);
@@ -119,7 +120,8 @@ class DocumentSharing implements IDocumentSharing {
         const data = {
             file: fileEncrypted,
             address: identity.address,
-            fileName: body.fileName
+            fileName: body.fileName,
+            keepOriginalName: body.keepOriginalName || false
         };
 
         let cid = await this.storageEngine.saveFile(data);
@@ -151,7 +153,7 @@ class DocumentSharing implements IDocumentSharing {
 
         const decodeFile = Buffer.from(file, 'base64').toString('utf8');
 
-        const decryptedFile = identity.encryptionLayer.decryptData(identity.privateKeySpecial, decodeFile);
+        const decryptedFile = await identity.encryptionLayer.decryptData(identity.privateKeySpecial, decodeFile);
 
         return decryptedFile;
     }

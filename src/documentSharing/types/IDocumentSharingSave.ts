@@ -5,4 +5,5 @@ export interface IDocumentSharingSave {
     fileName: string;
     consentId: string;
     contractInteraction: Interaction;
+    keepOriginalName: boolean;
 }

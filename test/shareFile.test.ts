@@ -37,26 +37,27 @@ describe('User owned file flow', () => {
         web3Provider = Web3Provider.getInstance();
 
         const web3 = new Web3('http://localhost:8545');
-        const consentConfig = { address: '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9', abi: ABIConsent.abi };
-        const accessConfig = { address: '0xa513E6E4b8f2a923D98304ec87F64353C4D5C853', abi: ABIAccess.abi };
-        const consentResourceConfig = { address: '0x5FC8d32690cc91D4c39d9d3abcBD16989F875707', abi: ABIConsentResource.abi };
-        const IPFSManagementConfig = { address: '0x8A791620dd6260079BF849Dc5567aDC3F2FdC318', abi: ABIIPFSManagement.abi };
+        const consentConfig = { address: '0xb3d94DBF4447152E0353C436bB8CD1Be3Bde0Da1', abi: ABIConsent.abi };
+        const accessConfig = { address: '0x6302548E0cAfB5977BAB4C1eC6a3BD0aD935A803', abi: ABIAccess.abi };
+        const consentResourceConfig = { address: '0x8d1d6a876C175442169e2a58817667DAaD14Da94', abi: ABIConsentResource.abi };
+        const IPFSManagementConfig = { address: '0x5c349c327CEBC32d6aEa22bC216b6a75A0044Eb1', abi: ABIIPFSManagement.abi };
         web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
 
         interaction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
 
-        aesInstance.address = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266';
-        aesInstance.privateKey = 'ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80';
+        aesInstance.address = '0x5B484242c0bc825CDBeeEFa6c05A22C309D62a80';
+        aesInstance.privateKey = '371f17889223d5038fccd4de66a5d2397d31be260ae29121d611418354dc7831';
 
         interaction.setIdentity(aesInstance);
     })
 
     test('Should approve consent, add new encrypted file and save register on IPFS Management contract', async () => {
         const options = {
-            file: fs.createReadStream(path.resolve(__dirname, './resources/test.txt')),
+            file: await fs.promises.readFile(path.resolve(__dirname, './resources/test.txt'), 'base64'),
             fileName: 'test.txt',
             contractInteraction: interaction,
-            consentId: 'AAA1'
+            consentId: 'AAA1',
+            keepOriginalName: false
         };
 
         try {
@@ -68,7 +69,7 @@ describe('User owned file flow', () => {
         } catch (error) {
             await interaction.consentInteraction.saveConsent(options.consentId, aesInstance);
         }
-             
+
         cid = await documentSharing.saveFile(aesInstance, options);
 
         expect(cid).not.toBe('');
@@ -79,7 +80,7 @@ describe('User owned file flow', () => {
     test('Should not add new encrypted file if the consent is not approved', async() => {
         try {
             const options = {
-                file: fs.createReadStream(path.resolve(__dirname, './resources/test.txt')),
+                file: await fs.promises.readFile(path.resolve(__dirname, './resources/test.txt'), 'base64'),
                 fileName: 'test.txt',
                 contractInteraction: interaction,
                 consentId: 'AAA2'
@@ -88,7 +89,7 @@ describe('User owned file flow', () => {
             await documentSharing.saveFile(aesInstance, options);
         } catch (error) {
             expect(error).toBeInstanceOf(Error);
-            expect(error.message).toBe(`Returned error: Error: VM Exception while processing transaction: reverted with reason string 'Consent not registered'`);          
+            expect(error.message).toContain('Consent not registered');
         }
     });
 
@@ -152,26 +153,27 @@ describe('User sharing files flow', () => {
     let interaction: Interaction;
 
     beforeEach(() => {
+        jest.setTimeout(10000);
         factoryInteraction = new FactoryInteraction();
         web3Provider = Web3Provider.getInstance();
 
         const web3 = new Web3('http://localhost:8545');
-        const consentConfig = { address: '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9', abi: ABIConsent.abi };
-        const accessConfig = { address: '0xa513E6E4b8f2a923D98304ec87F64353C4D5C853', abi: ABIAccess.abi };
-        const consentResourceConfig = { address: '0x5FC8d32690cc91D4c39d9d3abcBD16989F875707', abi: ABIConsentResource.abi };
-        const IPFSManagementConfig = { address: '0x8A791620dd6260079BF849Dc5567aDC3F2FdC318', abi: ABIIPFSManagement.abi };
+        const consentConfig = { address: '0xb3d94DBF4447152E0353C436bB8CD1Be3Bde0Da1', abi: ABIConsent.abi };
+        const accessConfig = { address: '0x6302548E0cAfB5977BAB4C1eC6a3BD0aD935A803', abi: ABIAccess.abi };
+        const consentResourceConfig = { address: '0x8d1d6a876C175442169e2a58817667DAaD14Da94', abi: ABIConsentResource.abi };
+        const IPFSManagementConfig = { address: '0x5c349c327CEBC32d6aEa22bC216b6a75A0044Eb1', abi: ABIIPFSManagement.abi };
         web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
 
         interaction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
 
-        pgpInstance.address = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266';
-        pgpInstance.privateKey = 'ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80';
+        pgpInstance.address = '0x5B484242c0bc825CDBeeEFa6c05A22C309D62a80';
+        pgpInstance.privateKey = '371f17889223d5038fccd4de66a5d2397d31be260ae29121d611418354dc7831';
 
-        pgpInstanceToShare.address = '0x70997970C51812dc3A010C7d01b50e0d17dc79C8';
-        pgpInstanceToShare.privateKey = '59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d';
+        pgpInstanceToShare.address = '0x934824993588a4dC2374C0Bf6Bc5c3bfa1E4A640';
+        pgpInstanceToShare.privateKey = 'ea2deac685d589a2dbf1e130196c957eb5f11c6f615c17cddb25cd58dbbab850';
 
-        pgpSecondInstanceToShare.address = '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC';
-        pgpSecondInstanceToShare.privateKey = '5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a';
+        pgpSecondInstanceToShare.address = '0x18148c5e87FB6f79029836901F97bb3dEdc9bCeC';
+        pgpSecondInstanceToShare.privateKey = '75c5eb65866d7461b6c2379443c6f865ffac1217ec8902e7095ed4c139a2fa55';
 
         interaction.setIdentity(pgpInstance);
     });
@@ -182,10 +184,11 @@ describe('User sharing files flow', () => {
         save register on IPFS management contract 
         and add user accounts allowed on access contract`, async () => {
         const options = {
-            file: fs.createReadStream(path.resolve(__dirname, './resources/test.txt')),
+            file: await fs.promises.readFile(path.resolve(__dirname, './resources/test.txt'), 'base64'),
             fileName: 'test.txt',
             contractInteraction: interaction,
-            consentId: 'SHARED'
+            consentId: 'SHARED',
+            keepOriginalName: false
         };
 
         try {
@@ -241,7 +244,7 @@ describe('User sharing files flow', () => {
             await documentSharing.getSharedFile(instance, options);
         } catch (error) {
             expect(error).toBeInstanceOf(Error);
-            expect(error.data.message).toBe(`Error: VM Exception while processing transaction: reverted with reason string 'You don't have permission over this resource'`);
+            expect(error.message).toContain(`You don't have permission over this resource`);
         }
     });
 
@@ -252,10 +255,11 @@ describe('User sharing files flow', () => {
         add user accounts allowed on access contract
         and decrypt file with different keys`, async () => {
         const options = {
-            file: fs.createReadStream(path.resolve(__dirname, './resources/test.txt')),
+            file: await fs.promises.readFile(path.resolve(__dirname, './resources/test.txt'), 'base64'),
             fileName: 'test.txt',
             contractInteraction: interaction,
-            consentId: 'SHARED1'
+            consentId: 'SHARED1',
+            keepOriginalName: false
         };
 
         try {
