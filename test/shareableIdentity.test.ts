@@ -15,7 +15,6 @@ describe('Testing ShareableIdentity class', () => {
         const mainIdentity: IdentityManager = factoryIdentity.generateIdentity('pgp', 'pgp');
         const shareable: ShareableIdentity = new ShareableIdentity(mainIdentity);
         const shareableKeys: string[] = Object.keys(shareable);
-
         expect(shareableKeys.includes('mainIdentity')).toBe(true);
         expect(shareableKeys.includes('identities')).toBe(true);
         expect(shareableKeys.includes('lastIdentity')).toBe(true);
@@ -34,21 +33,17 @@ describe('Testing ShareableIdentity class', () => {
     });
 
     test('should not genereta identities if the main identity is not generated', async () => {
-        try {
+        await expect(async () => {
             const mainIdentity: IdentityManager = factoryIdentity.generateIdentity('pgp', 'pgp');
             const shareable: ShareableIdentity = new ShareableIdentity(mainIdentity);
             await shareable.generateIdentities(5);
             const { identities } = shareable;
             expect(identities.length).toBe(0);
-        } catch (error) {
-            expect(error).toBeInstanceOf(Error);
-            expect(error.message).toBe('The main identity has to be initialized');
-        }
+        }).rejects.toThrow('The main identity has to be initialized');
     });
 
     test('should increse by 5 the property lastIdentity when the user wants 4 identities', async () => {
         const mainIdentity: IdentityManager = factoryIdentity.generateIdentity('pgp', 'pgp');
-
         await mainIdentity.generateIdentity();
         const shareable: ShareableIdentity = new ShareableIdentity(mainIdentity);
         await shareable.generateIdentities(4);
@@ -57,16 +52,13 @@ describe('Testing ShareableIdentity class', () => {
     });
 
     test('should not increse the property lastIdentity when the user wants 4 identities', async () => {
-        try {
+        await expect(async () => {
             const mainIdentity: IdentityManager = factoryIdentity.generateIdentity('pgp', 'pgp');
             const shareable: ShareableIdentity = new ShareableIdentity(mainIdentity);
-            shareable.generateIdentities(4);
+            await shareable.generateIdentities(4);
             const { lastIdentity } = shareable;
             expect(lastIdentity).toBe(1);
-        } catch (error) {
-            expect(error).toBeInstanceOf(Error);
-            expect(error.message).toBe('The main identity has to be initialized');
-        }
+        }).rejects.toThrow('The main identity has to be initialized');
     });
 
     test('should return an specific IdentityManager by index', async () => {
@@ -80,27 +72,23 @@ describe('Testing ShareableIdentity class', () => {
     });
 
     test('should return an empty object if the mainIdentity is not generated', async () => {
-        try {
+        await expect(async () => {
             const mainIdentity: IdentityManager = factoryIdentity.generateIdentity('pgp', 'pgp');
             const shareable: ShareableIdentity = new ShareableIdentity(mainIdentity);
             await shareable.generateIdentities(4);
             shareable.getIdentityByIndex(1);
-
-        } catch (error) {
-            expect(error).toBeInstanceOf(Error);
-            expect(error.message).toBe('The main identity has to be initialized');
-        }
+        }).rejects.toThrow('The main identity has to be initialized');
     });
+
     test('should throw an error if the position is less than 1', async () => {
-        try {
+        await expect(async () => {
             const mainIdentity: IdentityManager = factoryIdentity.generateIdentity('pgp', 'pgp');
+            await mainIdentity.generateIdentity();
             const shareable: ShareableIdentity = new ShareableIdentity(mainIdentity);
             await shareable.generateIdentities(4);
             shareable.getIdentityByIndex(-1);
-        } catch (error) {
-            expect(error).toBeInstanceOf(Error);
-            expect(error.message).toBe('Position must be equal or greater than 0');
-        }
+        }).rejects.toThrow('Position must be equal or greater than 0');
+
     });
 
 });
