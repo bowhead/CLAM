@@ -54,6 +54,8 @@ class ShareableIdentity {
                 this.identities.push(newIdentityChild);
                 this.lastIdentity++;
             }
+        } else {
+            throw new Error('The main identity has to be initialized');
         }
 
     }
