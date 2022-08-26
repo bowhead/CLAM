@@ -21,24 +21,17 @@ describe('Testing keys generator', () => {
         const { privateKey, publicKey } = await generatorPGP.generateKeys(data);
         expect(privateKey.includes('-----BEGIN PGP PRIVATE KEY BLOCK-----')).toBe(true);
         expect(privateKey.includes('-----END PGP PRIVATE KEY BLOCK-----')).toBe(true);
-
         expect(publicKey.includes('-----BEGIN PGP PUBLIC KEY BLOCK-----')).toBe(true);
         expect(publicKey.includes('-----END PGP PUBLIC KEY BLOCK-----')).toBe(true);
-
-
     });
+
     test('should not generate private and public PGP keys ', async () => {
-        try {
+        await expect(async()=>{
             const data = {
                 name: 'name',
                 email: 'email'
             };
             await generatorPGP.generateKeys(data);
-
-        } catch (error) {
-            expect(error).toBeInstanceOf(Error);
-            expect(error.message).toBe('Error generating keypair: Invalid user ID format');
-        }
-
+        }).rejects.toThrow(new Error('Error generating keypair: Invalid user ID format'))
     });
 });
