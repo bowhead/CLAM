@@ -18718,7 +18718,7 @@
     "version": "0.8.2+commit.661d1103.Linux.g++"
   },
   "networks": {
-    "1661474919410": {
+    "1661544020617": {
       "events": {},
       "links": {},
       "address": "0xCDb2d33Ac1910BbfcDB0502Bf0d88A1c3495e967",
@@ -18726,7 +18726,7 @@
     }
   },
   "schemaVersion": "3.4.7",
-  "updatedAt": "2022-08-26T00:52:32.129Z",
+  "updatedAt": "2022-08-26T20:03:24.914Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
