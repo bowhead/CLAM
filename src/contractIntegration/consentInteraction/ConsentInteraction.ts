@@ -24,7 +24,7 @@ class ConsentInteraction implements IConsentInteraction {
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('contentID must have at least 1 character');
         const objWeb3 = Web3Provider.getInstance().getProvider();
         const provider = Web3Provider.getInstance();
-        const contract = new objWeb3.eth.Contract(provider.consentConfig.abi, provider.consentConfig.address, { from: identity.address });
+        const contract = new objWeb3.eth.Contract(provider.interactionConfig.consent.abi, provider.interactionConfig.consent.address, { from: identity.address });
         const transaction = contract.methods.updateConsent(Web3.utils.fromAscii(consentId), true);
         const receipt = await this.send(transaction, objWeb3, identity);
         return receipt;
@@ -41,7 +41,7 @@ class ConsentInteraction implements IConsentInteraction {
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('contentID must have at least 1 character');
         const objWeb3 = Web3Provider.getInstance().getProvider();
         const provider = Web3Provider.getInstance();
-        const contract = new objWeb3.eth.Contract(provider.consentConfig.abi, provider.consentConfig.address, { from: identity.address });
+        const contract = new objWeb3.eth.Contract(provider.interactionConfig.consent.abi, provider.interactionConfig.consent.address, { from: identity.address });
         const transaction = contract.methods.updateConsent(Web3.utils.fromAscii(consentId), false);
         const receipt = await this.send(transaction, objWeb3, identity);
         return receipt;
@@ -62,7 +62,7 @@ class ConsentInteraction implements IConsentInteraction {
         if (!owner.trim().includes('0x')) throw new Error('Invalid owner, the string with has a correct format.');
         const objWeb3 = Web3Provider.getInstance().getProvider();
         const provider = Web3Provider.getInstance();
-        const contract = new objWeb3.eth.Contract(provider.consentConfig.abi, provider.consentConfig.address, { from: identity.address });
+        const contract = new objWeb3.eth.Contract(provider.interactionConfig.consent.abi, provider.interactionConfig.consent.address, { from: identity.address });
         return new Promise((resolve, reject) => {
             contract.methods.getConsent(Web3.utils.fromAscii(consentId), owner).call(function (error: Error, result: boolean) {
                 if (!error) {
@@ -94,7 +94,7 @@ class ConsentInteraction implements IConsentInteraction {
 
         const objWeb3 = Web3Provider.getInstance().getProvider();
         const provider = Web3Provider.getInstance();
-        const contract = new objWeb3.eth.Contract(provider.consentConfig.abi, provider.consentConfig.address, { from: identity.address });
+        const contract = new objWeb3.eth.Contract(provider.interactionConfig.consent.abi, provider.interactionConfig.consent.address, { from: identity.address });
         const transaction = contract.methods.addPGPKey(Web3.utils.fromAscii(consentId), addressConsent, key);
         const receipt = await this.send(transaction, objWeb3, identity);
         return receipt;
@@ -114,7 +114,7 @@ class ConsentInteraction implements IConsentInteraction {
 
         const objWeb3 = Web3Provider.getInstance().getProvider();
         const provider = Web3Provider.getInstance();
-        const contract = new objWeb3.eth.Contract(provider.consentConfig.abi, provider.consentConfig.address, { from: identity.address });
+        const contract = new objWeb3.eth.Contract(provider.interactionConfig.consent.abi, provider.interactionConfig.consent.address, { from: identity.address });
         return new Promise((resolve, reject) => {
             contract.methods.getPGPKeys(Web3.utils.fromAscii(consentId)).call(function (error: Error, result: IConsentKeys) {
                 if (!error) {

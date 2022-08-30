@@ -25,7 +25,7 @@ class IPFSManagementInteraction implements IIPFSManagementInteraction {
 
         const objWeb3 = Web3Provider.getInstance().getProvider();
         const provider = Web3Provider.getInstance();
-        const contract = new objWeb3.eth.Contract(provider.IPFSManagementConfig.abi, provider.IPFSManagementConfig.address, { from: identity.address });
+        const contract = new objWeb3.eth.Contract(provider.interactionConfig.ipfs.abi, provider.interactionConfig.ipfs.address, { from: identity.address });
         const transaction =  contract.methods.addFile(fileHash, Web3.utils.fromAscii(fileName));
         await this.send(transaction, objWeb3, identity);
         return;
@@ -42,7 +42,7 @@ class IPFSManagementInteraction implements IIPFSManagementInteraction {
 
         const objWeb3 = Web3Provider.getInstance().getProvider();
         const provider = Web3Provider.getInstance();
-        const contract = new objWeb3.eth.Contract(provider.IPFSManagementConfig.abi, provider.IPFSManagementConfig.address, { from: identity.address });
+        const contract = new objWeb3.eth.Contract(provider.interactionConfig.ipfs.abi, provider.interactionConfig.ipfs.address, { from: identity.address });
 
         const transaction = contract.methods.removeFile(fileHash);
         await this.send(transaction, objWeb3, identity);
@@ -60,7 +60,7 @@ class IPFSManagementInteraction implements IIPFSManagementInteraction {
 
         const objWeb3 = Web3Provider.getInstance().getProvider();
         const provider = Web3Provider.getInstance();
-        const contract = new objWeb3.eth.Contract(provider.IPFSManagementConfig.abi, provider.IPFSManagementConfig.address, { from: identity.address });
+        const contract = new objWeb3.eth.Contract(provider.interactionConfig.ipfs.abi, provider.interactionConfig.ipfs.address, { from: identity.address });
 
         return new Promise((resolve, reject) => {
             contract.methods.checkAccess(identity.address, fileHash).call(function (error: Error, result: boolean) {
@@ -85,7 +85,7 @@ class IPFSManagementInteraction implements IIPFSManagementInteraction {
 
         const objWeb3 = Web3Provider.getInstance().getProvider();
         const provider = Web3Provider.getInstance();
-        const contract = new objWeb3.eth.Contract(provider.IPFSManagementConfig.abi, provider.IPFSManagementConfig.address, { from: identity.address });
+        const contract = new objWeb3.eth.Contract(provider.interactionConfig.ipfs.abi, provider.interactionConfig.ipfs.address, { from: identity.address });
 
         return new Promise((resolve, reject) => {
             contract.methods.fileIsAvailable(identity.address, fileHash).call(function (error: Error, result: boolean) {
@@ -107,7 +107,7 @@ class IPFSManagementInteraction implements IIPFSManagementInteraction {
     getFiles(identity: IdentityManager): Promise<IIPFSManagementFiles> {
         const objWeb3 = Web3Provider.getInstance().getProvider();
         const provider = Web3Provider.getInstance();
-        const contract = new objWeb3.eth.Contract(provider.IPFSManagementConfig.abi, provider.IPFSManagementConfig.address, { from: identity.address });
+        const contract = new objWeb3.eth.Contract(provider.interactionConfig.ipfs.abi, provider.interactionConfig.ipfs.address, { from: identity.address });
         return new Promise((resolve, reject) => {
             contract.methods.getFiles(identity.address).call(function (error: Error, result: IIPFSManagementFiles) {
                 if (!error) {

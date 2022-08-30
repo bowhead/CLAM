@@ -32,7 +32,7 @@ class AccessInteraction implements IAccessInteraction {
 
         const objWeb3 = Web3Provider.getInstance().getProvider();
         const provider = Web3Provider.getInstance();
-        const contract = new objWeb3.eth.Contract(provider.accessConfig.abi, provider.accessConfig.address, { from: identity.address });
+        const contract = new objWeb3.eth.Contract(provider.interactionConfig.access.abi, provider.interactionConfig.access.address, { from: identity.address });
         const consentIdBytes = Web3.utils.fromAscii(consentId);
         const resourceNameBytes = Web3.utils.fromAscii(resourceName);
         const transaction = contract.methods.giveAccess(resource, consentIdBytes, accounts, resourceNameBytes);
@@ -55,7 +55,7 @@ class AccessInteraction implements IAccessInteraction {
 
         const objWeb3 = Web3Provider.getInstance().getProvider();
         const provider = Web3Provider.getInstance();
-        const contract = new objWeb3.eth.Contract(provider.accessConfig.abi, provider.accessConfig.address, { from: identity.address });
+        const contract = new objWeb3.eth.Contract(provider.interactionConfig.access.abi, provider.interactionConfig.access.address, { from: identity.address });
 
         return new Promise((resolve, reject) => {
             const consentIdBytes = Web3.utils.fromAscii(consentId);
@@ -83,7 +83,7 @@ class AccessInteraction implements IAccessInteraction {
 
         const objWeb3 = Web3Provider.getInstance().getProvider();
         const provider = Web3Provider.getInstance();
-        const contract = new objWeb3.eth.Contract(provider.accessConfig.abi, provider.accessConfig.address, { from: identity.address });
+        const contract = new objWeb3.eth.Contract(provider.interactionConfig.access.abi, provider.interactionConfig.access.address, { from: identity.address });
 
         return new Promise((resolve, reject) => {
             const consentIdBytes = Web3.utils.fromAscii(consentId);

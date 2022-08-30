@@ -1,14 +1,12 @@
 import Web3 from 'web3';
+import IInteractionConfig from './IInteractionConfig';
 
 /**
  * This class is used to contain the information and configuration 
  * to perform interaction with web 3 and contracts.
  */
 class Web3Provider {
-    public consentConfig: { address: string; abi: any }
-    public accessConfig: { address: string; abi: any }
-    public IPFSManagementConfig: { address: string; abi: any }
-    public consentResourceConfig: { address: string; abi: any }
+    public interactionConfig: IInteractionConfig;
     public static instance: Web3Provider;
     public web3Object: Web3;
 
@@ -34,18 +32,11 @@ class Web3Provider {
      * This function set the configuration to connect with the blockchain.
      * 
      * @param {Web3} web3Object This parameter this parameter Web3Provider.
-     * @param {any} consentConfig This parameter is the consent configuration to connect with the contract.
-     * @param {any} accessConfig This parameter is the access configuration to connect with the contract.
-     * @param {any} consentResourceConfig This parameter is the consentResource configuration to connect with the contract.
-     * @param {any} IPFSManagementConfig This parameter is the IPFSManagement configuration to connect with the contract.
      */
 
-    public setConfig(web3Object: Web3, consentConfig: any, accessConfig: any, consentResourceConfig: any, IPFSManagementConfig: any): void {
+    public setConfig(web3Object: Web3, interactionConfig: IInteractionConfig): void {
         this.web3Object = web3Object;
-        this.consentConfig = consentConfig;
-        this.accessConfig = accessConfig;
-        this.consentResourceConfig = consentResourceConfig;
-        this.IPFSManagementConfig = IPFSManagementConfig
+        this.interactionConfig = interactionConfig;
     }
 
     /**
