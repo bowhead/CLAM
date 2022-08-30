@@ -2,8 +2,9 @@ import { injectable } from 'tsyringe';
 import { IIPFSManagementInteraction } from '.';
 import Web3 from 'web3';
 import { IdentityManager } from '../../indentityManager';
-import Web3Provider from '../interaction/Wbe3Provider';
-import IIPFSManagementFiles from './IIPFSManagementFiles';
+import Web3Provider from '../interaction/Web3Provider';
+import IIpfsManagementFiles from './IIPFSManagementFiles';
+import { ITransaction } from '../types/ITransaction';
 
 /**
  * Implementation of IIPFSManagementInteraction interface
@@ -17,7 +18,7 @@ class IPFSManagementInteraction implements IIPFSManagementInteraction {
      * @param {string} fileHash - File identifier or location
      * @param {string} fileName - File name
      * @param {IdentityManager} identity - Identity of the file owner
-     * @returns void
+     * @returns {void}
      */
     async addFile(fileHash: string, fileName: string, identity: IdentityManager): Promise<void> {
         if (fileHash.trim() === '' || fileHash.trim().length === 0) throw new Error('fileHash must have at least 1 character');
@@ -35,7 +36,7 @@ class IPFSManagementInteraction implements IIPFSManagementInteraction {
      * Remove file from IPFS management contract
      * @param {string} fileHash - File identifier or location
      * @param {IdentityManager} identity - Identity of the file owner
-     * @returns void
+     * @returns {void}
      */
     async removeFile(fileHash: string, identity: IdentityManager): Promise<void> {
         if (fileHash.trim() === '' || fileHash.trim().length === 0) throw new Error('fileHash must have at least 1 character');
@@ -46,7 +47,7 @@ class IPFSManagementInteraction implements IIPFSManagementInteraction {
 
         const transaction = contract.methods.removeFile(fileHash);
         await this.send(transaction, objWeb3, identity);
-        return
+        return;
     }
 
     /**
@@ -102,14 +103,14 @@ class IPFSManagementInteraction implements IIPFSManagementInteraction {
     /**
      * Get list of user files
      * @param {IdentityManager} identity - User identity 
-     * @returns {Promise<IIPFSManagementFiles>} returns file list
+     * @returns {Promise<IIpfsManagementFiles>} returns file list
      */
-    getFiles(identity: IdentityManager): Promise<IIPFSManagementFiles> {
+    getFiles(identity: IdentityManager): Promise<IIpfsManagementFiles> {
         const objWeb3 = Web3Provider.getInstance().getProvider();
         const provider = Web3Provider.getInstance();
         const contract = new objWeb3.eth.Contract(provider.IPFSManagementConfig.abi, provider.IPFSManagementConfig.address, { from: identity.address });
         return new Promise((resolve, reject) => {
-            contract.methods.getFiles(identity.address).call(function (error: Error, result: IIPFSManagementFiles) {
+            contract.methods.getFiles(identity.address).call(function (error: Error, result: IIpfsManagementFiles) {
                 if (!error) {
                     resolve(result);
                 }
@@ -123,12 +124,12 @@ class IPFSManagementInteraction implements IIPFSManagementInteraction {
     /**
      * This function sign the transaction.
      * 
-     * @param {any} transaction This parameter is the transaction object. 
+     * @param {ITransaction} transaction This parameter is the transaction object. 
      * @param {Web3} web3 This parameter is the Web3 Provider to sign the transaction. 
      * @param {IdentityManager} identity This parameter is the identity to sign the transaction with it's privateKey. 
      * @returns {Promise<boolean>} Return true if the transaction was successful, false otherwise.
      */
-     private async send(transaction: any, web3: Web3, identity: IdentityManager): Promise<boolean> {
+    private async send(transaction: ITransaction, web3: Web3, identity: IdentityManager): Promise<boolean> {
         const options = {
             to: transaction._parent._address,
             data: transaction.encodeABI(),

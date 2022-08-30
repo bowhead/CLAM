@@ -1,6 +1,6 @@
-interface IIPFSManagementFiles {
+interface IIpfsManagementFiles {
     '0': string[];
     '1': string[];
 }
 
-export default IIPFSManagementFiles;
+export default IIpfsManagementFiles;

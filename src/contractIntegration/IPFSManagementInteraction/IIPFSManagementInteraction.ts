@@ -1,7 +1,7 @@
-import { IdentityManager } from "../../indentityManager";
-import IIPFSManagementFiles from "./IIPFSManagementFiles";
+import { IdentityManager } from '../../indentityManager';
+import IIpfsManagementFiles from './IIPFSManagementFiles';
 
-interface IIPFSManagementInteraction {
+interface IIpfsManagementInteraction {
     /**
      * Add file to IPFS management contract
      * @param {string} fileHash - File identifier or location
@@ -36,9 +36,9 @@ interface IIPFSManagementInteraction {
     /**
      * Get list of user files
      * @param {IdentityManager} identity - User identity 
-     * @returns {Promise<IIPFSManagementFiles>} returns file list
+     * @returns {Promise<IIpfsManagementFiles>} returns file list
      */
-    getFiles(identity: IdentityManager): Promise<IIPFSManagementFiles>;
+    getFiles(identity: IdentityManager): Promise<IIpfsManagementFiles>;
 }
 
-export default IIPFSManagementInteraction;
+export default IIpfsManagementInteraction;

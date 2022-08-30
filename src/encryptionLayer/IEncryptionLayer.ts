@@ -10,7 +10,7 @@ interface IEncryptionLayer {
      * @param {string} key This parameter is the key to encrypt the data.
      * @param {string} data This parameter is the data that will be encrypted.
      */
-    ecryptData(key: string, data: string): Promise<string>;
+    encryptData(key: string, data: string): Promise<string>;
 
     /**
      * This function decrypt the data passed as a parameter using the

@@ -1,9 +1,8 @@
-/* eslint-disable no-undef */
-/* eslint-disable @typescript-eslint/no-var-requires */
-
 import { IEncryptionLayer } from '../encryptionLayer';
 import { IKeysGenerator } from '../keysGenerator';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { fromMnemonic } = require('ethereum-hdwallet');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { generateMnemonic } = require('eth-hd-wallet');
 import { injectable, inject } from 'tsyringe';
 
@@ -49,10 +48,10 @@ class IdentityManager {
      * 
      * @param {string} mnemonic This parameter is the 12 words that will be used to generate the identity information. 
      */
-    public generateIdentity = async (mnemonic: string = ""): Promise<void> => {
+    public generateIdentity = async (mnemonic = ''): Promise<void> => {
         if (this.mnemonic.trim() === '' && this.address.trim() === '' &&
             this.privateKey.trim() === '' && this.publicKey.trim() == '') {
-            this.mnemonic = mnemonic.trim() === "" ? generateMnemonic() : mnemonic;
+            this.mnemonic = mnemonic.trim() === '' ? generateMnemonic() : mnemonic;
             const hdwallet = fromMnemonic(this.mnemonic);
             this.address = `0x${hdwallet.derive('m/44\'/60\'/0\'/0/0').getAddress().toString('hex')}`;
             this.privateKey = hdwallet.derive('m/44\'/60\'/0\'/0/0').getPrivateKey(true).toString('hex');
@@ -66,7 +65,7 @@ class IdentityManager {
         const { privateKey, publicKey } = await this.keysGenerator.generateKeys(data);
         this.privateKeySpecial = privateKey;
         this.publicKeySpecial = publicKey;
-    }
+    };
 
 }
 

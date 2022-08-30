@@ -1,3 +1,5 @@
-interface IIPFSDelete extends IIPFSDocument {
+import { IIpfsDocument } from './IIPFSDocuments';
+
+export interface IIpfsDelete extends IIpfsDocument {
     privateKey: string; 
 }

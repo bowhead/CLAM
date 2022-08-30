@@ -4,4 +4,4 @@ import IPFSManagementInteraction from './IPFSManagementInteraction';
 export {
     IIPFSManagementInteraction,
     IPFSManagementInteraction
-}
+};

@@ -7,14 +7,13 @@ import {
 import { IdentityManager } from '../../';
 
 /**
- * This class is used to interact with the blockchain by making use 
+ * This class is used to interact with the block-chain by making use 
  * of consent and access interaction instances.
  */
-
 @injectable()
 class Interaction {
 
-    public acccessInteraction: IAccessInteraction;
+    public accessInteraction: IAccessInteraction;
     public consentInteraction: IConsentInteraction;
     public IPFSManagementInteraction: IIPFSManagementInteraction;
     public urlProvider: string;
@@ -25,15 +24,15 @@ class Interaction {
      * implementation of consent, access and IPFS management.
      * 
      * @param {IConsentInteraction} consentInteraction This parameter is the implementation of ConsentInteraction.
-     * @param {IAccessInteraction} acccessInteraction This parameter is the implementation of AccessInteration.
+     * @param {IAccessInteraction} accessInteraction This parameter is the implementation of AccessInteraction.
      * @param {IIPFSManagementInteraction} IPFSManagementInteraction This parameter is the implementation of IPFSManagementInteraction.
      */
     public constructor(
         @inject('ConsentInteraction') consentInteraction: IConsentInteraction,
-        @inject('AccessInteraction') acccessInteraction: IAccessInteraction,
+        @inject('AccessInteraction') accessInteraction: IAccessInteraction,
         @inject('IPFSManagementInteraction') IPFSManagementInteraction: IIPFSManagementInteraction
     ) {
-        this.acccessInteraction = acccessInteraction;
+        this.accessInteraction = accessInteraction;
         this.consentInteraction = consentInteraction;
         this.IPFSManagementInteraction = IPFSManagementInteraction;
     }
@@ -52,7 +51,6 @@ class Interaction {
      * 
      * @param {IdentityManager} identity This parameter is the identity that will be used to interact with the web.
      */
-
     public setIdentity(identity: IdentityManager): void {
         this.identity = identity;
     }
