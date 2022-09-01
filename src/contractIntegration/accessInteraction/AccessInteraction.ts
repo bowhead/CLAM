@@ -1,19 +1,21 @@
 /*global Promise*/
 import { injectable } from 'tsyringe';
 import { IAccessInteraction } from '.';
-
 import Web3 from 'web3';
 import { IdentityManager } from '../../indentityManager';
-import Web3Provider from '../interaction/Wbe3Provider';
 import IAccessResource from './IAccessResource';
+import IWeb3Provider from '../interaction/web3Provider/IWeb3Provider';
+import FactoryWeb3Interaction from '../interaction/web3Provider/FactoryWeb3Interaction';
 
 /**
+ * 
  * This class is the implementation of IAccessInteraction interface,
  * this class is used to communicate with Access smart contract.
  * 
  */
 @injectable()
 class AccessInteraction implements IAccessInteraction {
+    private provider: IWeb3Provider = FactoryWeb3Interaction.getInstance().generateWeb3Provider("web3");
 
     /**
      * This function gives access by making use of the values passed as parameters.
@@ -29,14 +31,8 @@ class AccessInteraction implements IAccessInteraction {
         if (resource.trim() === '' || resource.trim().length === 0) throw new Error('The resource must have at least one character');
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('The consentID must have at least one character');
         if (accounts.length === 0) throw new Error('Accounts must have at least one element');
-
-        const objWeb3 = Web3Provider.getInstance().getProvider();
-        const provider = Web3Provider.getInstance();
-        const contract = new objWeb3.eth.Contract(provider.interactionConfig.access.abi, provider.interactionConfig.access.address, { from: identity.address });
-        const consentIdBytes = Web3.utils.fromAscii(consentId);
-        const resourceNameBytes = Web3.utils.fromAscii(resourceName);
-        const transaction = contract.methods.giveAccess(resource, consentIdBytes, accounts, resourceNameBytes);
-        const receipt = await this.send(transaction, objWeb3, identity);
+        const transaction = this.provider.getMethods("access").giveAccess(resource, Web3.utils.fromAscii(consentId), accounts, Web3.utils.fromAscii(resourceName));
+        const receipt = await this.provider.signTransaction(transaction, identity);
         return receipt;
     }
 
@@ -51,21 +47,10 @@ class AccessInteraction implements IAccessInteraction {
     async checkAccess(resource: string, consentId: string, identity: IdentityManager): Promise<boolean> {
         if (resource.trim() === '' || resource.trim().length === 0) throw new Error('The resource must have at least one character');
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('The consentID must have at least one character');
-
-
-        const objWeb3 = Web3Provider.getInstance().getProvider();
-        const provider = Web3Provider.getInstance();
-        const contract = new objWeb3.eth.Contract(provider.interactionConfig.access.abi, provider.interactionConfig.access.address, { from: identity.address });
-
         return new Promise((resolve, reject) => {
-            const consentIdBytes = Web3.utils.fromAscii(consentId);
-            contract.methods.checkAccess(resource, consentIdBytes).call(function (error: Error, result: boolean) {
-                if (!error) {
-                    resolve(result);
-                }
-                else {
-                    reject(error);
-                }
+            this.provider.getMethods("access").checkAccess(resource, Web3.utils.fromAscii(consentId)).call({ from: identity.address }, function (error: Error, result: boolean) {
+                if (!error) resolve(result);
+                else reject(error);
             });
         });
     }
@@ -79,43 +64,14 @@ class AccessInteraction implements IAccessInteraction {
      */
     async getResourceByConsent(consentId: string, identity: IdentityManager): Promise<IAccessResource> {
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('The consentID must have at least one character');
-
-
-        const objWeb3 = Web3Provider.getInstance().getProvider();
-        const provider = Web3Provider.getInstance();
-        const contract = new objWeb3.eth.Contract(provider.interactionConfig.access.abi, provider.interactionConfig.access.address, { from: identity.address });
-
         return new Promise((resolve, reject) => {
             const consentIdBytes = Web3.utils.fromAscii(consentId);
-            contract.methods.getResourceByConsent(consentIdBytes).call(function (error: Error, result: IAccessResource) {
-                if (!error) {
-                    resolve(result);
-                }
-                else {
-                    reject(error);
-                }
+            this.provider.getMethods("access").getResourceByConsent(consentIdBytes).call({ from: identity.address }, function (error: Error, result: IAccessResource) {
+                if (!error) resolve(result);
+                else reject(error);
             });
         });
 
-    }
-    /**
-     * This function sign the transaction.
-     * 
-     * @param {any} transaction This parameter is the transaction object. 
-     * @param {Web3} web3 This parameter is the Web3 Provider to sign the transaction. 
-     * @param {IdentityManager} identity This parameter is the identity to sign the transaction with it's privateKey. 
-     * @returns {Promise<boolean>} Return true if the transaction was successful, false otherwise.
-     */
-    private async send(transaction: any, web3: Web3, identity: IdentityManager): Promise<boolean> {
-        const options = {
-            to: transaction._parent._address,
-            data: transaction.encodeABI(),
-            gas: await transaction.estimateGas({ from: identity.address }),
-            gasPrice: web3.utils.toHex(web3.utils.toWei('30', 'gwei'))
-        };
-        const signed = await web3.eth.accounts.signTransaction(options, identity.privateKey);
-        const receipt = await web3.eth.sendSignedTransaction(signed.rawTransaction as string);
-        return receipt.status;
     }
 
 }

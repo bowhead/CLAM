@@ -2,34 +2,33 @@
 require('dotenv').config();
 import { FactoryInteraction, Interaction } from '../src/contractIntegration';
 import { FactoryIdentity, IdentityManager } from '../src/';
-import Web3Provider from '../src/contractIntegration/interaction/Wbe3Provider';
+//import Web3Provider from '../src/contractIntegration/interaction/Wbe3Provider';
 import ABIConsent from './utilities/Consent.json';
 import ABIAccess from './utilities/Access.json';
 import ABIConsentResource from './utilities/Consent.json';
 import ABIIPFSManagement from './utilities/IPFSManagement.json';
 import Web3 from 'web3';
 import IInteractionConfig from '../src/contractIntegration/interaction/IInteractionConfig';
+import FactoryWeb3Interaction from "../src/contractIntegration/interaction/web3Provider/FactoryWeb3Interaction"
 
 describe('Testing consent interaction', () => {
     let factoryInteraction: FactoryInteraction;
     let factoryIdentity: FactoryIdentity;
-    let web3Provider: Web3Provider;
+    let factoryWeb3Provider: FactoryWeb3Interaction;
     let interaction: Interaction;
 
     beforeEach(async () => {
         factoryInteraction = new FactoryInteraction();
         factoryIdentity = new FactoryIdentity();
-        web3Provider = Web3Provider.getInstance();
-
-        const web3 = new Web3(String(process.env.CLAM_BLOCKCHAIN_LOCALTION));
+        factoryWeb3Provider = FactoryWeb3Interaction.getInstance();
         const interactionConfig:IInteractionConfig = {
+            provider: new Web3(String(process.env.CLAM_BLOCKCHAIN_LOCALTION)),
             consent: { address: String(process.env.CLAM_CONSENT_ADDRESS), abi: ABIConsent.abi },
             access: { address: String(process.env.CLAM_ACCESS_ADDRESS), abi: ABIAccess.abi },
             consentResource: { address: String(process.env.CLAM_CONSENT_RESOURCE_ADDRESS), abi: ABIConsentResource.abi },
             ipfs: { address: String(process.env.CLAM_IPFS_ADDRESS), abi: ABIIPFSManagement.abi }
         }
-
-        web3Provider.setConfig(web3, interactionConfig);
+        factoryWeb3Provider.setConfig(interactionConfig);
         interaction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
 
         const identity: IdentityManager = factoryIdentity.generateIdentity('pgp', 'pgp');

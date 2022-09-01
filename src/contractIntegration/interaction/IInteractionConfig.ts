@@ -1,4 +1,5 @@
 interface IInteractionConfig {
+    provider: any,
     consent: { address: string, abi: any },
     access: { address: string, abi: any },
     consentResource: { address: string, abi: any },
