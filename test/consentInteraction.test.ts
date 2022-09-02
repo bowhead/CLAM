@@ -2,7 +2,6 @@
 require('dotenv').config();
 import { FactoryInteraction, Interaction } from '../src/contractIntegration';
 import { FactoryIdentity, IdentityManager } from '../src/';
-//import Web3Provider from '../src/contractIntegration/interaction/Wbe3Provider';
 import ABIConsent from './utilities/Consent.json';
 import ABIAccess from './utilities/Access.json';
 import ABIConsentResource from './utilities/Consent.json';

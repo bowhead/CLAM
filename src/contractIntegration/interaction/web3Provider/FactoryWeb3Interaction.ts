@@ -4,7 +4,7 @@ import { container } from 'tsyringe';
 import IInteractionConfig from "../IInteractionConfig";
 import IOption from "../IOption";
 import IWeb3Provider from './IWeb3Provider';
-import Web3ProviderClam from "./Web3ProviderClam";
+import Web3Provider from "./Web3Provider";
 import Web3ProviderBowhead from "./Web3ProviderBowhead";
 
 
@@ -15,7 +15,7 @@ class FactoryWeb3Interaction {
 
     private constructor() {
         this.web3Providers = [
-            { name: "web3", option: Web3ProviderClam },
+            { name: "web3", option: Web3Provider },
             { name: "bowhead", option: Web3ProviderBowhead }
         ];
     };

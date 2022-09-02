@@ -5,7 +5,7 @@ import IWeb3Provider from "./IWeb3Provider";
 import { injectable, inject } from "tsyringe";
 
 @injectable()
-class Web3ProviderClam implements IWeb3Provider {
+class Web3Provider implements IWeb3Provider {
     private provider: Web3;
     private interactionConfig: IInteractionConfig
 
@@ -14,6 +14,8 @@ class Web3ProviderClam implements IWeb3Provider {
         this.interactionConfig = interactionConfig;
     }
     getMethods(interactionType: string) {
+        if (interactionType.trim().length === 0 || interactionType.trim() === '') throw new Error("Please pass the contract name to interact.");
+
         let abi: any;
         let address: string = "";
         if (interactionType === "consent") {
@@ -23,14 +25,13 @@ class Web3ProviderClam implements IWeb3Provider {
             abi = this.interactionConfig.access.abi;
             address = this.interactionConfig.access.address;
         } else {
-            abi = this.interactionConfig.consent.abi;
-            address = this.interactionConfig.consent.address;
+            throw new Error("This contract doesn't exist.");
         }
         const contract = new this.provider.eth.Contract(abi, address);
         return contract.methods;
     }
 
-    async callContractMethod(method: Function, identity: IdentityManager) {
+    async callContractMethod(method: Function, identity: IdentityManager, __more: object[]) {
         return new Promise((resolve, reject) => {
             method.call({ from: identity.address }, function (error: Error, result: boolean) {
                 if (!error) resolve(result);
@@ -54,4 +55,4 @@ class Web3ProviderClam implements IWeb3Provider {
 
 }
 
-export default Web3ProviderClam;
+export default Web3Provider;
