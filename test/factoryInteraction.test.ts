@@ -1,7 +1,10 @@
 /*global expect, test, describe*/
+require('dotenv').config();
 
 import { IdentityManager } from '../src';
 import { FactoryInteraction, IAccessInteraction, IConsentInteraction } from '../src/contractIntegration';
+import IInteractionConfig from '../src/contractIntegration/interaction/IInteractionConfig';
+import FactoryWeb3Interaction from '../src/contractIntegration/interaction/web3Provider/FactoryWeb3Interaction';
 
 
 
@@ -127,7 +130,19 @@ class AccessInteractionOther implements IAccessInteraction {
 
 
 describe('Testing interaction component using the CLAM implementation', () => {
+    let factoryWeb3Provider: FactoryWeb3Interaction;
 
+    beforeEach(() => {
+        factoryWeb3Provider = FactoryWeb3Interaction.getInstance();
+        const interactionConfig: IInteractionConfig = {
+            provider: String(process.env.CLAM_BLOCKCHAIN_LOCALTION),
+            consent: { address: String(process.env.CLAM_CONSENT_ADDRESS), abi: "a" },
+            access: { address: String(process.env.CLAM_ACCESS_ADDRESS), abi: "a" },
+            consentResource: { address: String(process.env.CLAM_CONSENT_RESOURCE_ADDRESS), abi: "a" },
+            ipfs: { address: String(process.env.CLAM_IPFS_ADDRESS), abi: "a" }
+        }
+        factoryWeb3Provider.setConfig(interactionConfig);
+    })
     test('should the factoryInteraction instance have a good structure', () => {
         const factoryInteraction: FactoryInteraction = new FactoryInteraction();
         const keys = Object.keys(factoryInteraction);

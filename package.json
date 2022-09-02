@@ -76,9 +76,12 @@
     },
     "dependencies": {
         "axios": "^0.27.2",
+        "bowhead-web3": "github:bowhead/web3.js#bowhead_stable",
         "crypto-js": "^4.1.1",
         "eth-hd-wallet": "^0.5.1",
         "ethereum-hdwallet": "^0.1.2",
+        "ethereumjs-common": "^1.5.2",
+        "ethereumjs-tx": "^2.1.2",
         "ethereumjs-util": "^7.1.5",
         "form-data": "^4.0.0",
         "openpgp": "^5.3.1",

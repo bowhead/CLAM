@@ -7,7 +7,6 @@ import ABIConsent from './utilities/Consent.json';
 import ABIAccess from './utilities/Access.json';
 import ABIConsentResource from './utilities/Consent.json';
 import ABIIPFSManagement from './utilities/IPFSManagement.json';
-import Web3 from 'web3';
 import IInteractionConfig from '../src/contractIntegration/interaction/IInteractionConfig';
 import FactoryWeb3Interaction from "../src/contractIntegration/interaction/web3Provider/FactoryWeb3Interaction"
 
@@ -22,7 +21,7 @@ describe('Testing consent interaction', () => {
         factoryIdentity = new FactoryIdentity();
         factoryWeb3Provider = FactoryWeb3Interaction.getInstance();
         const interactionConfig:IInteractionConfig = {
-            provider: new Web3(String(process.env.CLAM_BLOCKCHAIN_LOCALTION)),
+            provider: String(process.env.CLAM_BLOCKCHAIN_LOCALTION),
             consent: { address: String(process.env.CLAM_CONSENT_ADDRESS), abi: ABIConsent.abi },
             access: { address: String(process.env.CLAM_ACCESS_ADDRESS), abi: ABIAccess.abi },
             consentResource: { address: String(process.env.CLAM_CONSENT_RESOURCE_ADDRESS), abi: ABIConsentResource.abi },
