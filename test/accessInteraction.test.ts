@@ -27,6 +27,7 @@ describe('Testing access interaction', () => {
         const consentResourceConfig = { address: process.env.CLAM_CONSENT_RESOURCE_ADDRESS, abi: ABIConsentResource.abi };
         const IPFSManagementConfig = { address: process.env.CLAM_IPFS_ADDRESS, abi: ABIIPFSManagement.abi };
         web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
+
         interaction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
 
         const identity: IdentityManager = factoryIdentity.generateIdentity('pgp', 'pgp');
