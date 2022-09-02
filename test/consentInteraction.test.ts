@@ -1,5 +1,5 @@
 /*global beforeEach, describe, test, expect*/
-
+require('dotenv').config();
 import { FactoryInteraction, Interaction } from '../src/contractIntegration';
 import { FactoryIdentity, IdentityManager } from '../src/';
 import Web3Provider from '../src/contractIntegration/interaction/Wbe3Provider';
@@ -20,19 +20,19 @@ describe('Testing consent interaction', () => {
         factoryIdentity = new FactoryIdentity();
         web3Provider = Web3Provider.getInstance();
 
-        const web3 = new Web3('http://localhost:8545');
-        const consentConfig = { address: '0xD48A409F0b853EA933341366Afb79026a8b96f98', abi: ABIConsent.abi };
-        const accessConfig = { address: '0x859768B0d2ed33eCe914Fd8B6EbcAE5288fb087a', abi: ABIAccess.abi };
-        const consentResourceConfig = { address: '0xCDb2d33Ac1910BbfcDB0502Bf0d88A1c3495e967', abi: ABIConsentResource.abi };
-        const IPFSManagementConfig = { address: '0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6', abi: ABIIPFSManagement.abi };
+        const web3 = new Web3(String(process.env.CLAM_BLOCKCHAIN_LOCALTION));
+        const consentConfig = { address: process.env.CLAM_CONSENT_ADDRESS, abi: ABIConsent.abi };
+        const accessConfig = { address: process.env.CLAM_ACCESS_ADDRESS, abi: ABIAccess.abi };
+        const consentResourceConfig = { address: process.env.CLAM_CONSENT_RESOURCE_ADDRESS, abi: ABIConsentResource.abi };
+        const IPFSManagementConfig = { address: process.env.CLAM_IPFS_ADDRESS, abi: ABIIPFSManagement.abi };
         web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
 
         interaction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
 
         const identity: IdentityManager = factoryIdentity.generateIdentity('pgp', 'pgp');
         await identity.generateIdentity();
-        identity.address = '0x751bdD89dDD33849507334d9C802a15aAE05D826';
-        identity.privateKey = '0x2bc3604040467f2db3a9a768fd1dca94d7e2d410ef4f65e6fccf0b80b9754ac2';
+        identity.address = String(process.env.CLAM_USER_ADDRESS);
+        identity.privateKey = String(process.env.CLAM_USER_PRIVATEKEY);
         interaction.setIdentity(identity);
     })
 

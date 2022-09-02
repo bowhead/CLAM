@@ -1,3 +1,4 @@
+require('dotenv').config()
 import { 
     DocumentSharing,
     IdentityManager,
@@ -39,7 +40,7 @@ describe('Testing document sharing', () => {
         timeout: 2000
     })
     const documentSharing = new DocumentSharing(storageEngine);
-    let firstUser : IKeys;
+    let firstUser: IKeys;
     let cid: string;
     let cidShared: string;
     let factoryInteraction: FactoryInteraction;
@@ -54,13 +55,12 @@ describe('Testing document sharing', () => {
         factoryInteraction = new FactoryInteraction();
         web3Provider = Web3Provider.getInstance();
 
-        const web3 = new Web3('http://localhost:8545');
-        const consentConfig = { address: '0x0E801D84Fa97b50751Dbf25036d067dCf18858bF', abi: ABIConsent.abi };
-        const accessConfig = { address: '0x5eb3Bc0a489C5A8288765d2336659EbCA68FCd00', abi: ABIAccess.abi };
-        const consentResourceConfig = { address: '0x8f86403A4DE0BB5791fa46B8e795C547942fE4Cf', abi: ABIConsentResource.abi };
-        const IPFSManagementConfig = { address: '0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6', abi: ABIIPFSManagement.abi };
+        const web3 = new Web3(String(process.env.CLAM_BLOCKCHAIN_LOCALTION));
+        const consentConfig = { address: process.env.CLAM_CONSENT_ADDRESS, abi: ABIConsent.abi };
+        const accessConfig = { address: process.env.CLAM_ACCESS_ADDRESS, abi: ABIAccess.abi };
+        const consentResourceConfig = { address: process.env.CLAM_CONSENT_RESOURCE_ADDRESS, abi: ABIConsentResource.abi };
+        const IPFSManagementConfig = { address: process.env.CLAM_IPFS_ADDRESS, abi: ABIIPFSManagement.abi };
         web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
-
         interaction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
 
         aesInstance.address = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266';
@@ -108,11 +108,11 @@ describe('Testing document sharing', () => {
     });
 
     test('Should add new encrypted file', async () => {
-        jest.spyOn(ConsentInteraction.prototype, 'getConsentById').mockImplementation(async() => await true);
+        jest.spyOn(ConsentInteraction.prototype, 'getConsentById').mockImplementation(async () => await true);
         nock('http://localhost:3000')
             .post('/file')
             .reply(200, {
-                    CID: 'fe5c3e7fa0f43b8cbfed5e69c9a19c722c1900ff893ce7fa6b40646b88e46f48.txt'
+                CID: 'fe5c3e7fa0f43b8cbfed5e69c9a19c722c1900ff893ce7fa6b40646b88e46f48.txt'
             })
 
         const options = {
@@ -121,7 +121,7 @@ describe('Testing document sharing', () => {
             contractInteraction: interaction,
             consentId: 'AAA1'
         };
-             
+
         cid = await documentSharing.saveFile(aesInstance, options);
 
         expect(cid).not.toBe('');
@@ -132,7 +132,7 @@ describe('Testing document sharing', () => {
             .get('/file')
             .query({ address: aesInstance.address, cid: cid })
             .reply(200, {
-                    file: 'ZTE3YmUzZGUzYTg0MDQ0OWM5MGM2YTRhYTVkZGI2YmZkODdlNzQxZmE0M2M3ZDc4NDQwNjdlOTcyOWRjYTllY2R1b3o5bGxEUW1aSmUvRGI2d1hiK3c9PQ=='
+                file: 'ZTE3YmUzZGUzYTg0MDQ0OWM5MGM2YTRhYTVkZGI2YmZkODdlNzQxZmE0M2M3ZDc4NDQwNjdlOTcyOWRjYTllY2R1b3o5bGxEUW1aSmUvRGI2d1hiK3c9PQ=='
             })
 
         const options = {
@@ -144,7 +144,7 @@ describe('Testing document sharing', () => {
         expect(Buffer.from(file, 'base64').toString()).toBe('testv10');
     });
 
-    test('Should update an encrypted file', async() => {
+    test('Should update an encrypted file', async () => {
         const options = {
             file: fs.createReadStream(path.resolve(__dirname, './resources/testUpdate.txt')),
             cid: cid
@@ -162,7 +162,7 @@ describe('Testing document sharing', () => {
             .reply(200);
 
         await documentSharing.updateFile(aesInstance, options);
-        
+
         const getOptions = {
             cid: cid
         };
@@ -183,7 +183,7 @@ describe('Testing document sharing', () => {
         nock('http://localhost:3000')
             .post('/file')
             .reply(200, {
-                    CID: 'fe5c3e7fa0f43b8cbfed5e69c9a19c722c1900ff893ce7fa6b40646b88e46f48.txt'
+                CID: 'fe5c3e7fa0f43b8cbfed5e69c9a19c722c1900ff893ce7fa6b40646b88e46f48.txt'
             })
 
         firstUser = await keysGeneratos.generateKeys({ name: 'first', email: 'first@email.com' });
@@ -201,7 +201,7 @@ describe('Testing document sharing', () => {
 
         expect(cidShared).not.toBe('');
 
-        jest.spyOn(AccessInteraction.prototype, 'giveAccess').mockImplementation(async() => await true);
+        jest.spyOn(AccessInteraction.prototype, 'giveAccess').mockImplementation(async () => await true);
         await interaction.acccessInteraction.giveAccess(cidShared, 'AAA1', [pgpInstanceToShare.address], 'test.txt', pgpInstance);
 
         nock('http://localhost:3000')
@@ -217,7 +217,7 @@ describe('Testing document sharing', () => {
             contractInteraction: interaction,
             consentId: 'AAA1'
         }
-        jest.spyOn(AccessInteraction.prototype, 'checkAccess').mockImplementation(async() => await true);
+        jest.spyOn(AccessInteraction.prototype, 'checkAccess').mockImplementation(async () => await true);
         const file = await documentSharing.getSharedFile(pgpInstance, getOptions);
 
         expect(Buffer.from(file, 'base64').toString()).toBe('testv10');
@@ -246,11 +246,11 @@ describe('Testing document sharing', () => {
     test('Should not get shared file if the identity is not on list to shared', async () => {
         try {
             nock('http://localhost:3000')
-            .get('/file')
-            .query({ address: pgpInstance.address, cid: cidShared })
-            .reply(200, {
-                file: 'LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgp3VjREK0N3dUxRbWRnL0lTQVFkQS8vMXFrbVFFaHlIeWNlQXIzc0xyZCtoZXVvTWU2djEwR29kendpbFQKd1Fzd3g5NGtXa3NOY0tNTkM3aFlTSEZFeTRpME5pMU1HOGdXU0U3YUtCNmxJQnB4SGpUZU1raERUMWRVCjdCQ1NLRWRpd1Y0RDF6aHpTbU96Z0lnU0FRZEF5VXdpUVJvb0wrZnR4Z1FXdG9YaGJ1d1h0OVdhazRIYQphN05kUWJnOGFDWXdkODZzZ1dFRW13cmFqakg2NFBkRThvNWR1ay9zZXJwV3pLWWFTV2cwRUVhWFFCYU0KUFI2QTRIYllSZi9LT0tRa3dWNERsaE1sNEw0NkJFQVNBUWRBaUR6dVJGWnRtWEhUYjVrY1lJRm9lMXhtCmtJdC9sdHVKMVdiSVNYUGRUakF3VTJiek1pbm1uNDVRczBWbzZNMWE4NWo3c2Z1UTNzVEJwREd1Y21ySwpDSnJJT1FxQ2tzV1BUbkRDb1VxV2dnMGIwajBCTUZJYnlHSzFsMjNKTVUyTUZ1SFZxeXRLQXI1b3NFZk0KWjdnRlZkWVpOVTIxQ1U3TWVLSEdvems1UDVhOWpTbzV3VGFSZ01vaTNQanVQN3BOCj1WMGV0Ci0tLS0tRU5EIFBHUCBNRVNTQUdFLS0tLS0K'
-            })
+                .get('/file')
+                .query({ address: pgpInstance.address, cid: cidShared })
+                .reply(200, {
+                    file: 'LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgp3VjREK0N3dUxRbWRnL0lTQVFkQS8vMXFrbVFFaHlIeWNlQXIzc0xyZCtoZXVvTWU2djEwR29kendpbFQKd1Fzd3g5NGtXa3NOY0tNTkM3aFlTSEZFeTRpME5pMU1HOGdXU0U3YUtCNmxJQnB4SGpUZU1raERUMWRVCjdCQ1NLRWRpd1Y0RDF6aHpTbU96Z0lnU0FRZEF5VXdpUVJvb0wrZnR4Z1FXdG9YaGJ1d1h0OVdhazRIYQphN05kUWJnOGFDWXdkODZzZ1dFRW13cmFqakg2NFBkRThvNWR1ay9zZXJwV3pLWWFTV2cwRUVhWFFCYU0KUFI2QTRIYllSZi9LT0tRa3dWNERsaE1sNEw0NkJFQVNBUWRBaUR6dVJGWnRtWEhUYjVrY1lJRm9lMXhtCmtJdC9sdHVKMVdiSVNYUGRUakF3VTJiek1pbm1uNDVRczBWbzZNMWE4NWo3c2Z1UTNzVEJwREd1Y21ySwpDSnJJT1FxQ2tzV1BUbkRDb1VxV2dnMGIwajBCTUZJYnlHSzFsMjNKTVUyTUZ1SFZxeXRLQXI1b3NFZk0KWjdnRlZkWVpOVTIxQ1U3TWVLSEdvems1UDVhOWpTbzV3VGFSZ01vaTNQanVQN3BOCj1WMGV0Ci0tLS0tRU5EIFBHUCBNRVNTQUdFLS0tLS0K'
+                })
 
             const instance: IdentityManager = factoryIdentity.generateIdentity('pgp', 'pgp');
             instance.generateIdentity();
@@ -273,33 +273,24 @@ describe('Testing document sharing', () => {
     });
 
     test('Should not shared an encrypted file if the consent is not approved', async () => {
-        try {
+        await expect(async () => {
             firstUser = await keysGeneratos.generateKeys({ name: 'first', email: 'first@email.com' });
-
             const pgpKeys = `${pgpInstanceToShare.publicKeySpecial},${firstUser.publicKey}`;
-
             const options = {
                 file: fs.createReadStream(path.resolve(__dirname, './resources/test.txt')),
                 fileName: 'test.txt',
                 contractInteraction: interaction,
                 consentId: 'AAA2'
             }
-
             jest.spyOn(ConsentInteraction.prototype, 'getConsentById').mockImplementation(async () => Promise.reject(new Error(`Returned error: Error: VM Exception while processing transaction: reverted with reason string 'Consent not registered'`)));
             cidShared = await documentSharing.sharedFile(pgpInstance, options, pgpKeys);
-
             expect(cidShared).not.toBe('');
-
             const getOptions = {
                 cid: cidShared,
                 owner: pgpInstance.address
             }
-
             await documentSharing.getSharedFile(pgpInstance, getOptions);
-        } catch (error) {
-            expect(error).toBeInstanceOf(Error);
-            expect(error.message).toBe(`Returned error: Error: VM Exception while processing transaction: reverted with reason string 'Consent not registered'`);
-        }
+        }).rejects.toThrow(`Returned error: Error: VM Exception while processing transaction: reverted with reason string 'Consent not registered'`);
     });
 
     test('Should not get an encrypted file when the identity does not own the file', async () => {
@@ -308,16 +299,16 @@ describe('Testing document sharing', () => {
             instance.generateIdentity();
 
             nock('http://localhost:3000')
-            .get('/file')
-            .query({ address: instance.address, cid: cid })
-            .reply(404, {
-                message: 'File not found'
-            })
+                .get('/file')
+                .query({ address: instance.address, cid: cid })
+                .reply(404, {
+                    message: 'File not found'
+                })
 
             const options = {
                 cid: cid
             };
-            
+
             await documentSharing.getFile(instance, options);
         } catch (error) {
             expect(error).toBeInstanceOf(Error);
@@ -328,10 +319,10 @@ describe('Testing document sharing', () => {
     test('Should not add new encrypted file if consent is not approved', async () => {
         try {
             nock('http://localhost:3000')
-            .post('/file')
-            .reply(200, {
+                .post('/file')
+                .reply(200, {
                     CID: 'fe5c3e7fa0f43b8cbfed5e69c9a19c722c1900ff893ce7fa6b40646b88e46f48.txt'
-            })
+                })
 
             const options = {
                 file: fs.createReadStream(path.resolve(__dirname, './resources/test.txt')),
@@ -339,8 +330,8 @@ describe('Testing document sharing', () => {
                 contractInteraction: interaction,
                 consentId: 'AAA2'
             };
-                 
-            await documentSharing.saveFile(aesInstance, options);   
+
+            await documentSharing.saveFile(aesInstance, options);
         } catch (error) {
             expect(error).toBeInstanceOf(Error);
             expect(error.message).toBe(`Returned error: Error: VM Exception while processing transaction: reverted with reason string 'Consent not registered'`);
