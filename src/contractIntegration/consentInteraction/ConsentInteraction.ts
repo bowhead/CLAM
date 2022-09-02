@@ -52,16 +52,12 @@ class ConsentInteraction implements IConsentInteraction {
      * @param {IdentityManager} identity This parameter is the Identity to configurate the smart contract interaction.
      * @returns {Promise<boolean>} return the consent status. 
      */
-    getConsentById(consentId: string, owner: string, identity: IdentityManager): Promise<boolean> {
+    async getConsentById(consentId: string, owner: string, identity: IdentityManager): Promise<boolean> {
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('contentID must have at least 1 character');
         if (owner.trim() === '' || owner.trim().length === 0) throw new Error('Owner must have at least 1 character');
         if (!owner.trim().includes('0x')) throw new Error('Invalid owner, the string with has a correct format.');
-        return new Promise((resolve, reject) => {
-            this.provider.getMethods("consent").getConsent(Web3.utils.fromAscii(consentId), owner).call({ from: identity.address }, function (error: Error, result: boolean) {
-                if (!error) resolve(result);
-                else reject(error);
-            });
-        });
+        const method: Function = this.provider.getMethods("consent").getConsent(Web3.utils.fromAscii(consentId), owner);
+        return await this.provider.callContractMethod(method, identity);
     }
 
     /**
@@ -91,14 +87,10 @@ class ConsentInteraction implements IConsentInteraction {
      * @param {IdentityManager} identity This parameter is the Identity to configurate the smart contract interaction. 
      * @returns {Promise<IConsentKeys>} return the addres's and keys's
      */
-    getKeys(consentId: string, identity: IdentityManager): Promise<IConsentKeys> {
+    async getKeys(consentId: string, identity: IdentityManager): Promise<IConsentKeys> {
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('contentID must have at least 1 character');
-        return new Promise((resolve, reject) => {
-            this.provider.getMethods("consent").getPGPKeys(Web3.utils.fromAscii(consentId)).call({ from: identity.address }, function (error: Error, result: IConsentKeys) {
-                if (!error) resolve(result);
-                else reject(error);
-            });
-        });
+        const method: Function = this.provider.getMethods("consent").getPGPKeys(Web3.utils.fromAscii(consentId));
+        return await this.provider.callContractMethod(method, identity);
     }
 }
 

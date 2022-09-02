@@ -47,12 +47,8 @@ class AccessInteraction implements IAccessInteraction {
     async checkAccess(resource: string, consentId: string, identity: IdentityManager): Promise<boolean> {
         if (resource.trim() === '' || resource.trim().length === 0) throw new Error('The resource must have at least one character');
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('The consentID must have at least one character');
-        return new Promise((resolve, reject) => {
-            this.provider.getMethods("access").checkAccess(resource, Web3.utils.fromAscii(consentId)).call({ from: identity.address }, function (error: Error, result: boolean) {
-                if (!error) resolve(result);
-                else reject(error);
-            });
-        });
+        const method: Function = this.provider.getMethods("access").checkAccess(resource, Web3.utils.fromAscii(consentId));
+        return await this.provider.callContractMethod(method, identity);
     }
 
     /**
@@ -64,14 +60,8 @@ class AccessInteraction implements IAccessInteraction {
      */
     async getResourceByConsent(consentId: string, identity: IdentityManager): Promise<IAccessResource> {
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('The consentID must have at least one character');
-        return new Promise((resolve, reject) => {
-            const consentIdBytes = Web3.utils.fromAscii(consentId);
-            this.provider.getMethods("access").getResourceByConsent(consentIdBytes).call({ from: identity.address }, function (error: Error, result: IAccessResource) {
-                if (!error) resolve(result);
-                else reject(error);
-            });
-        });
-
+        const method: Function = this.provider.getMethods("access").getResourceByConsent(Web3.utils.fromAscii(consentId));
+        return await this.provider.callContractMethod(method, identity);
     }
 
 }

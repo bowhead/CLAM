@@ -5,6 +5,8 @@ import IInteractionConfig from "../IInteractionConfig";
 import IOption from "../IOption";
 import IWeb3Provider from './IWeb3Provider';
 import Web3ProviderClam from "./Web3ProviderClam";
+import Web3ProviderBowhead from "./Web3ProviderBowhead";
+
 
 class FactoryWeb3Interaction {
     private config: IInteractionConfig;
@@ -12,7 +14,10 @@ class FactoryWeb3Interaction {
     public static intance: FactoryWeb3Interaction;
 
     private constructor() {
-        this.web3Providers = [{ name: "web3", option: Web3ProviderClam }];
+        this.web3Providers = [
+            { name: "web3", option: Web3ProviderClam },
+            { name: "bowhead", option: Web3ProviderBowhead }
+        ];
     };
 
     public static getInstance(): FactoryWeb3Interaction {
