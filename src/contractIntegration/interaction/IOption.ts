@@ -1,6 +1,6 @@
 interface IOption{
     name: string;
-    option: any;
+    option: object;
 }
 
 export default IOption;

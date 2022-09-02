@@ -4,6 +4,12 @@ import axios, { AxiosInstance } from 'axios';
 import { ecsign } from 'ethereumjs-util';
 import FormData from 'form-data';
 import { Buffer } from 'buffer';
+import { IIpfsConstructor } from './IPFS/IIPFSConstructor';
+import { IIpfsDelete } from './IPFS/IIPFSDelete';
+import { IIpfsSignature } from './IPFS/IIPFSSignature';
+import { IIpfsDocument } from './IPFS/IIPFSDocuments';
+import { IIpfsUpdate } from './IPFS/IIPFSUpdate';
+import { IIpfsSave } from './IPFS/IIPFSSave';
 
 /**
  * Storage engine to save, update, get and delete files from IPFS.
@@ -16,9 +22,9 @@ class StorageEngine implements IStorageEngine {
     /**
      * Storage engine constructor
      * Using to initialize the axios instance
-     * @param {IIPFSConstructor} options - Connection options
+     * @param {IIpfsConstructor} options - Connection options
      */
-    constructor (options: IIPFSConstructor) {
+    constructor (options: IIpfsConstructor) {
         this.instance = axios.create({
             baseURL: options.URL,
             timeout: options.timeout,
@@ -37,7 +43,7 @@ class StorageEngine implements IStorageEngine {
      * @throws {InternalServerError} Internal server error
      */
     async saveFile(options: object): Promise<string> {
-        const body = options as IIPFSSave;
+        const body = options as IIpfsSave;
         
         const formData = new FormData();
         
@@ -59,7 +65,7 @@ class StorageEngine implements IStorageEngine {
      * @throws {InternalServerError} Internal server error
      */
     async getFile(options: object): Promise<string> {
-        const params = options as IIPFSDocument;
+        const params = options as IIpfsDocument;
         
         const file = await this.instance.get(`/file?address=${params.address}&cid=${params.cid}`);
         
@@ -74,7 +80,7 @@ class StorageEngine implements IStorageEngine {
      * @throws {InternalServerError} Internal server error
      */
     async updateFile(options: object): Promise<void> {
-        const body = options as IIPFSUpdate;
+        const body = options as IIpfsUpdate;
 
         const formData = new FormData();
 
@@ -101,7 +107,7 @@ class StorageEngine implements IStorageEngine {
      * @throws {InternalServerError} Internal server error
      */
     async deleteFile(options: object): Promise<void> {
-        const params = options as IIPFSDelete;
+        const params = options as IIpfsDelete;
 
         const serverHash = await this.getChallenge(params.address);
 
@@ -134,14 +140,14 @@ class StorageEngine implements IStorageEngine {
      * Generate signature from hash
      * @param {string} serverHash - Hash
      * @param {string} privateKey - Private key
-     * @returns {IIPFSSignature} Signature
+     * @returns {IIpfsSignature} Signature
      */
-    private generateSignature(serverHash: string, privateKey: string): IIPFSSignature {
+    private generateSignature(serverHash: string, privateKey: string): IIpfsSignature {
         const hash = Buffer.from(serverHash, 'hex');
         const privateKeyBuffer = Buffer.from(privateKey, 'hex');
         const { v, r, s } = ecsign(hash, privateKeyBuffer);
 
-        const signData: IIPFSSignature = {
+        const signData: IIpfsSignature = {
             hash: serverHash,
             sigR: r.toString('hex'),
             sigS: s.toString('hex'),

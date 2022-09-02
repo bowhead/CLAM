@@ -1,4 +1,4 @@
-import { IEncryptionLayer } from './';
+import { IEncryptionLayer } from '.';
 import { readKey, encrypt, decrypt, readMessage, createMessage, decryptKey, readPrivateKey } from 'openpgp';
 import { injectable } from 'tsyringe';
 /**
@@ -14,12 +14,12 @@ class EncryptionLayerPGP implements IEncryptionLayer {
      * @param {string} data This parameter is the data that will be encrypted.
      * @returns {string} returns a string promise, when resolved it returns a string representing the encrypted data.
      */
-    ecryptData = async (publicKeyPGP: string, data: string): Promise<string> => {
+    encryptData = async (publicKeyPGP: string, data: string): Promise<string> => {
 
         if (data.trim().length == 0) throw new Error('The data must have at least one character');
         const pubKeys = publicKeyPGP.split(',');
         const publicKeys = pubKeys.map(async (key) => {
-            return (await readKey({ armoredKey: key }))
+            return (await readKey({ armoredKey: key }));
         });
         
         const encrypted = await encrypt({
@@ -27,7 +27,7 @@ class EncryptionLayerPGP implements IEncryptionLayer {
             encryptionKeys: await Promise.all(publicKeys),
         });
         return encrypted.toString();
-    }
+    };
 
     /**
      * This function decrypt the data passed as a parameter using the
@@ -40,8 +40,8 @@ class EncryptionLayerPGP implements IEncryptionLayer {
     decryptData = async (privateKeyPGP: string, dataEncrypted: string): Promise<string> => {
         if (dataEncrypted.trim().length == 0) throw new Error('The data must have at least one character');
         
-        const privKeys = privateKeyPGP.split(',');
-        const privateKeys = privKeys.map(async (key) => {
+        const privateKeysArr = privateKeyPGP.split(',');
+        const privateKeys = privateKeysArr.map(async (key) => {
             return await decryptKey({
                 privateKey: await readPrivateKey({ armoredKey: key}),
                 passphrase: 'passphrase'
@@ -56,7 +56,7 @@ class EncryptionLayerPGP implements IEncryptionLayer {
             decryptionKeys: await Promise.all(privateKeys)
         });
         return decrypted.toString();
-    }
-};
+    };
+}
 
 export default EncryptionLayerPGP;

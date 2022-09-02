@@ -4,8 +4,9 @@ import { IAccessInteraction } from '.';
 
 import Web3 from 'web3';
 import { IdentityManager } from '../../indentityManager';
-import Web3Provider from '../interaction/Wbe3Provider';
+import Web3Provider from '../interaction/Web3Provider';
 import IAccessResource from './IAccessResource';
+import { ITransaction } from '../types/ITransaction';
 
 /**
  * This class is the implementation of IAccessInteraction interface,
@@ -101,12 +102,12 @@ class AccessInteraction implements IAccessInteraction {
     /**
      * This function sign the transaction.
      * 
-     * @param {any} transaction This parameter is the transaction object. 
+     * @param {ITransaction} transaction This parameter is the transaction object. 
      * @param {Web3} web3 This parameter is the Web3 Provider to sign the transaction. 
      * @param {IdentityManager} identity This parameter is the identity to sign the transaction with it's privateKey. 
      * @returns {Promise<boolean>} Return true if the transaction was successful, false otherwise.
      */
-    private async send(transaction: any, web3: Web3, identity: IdentityManager): Promise<boolean> {
+    private async send(transaction: ITransaction, web3: Web3, identity: IdentityManager): Promise<boolean> {
         const options = {
             to: transaction._parent._address,
             data: transaction.encodeABI(),

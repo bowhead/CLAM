@@ -1,9 +1,10 @@
 import 'reflect-metadata';
 import { container } from 'tsyringe';
 import IOption from './IOption';
-import { EncryptioLayerAES, EncryptionLayerPGP } from '../encryptionLayer';
+import { EncryptionLayerAES, EncryptionLayerPGP } from '../encryptionLayer';
 import { KeysGeneratorPGP } from '../keysGenerator';
 import { IdentityManager } from '../indentityManager';
+import { constructor } from 'tsyringe/dist/typings/types';
 
 
 /**
@@ -17,15 +18,15 @@ class FactoryIdentity {
 
     /**
      * Constructor that initializes the class instance, setting two options for 
-     * EncryptionLayer (aes, pgp) and one option for KeysGenerator (pgp).
+     * EncryptionLayer (AES, PGP) and one option for KeysGenerator (PGP).
      */
     constructor() {
         this.optionsEncryptionLayer = [
-            { name: 'aes', option: EncryptioLayerAES },
-            { name: 'pgp', option: EncryptionLayerPGP },
+            { name: 'AES', option: EncryptionLayerAES },
+            { name: 'PGP', option: EncryptionLayerPGP },
         ];
         this.optionsKeysGenerator = [
-            { name: 'pgp', option: KeysGeneratorPGP }
+            { name: 'PGP', option: KeysGeneratorPGP }
         ];
 
     }
@@ -41,10 +42,14 @@ class FactoryIdentity {
         this.optionsEncryptionLayer.push(option);
     }
 
+    /**
+     * Set options to generate keys
+     * @param {IOption} option - This parameter contains the name and class of the new implementation.
+     */
     setOptionKeysGenerator(option: IOption) {
         const optionKeysGenerator = this.optionsKeysGenerator.find(optionAux => optionAux.name === option.name);
         if (optionKeysGenerator) {
-            throw new Error("This option already exists.");
+            throw new Error('This option already exists.');
         }
         this.optionsKeysGenerator.push(option);
     }
@@ -53,7 +58,7 @@ class FactoryIdentity {
      * This function generates a new identity with past implementations as parameters.
      * 
      * @param {string} encryptionLayerType This parameter is the option of EncryptionLayer implementation.
-     * @param {string} generatorKeysType This parameter is teh option of KeysGenerator implementation.
+     * @param {string} generatorKeysType This parameter is the option of KeysGenerator implementation.
      * @returns {IdentityManager} return a new instance of IdentityManager.
      */
     generateIdentity(encryptionLayerType: string, generatorKeysType: string): IdentityManager {
@@ -62,8 +67,8 @@ class FactoryIdentity {
         if (!encryptionLayer) throw new Error('The encryptionLayer type doesn\'t exist');
         if (!keysGenerator) throw new Error('The keysGenerator type doesn\'t exist');
 
-        container.register('EncryptionLayer', encryptionLayer.option);
-        container.register('KeysGenerator', keysGenerator.option);
+        container.register('EncryptionLayer', encryptionLayer.option as constructor<unknown>);
+        container.register('KeysGenerator', keysGenerator.option as constructor<unknown>);
         const identity = container.resolve(IdentityManager);
         return identity;
     }

@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import { container } from 'tsyringe';
+import { constructor } from 'tsyringe/dist/typings/types';
 
 import {
     ConsentInteraction,
@@ -60,7 +61,7 @@ class FactoryInteraction {
      * 
      * @param {IOption} option This parameter contains the name and class of the new implementation.
      */
-     public setOptionsIPFSManagementInteraction(option: IOption): void {
+    public setOptionsIPFSManagementInteraction(option: IOption): void {
         if (option.name.trim() === '' && option.name.trim().length === 0) {
             throw new Error('The name must have at least one character');
         }
@@ -107,9 +108,9 @@ class FactoryInteraction {
             throw new Error('The IPFSManagementInteraction type doesn\'t exist');
         }
 
-        container.register('ConsentInteraction', consent.option);
-        container.register('AccessInteraction', access.option);
-        container.register('IPFSManagementInteraction', IPFSManagement.option);
+        container.register('ConsentInteraction', consent.option as constructor<unknown>);
+        container.register('AccessInteraction', access.option as constructor<unknown>);
+        container.register('IPFSManagementInteraction', IPFSManagement.option as constructor<unknown>);
 
         const interaction: Interaction = container.resolve(Interaction);
 

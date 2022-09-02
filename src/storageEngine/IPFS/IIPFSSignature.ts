@@ -1,4 +1,4 @@
-interface IIPFSSignature {
+export interface IIpfsSignature {
     sigV: number;
     sigR: string;
     sigS: string;
