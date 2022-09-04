@@ -90,7 +90,7 @@ module.exports = {
                     'ecsign',
                     'decrypted',
                     'decrypting',
-                    'Pkcs7',
+                    'Pkcs',
                     'Utf8',
                     'passphrase',
                     'Ipfs',
@@ -100,8 +100,26 @@ module.exports = {
                     'ethereum',
                     'hdwallet',
                     'hd',
-                    'localhost'
+                    'localhost',
+                    'fs',
+                    'nock',
+                    'Za',
+                    'undef',
+                    'globals',
+                    'Uint',
+                    'keypair',
+                    'txt',
+                    'Misformed'
                 ],
+                'skipIfMatch': [
+                    '.+\.txt',
+                    '^[a-f0-9]{64}$/gi${salt}.txt',
+                    '^0x[a-fA-F0-9]{40}$',
+                    '^[0-9a-f]{5,999}$',
+                    '^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$',
+                    '.*\${salt}.txt',
+                    '([a-zA-Z]+([0-9]+[a-zA-Z]+)+)'
+                ]
             }
         ]
     }

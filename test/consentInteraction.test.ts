@@ -2,12 +2,13 @@
 
 import { FactoryInteraction, Interaction } from '../src/contractIntegration';
 import { FactoryIdentity, IdentityManager } from '../src/';
-import Web3Provider from '../src/contractIntegration/interaction/Wbe3Provider';
+import Web3Provider from '../src/contractIntegration/interaction/Web3Provider';
 import ABIConsent from './utilities/Consent.json';
 import ABIAccess from './utilities/Access.json';
 import ABIConsentResource from './utilities/Consent.json';
 import ABIIPFSManagement from './utilities/IPFSManagement.json';
 import Web3 from 'web3';
+import { AbiItem } from 'web3-utils';
 
 describe('Testing consent interaction', () => {
     let factoryInteraction: FactoryInteraction;
@@ -15,29 +16,31 @@ describe('Testing consent interaction', () => {
     let web3Provider: Web3Provider;
     let interaction: Interaction;
 
+    const consent = (Math.random() + 1).toString(36).substring(7);
+
     beforeEach(async () => {
         factoryInteraction = new FactoryInteraction();
         factoryIdentity = new FactoryIdentity();
         web3Provider = Web3Provider.getInstance();
 
         const web3 = new Web3('http://localhost:8545');
-        const consentConfig = { address: '0xD48A409F0b853EA933341366Afb79026a8b96f98', abi: ABIConsent.abi };
-        const accessConfig = { address: '0x859768B0d2ed33eCe914Fd8B6EbcAE5288fb087a', abi: ABIAccess.abi };
-        const consentResourceConfig = { address: '0xCDb2d33Ac1910BbfcDB0502Bf0d88A1c3495e967', abi: ABIConsentResource.abi };
-        const IPFSManagementConfig = { address: '0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6', abi: ABIIPFSManagement.abi };
+        const consentConfig = { address: '0x09Fe1b1A9Cd73F35945Bfdc0378c9aCC227c0DBF', abi: ABIConsent.abi as unknown as AbiItem };
+        const accessConfig = { address: '0x82E54b8B226b007704D1203f0951138338CB921F', abi: ABIAccess.abi as unknown as AbiItem };
+        const consentResourceConfig = { address: '0x639c9197aB9be745A6D2CB6cB8c2d46D7BB9A412', abi: ABIConsentResource.abi as unknown as AbiItem };
+        const IPFSManagementConfig = { address: '0xB19Fb08e183fF19989792ceD10325BF0C45CCd27', abi: ABIIPFSManagement.abi as unknown as AbiItem };
         web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
 
         interaction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
 
-        const identity: IdentityManager = factoryIdentity.generateIdentity('pgp', 'pgp');
+        const identity: IdentityManager = factoryIdentity.generateIdentity('PGP', 'PGP');
         await identity.generateIdentity();
-        identity.address = '0x751bdD89dDD33849507334d9C802a15aAE05D826';
-        identity.privateKey = '0x2bc3604040467f2db3a9a768fd1dca94d7e2d410ef4f65e6fccf0b80b9754ac2';
+        identity.address = '0x8B3921DA1090CF8de6a34dcb929Be0df53AB81Fa';
+        identity.privateKey = '0a6a24eac9cd5adf1d4b447fdc3316623d362480d6a835da70860b4d4cb0f82f';
         interaction.setIdentity(identity);
-    })
+    });
 
     test('should add a new consent', async () => {
-        const result = await interaction.consentInteraction.saveConsent('AAA1', interaction.identity);
+        const result = await interaction.consentInteraction.saveConsent(consent, interaction.identity);
         expect(result).toBe(true);
     });
 
@@ -48,8 +51,8 @@ describe('Testing consent interaction', () => {
         }).rejects.toThrow('contentID must have at least 1 character');
     });
 
-    test('should get cosent by id', async () => {
-        const resultGet = await interaction.consentInteraction.getConsentById('AAA1', interaction.identity.address, interaction.identity);
+    test('should get consent by id', async () => {
+        const resultGet = await interaction.consentInteraction.getConsentById(consent, interaction.identity.address, interaction.identity);
         expect(resultGet).toBe(true);
     });
 
@@ -69,21 +72,21 @@ describe('Testing consent interaction', () => {
 
     test('should not get a consent by id (empty owner)', async () => {
         await expect(async () => {
-            const result = await interaction.consentInteraction.getConsentById('AAA1', '', interaction.identity);
+            const result = await interaction.consentInteraction.getConsentById(consent, '', interaction.identity);
             expect(result).toBe(true);
         }).rejects.toThrow('Owner must have at least 1 character');
     });
 
     test('should not get a consent by id (invalid owner)', async () => {
         await expect(async () => {
-            const result = await interaction.consentInteraction.getConsentById('AAA1', 'invalid', interaction.identity);
+            const result = await interaction.consentInteraction.getConsentById(consent, 'invalid', interaction.identity);
             expect(result).toBe(true);
         }).rejects.toThrow('Invalid owner, the string with has a correct format.');
     });
 
     test('should add keys', async () => {
         const address = '0xbB230b6210C5E4640Cf7d3dC306Cdc5a207C92a6';
-        const resultAdd = await interaction.consentInteraction.addKey('AAA1', address, 'pk1', interaction.identity);
+        const resultAdd = await interaction.consentInteraction.addKey(consent, address, 'pk1', interaction.identity);
         expect(resultAdd).toBe(true);
 
     });
@@ -99,7 +102,7 @@ describe('Testing consent interaction', () => {
     test('should not add keys (empty addressConsent)', async () => {
         await expect(async () => {
             const address = '';
-            const result = await interaction.consentInteraction.addKey('AAA1', address, 'pk1', interaction.identity);
+            const result = await interaction.consentInteraction.addKey(consent, address, 'pk1', interaction.identity);
             expect(result).toBe(true);
         }).rejects.toThrow('AddressConsent must have at least 1 character');
     });
@@ -107,7 +110,7 @@ describe('Testing consent interaction', () => {
     test('should not add keys (invalid addressConsent)', async () => {
         await expect(async () => {
             const address = 'invalid';
-            const result = await interaction.consentInteraction.addKey('AAA1', address, 'pk1', interaction.identity);
+            const result = await interaction.consentInteraction.addKey(consent, address, 'pk1', interaction.identity);
             expect(result).toBe(true);
         }).rejects.toThrow('Invalid addressConsent, the string with has a correct format.');
     });
@@ -115,13 +118,13 @@ describe('Testing consent interaction', () => {
     test('should not add keys (empty key)', async () => {
         await expect(async () => {
             const address = '0xbB230b6210C5E4640Cf7d3dC306Cdc5a207C92a6';
-            const result = await interaction.consentInteraction.addKey('AAA1', address, '', interaction.identity);
+            const result = await interaction.consentInteraction.addKey(consent, address, '', interaction.identity);
             expect(result).toBe(true);
         }).rejects.toThrow('Key must have at least 1 character');
     });
 
     test('should get keys', async () => {
-        const result = await interaction.consentInteraction.getKeys('AAA1', interaction.identity);
+        const result = await interaction.consentInteraction.getKeys(consent, interaction.identity);
         expect(result[0][0]).toBe('0xbB230b6210C5E4640Cf7d3dC306Cdc5a207C92a6');
         expect(result[1][0]).toBe('pk1');
     });
@@ -142,7 +145,7 @@ describe('Testing consent interaction', () => {
     });
 
     test('should cancel consent', async () => {
-        const result = await interaction.consentInteraction.cancelConsent("AAA1", interaction.identity);
-        expect(result).toBe(true)
+        const result = await interaction.consentInteraction.cancelConsent(consent, interaction.identity);
+        expect(result).toBe(true);
     });
 });

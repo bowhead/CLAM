@@ -15,29 +15,31 @@ import ABIConsent from './utilities/Consent.json';
 import ABIAccess from './utilities/Access.json';
 import ABIConsentResource from './utilities/ConsentResource.json';
 import ABIIPFSManagement from './utilities/IPFSManagement.json';
-import Web3Provider from '../src/contractIntegration/interaction/Wbe3Provider';
+import Web3Provider from '../src/contractIntegration/interaction/Web3Provider';
 import { AccessInteraction, ConsentInteraction, FactoryInteraction ,Interaction } from '../src/contractIntegration';
-import nock from "nock";
+import nock from 'nock';
 import Web3 from 'web3';
+import { IContractConfig } from '../src/contractIntegration/interaction/types/IContractConfig';
+import { AbiItem } from 'web3-utils';
 
 describe('Testing document sharing', () => {
     const factoryIdentity: FactoryIdentity = new FactoryIdentity();
-    const keysGeneratos: IKeysGenerator = new KeysGeneratorPGP();
+    const keysGenerator: IKeysGenerator = new KeysGeneratorPGP();
 
-    const aesInstance: IdentityManager = factoryIdentity.generateIdentity('aes', 'pgp');
-    aesInstance.generateIdentity();
+    const AESInstance: IdentityManager = factoryIdentity.generateIdentity('AES', 'PGP');
+    AESInstance.generateIdentity();
 
-    const pgpInstance: IdentityManager = factoryIdentity.generateIdentity('pgp', 'pgp');
-    pgpInstance.generateIdentity();
+    const PGPInstance: IdentityManager = factoryIdentity.generateIdentity('PGP', 'PGP');
+    PGPInstance.generateIdentity();
 
-    const pgpInstanceToShare: IdentityManager = factoryIdentity.generateIdentity('pgp', 'pgp');
-    pgpInstanceToShare.generateIdentity();
+    const PGPInstanceToShare: IdentityManager = factoryIdentity.generateIdentity('PGP', 'PGP');
+    PGPInstanceToShare.generateIdentity();
 
     const storageEngine: IStorageEngine = new StorageEngine({
         URL: 'http://localhost:3000',
         ApiKey: 'wXW9c5NObnsrZIY1J3Tqhvz4cZ7YQrrKnbJpo9xOqJM=',
         timeout: 2000
-    })
+    });
     const documentSharing = new DocumentSharing(storageEngine);
     let firstUser : IKeys;
     let cid: string;
@@ -48,63 +50,87 @@ describe('Testing document sharing', () => {
 
     afterAll(() => {
         jest.restoreAllMocks();
-    })
+    });
 
     beforeEach(() => {
         factoryInteraction = new FactoryInteraction();
         web3Provider = Web3Provider.getInstance();
 
         const web3 = new Web3('http://localhost:8545');
-        const consentConfig = { address: '0x0E801D84Fa97b50751Dbf25036d067dCf18858bF', abi: ABIConsent.abi };
-        const accessConfig = { address: '0x5eb3Bc0a489C5A8288765d2336659EbCA68FCd00', abi: ABIAccess.abi };
-        const consentResourceConfig = { address: '0x8f86403A4DE0BB5791fa46B8e795C547942fE4Cf', abi: ABIConsentResource.abi };
-        const IPFSManagementConfig = { address: '0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6', abi: ABIIPFSManagement.abi };
+        const consentConfig:IContractConfig = { address: '0x09Fe1b1A9Cd73F35945Bfdc0378c9aCC227c0DBF', abi: ABIConsent.abi as unknown as AbiItem };
+        const accessConfig:IContractConfig = { address: '0x82E54b8B226b007704D1203f0951138338CB921F', abi: ABIAccess.abi as unknown as AbiItem };
+        const consentResourceConfig:IContractConfig = { address: '0x639c9197aB9be745A6D2CB6cB8c2d46D7BB9A412', abi: ABIConsentResource.abi as unknown as AbiItem };
+        const IPFSManagementConfig:IContractConfig = { address: '0xB19Fb08e183fF19989792ceD10325BF0C45CCd27', abi: ABIIPFSManagement.abi  as unknown as AbiItem};
         web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
 
         interaction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
 
-        aesInstance.address = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266';
-        aesInstance.privateKey = 'ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80';
+        AESInstance.address = '0x8B3921DA1090CF8de6a34dcb929Be0df53AB81Fa';
+        AESInstance.privateKey = '0a6a24eac9cd5adf1d4b447fdc3316623d362480d6a835da70860b4d4cb0f82f';
 
-        pgpInstance.address = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266';
-        pgpInstance.privateKey = 'ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80';
-        pgpInstance.privateKeySpecial = `-----BEGIN PGP PRIVATE KEY BLOCK-----\n\n
-        xYYEYwJShBYJKwYBBAHaRw8BAQdAieeepcV/Rwi+fEyC7Vg/btVIbK+sljsA\n
-        h7jc5wqHwgP+CQMI4SSA1ZunQmXgR1k7VBxWDph+WYHZaTEUlAk/FD7TDQPH\n
-        6+gFfPxjwDoi2QDUeF5LQZIiJAu2iF6hnmLlG4d6QATNS6HQDcPwz9wznWrd\n
-        G81lMHgzZmU4OWQzNTM4Njk5ZWZiYjZjMjYyNTQ2YWZlZDQ5MzQ0MTcxYTk1\n
-        IDwweDNmZTg5ZDM1Mzg2OTllZmJiNmMyNjI1NDZhZmVkNDkzNDQxNzFhOTVA\n
-        bG9jYWxob3N0LmNvbT7CjAQQFgoAHQUCYwJShAQLCQcIAxUICgQWAAIBAhkB\n
-        AhsDAh4BACEJEJg3MgXeYx2EFiEEY26Uvly3JjUkYvXSmDcyBd5jHYSUJAD7\n
-        BHICtm2d3fKRPiQeuzS9zHuSmFG9+tpJNOtak6zM2rsA/RxvYi/wITtPhzPM\n
-        QicbN8xtAqyjlSz5bjlPqOzqAVsOx4sEYwJShBIKKwYBBAGXVQEFAQEHQHrc\n
-        jzqHkGcs13B6JqSU64hSUUPIVo3xi4xvpiG6zHVxAwEIB/4JAwhRcLP5XiBl\n
-        7eAw5ZRJe8OGVRJTI/cikyck55tAwM5yXXGZQyvDoW0bzAvyIAVeYe4VoMC5\n
-        2ygjXiYuTGB/qTgVoL5uzdV8IPkZT5rDv+E3wngEGBYIAAkFAmMCUoQCGwwA\n
-        IQkQmDcyBd5jHYQWIQRjbpS+XLcmNSRi9dKYNzIF3mMdhP/tAP9m7l+5NzPn\n
-        nt//5rumqxIxmqswSpnGYJuHaWka82j/3AEA0wDpkTboL4KbSPaiVZzUKCtD\n
-        IfICvDdmN0GG8WAqVwg=\n=rQnr\n-----END PGP PRIVATE KEY BLOCK-----`
+        PGPInstance.address = '0x8B3921DA1090CF8de6a34dcb929Be0df53AB81Fa';
+        PGPInstance.privateKey = '0a6a24eac9cd5adf1d4b447fdc3316623d362480d6a835da70860b4d4cb0f82f';
+        PGPInstance.publicKeySpecial = `-----BEGIN PGP PUBLIC KEY BLOCK-----\n\n
+        xjMEYxPc1xYJKwYBBAHaRw8BAQdAISEl5yOPoIrEsNid5TrO+AsWUWVeYwf1\n
+        eVFkJTCPbMrNZTB4MWUxZjY4OTgyMjliMDhiOTY3ZGQxN2U2MTE1Zjg5MDZi\n
+        MDA4MDQzMyA8MHgxZTFmNjg5ODIyOWIwOGI5NjdkZDE3ZTYxMTVmODkwNmIw\n
+        MDgwNDMzQGxvY2FsaG9zdC5jb20+wowEEBYKAB0FAmMT3NcECwkHCAMVCAoE\n
+        FgACAQIZAQIbAwIeAQAhCRA4wRQ+4Mv5GBYhBHy3yQxDQqK36+MXmTjBFD7g\n
+        y/kYM/4A/0f2mVcSNB0iJYKSVK2E9ZT8ubB6eW+CkRb3Gvnq2IAnAQC400Wm\n
+        Vh0JHr5sr3VJMf6sH+9YOrfkQ+FEouuebtKSCc44BGMT3NcSCisGAQQBl1UB\n
+        BQEBB0B2/IRCPPEqYG4E78eT3r5X0xWyn+8+2YPu9/ZV5iVycgMBCAfCeAQY\n
+        FggACQUCYxPc1wIbDAAhCRA4wRQ+4Mv5GBYhBHy3yQxDQqK36+MXmTjBFD7g\n
+        y/kYWFEBAKS9Al6PI9IG8zLeO8y+EPTikvhNYvubUP1/BNUqbR12AP9MC7Fc\n
+        sQOpqThNHpZiQS/f0wEdlqV7j6tVimnUit1DAw==\n=xhBn\n-----END PGP PUBLIC KEY BLOCK-----`;
+        PGPInstance.privateKeySpecial = `-----BEGIN PGP PRIVATE KEY BLOCK-----\n\n
+        xYYEYxPc1xYJKwYBBAHaRw8BAQdAISEl5yOPoIrEsNid5TrO+AsWUWVeYwf1\n
+        eVFkJTCPbMr+CQMIH5LUSZBxClHgLYFtKNFfBUKxMTtmOBBEftR7CuATrLf8\n
+        SLRIoRqpXTjBCIfBtwvs1qApWOQPOJkSeTw8ocLSsf8fIUJ1hgOFPWWWxFES\n
+        Is1lMHgxZTFmNjg5ODIyOWIwOGI5NjdkZDE3ZTYxMTVmODkwNmIwMDgwNDMz\n
+        IDwweDFlMWY2ODk4MjI5YjA4Yjk2N2RkMTdlNjExNWY4OTA2YjAwODA0MzNA\n
+        bG9jYWxob3N0LmNvbT7CjAQQFgoAHQUCYxPc1wQLCQcIAxUICgQWAAIBAhkB\n
+        AhsDAh4BACEJEDjBFD7gy/kYFiEEfLfJDENCorfr4xeZOMEUPuDL+Rgz/gD/\n
+        R/aZVxI0HSIlgpJUrYT1lPy5sHp5b4KRFvca+erYgCcBALjTRaZWHQkevmyv\n
+        dUkx/qwf71g6t+RD4USi655u0pIJx4sEYxPc1xIKKwYBBAGXVQEFAQEHQHb8\n
+        hEI88SpgbgTvx5PevlfTFbKf7z7Zg+739lXmJXJyAwEIB/4JAwh3gzs8Axv8\n
+        sOBlBVssCRcdRqModA+NC6nK0JSUdaAZu2lo4j9ufJY+CFXBO77UyJDGuRnf\n
+        UhzYjQDiFphUnJYNIH4bEbeHWgLD/mtm9trawngEGBYIAAkFAmMT3NcCGwwA\n
+        IQkQOMEUPuDL+RgWIQR8t8kMQ0Kit+vjF5k4wRQ+4Mv5GFhRAQCkvQJejyPS\n
+        BvMy3jvMvhD04pL4TWL7m1D9fwTVKm0ddgD/TAuxXLEDqak4TR6WYkEv39MB\n
+        HZale4+rVYpp1IrdQwM=\n=P8nQ\n-----END PGP PRIVATE KEY BLOCK-----`;
 
-        pgpInstanceToShare.address = '0x70997970C51812dc3A010C7d01b50e0d17dc79C8';
-        pgpInstanceToShare.privateKey = '59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d';
-        pgpInstanceToShare.privateKeySpecial = `-----BEGIN PGP PRIVATE KEY BLOCK-----\n\n
-        xYYEYwJShBYJKwYBBAHaRw8BAQdAieeepcV/Rwi+fEyC7Vg/btVIbK+sljsA\n
-        h7jc5wqHwgP+CQMI4SSA1ZunQmXgR1k7VBxWDph+WYHZaTEUlAk/FD7TDQPH\n
-        6+gFfPxjwDoi2QDUeF5LQZIiJAu2iF6hnmLlG4d6QATNS6HQDcPwz9wznWrd\n
-        G81lMHgzZmU4OWQzNTM4Njk5ZWZiYjZjMjYyNTQ2YWZlZDQ5MzQ0MTcxYTk1\n
-        IDwweDNmZTg5ZDM1Mzg2OTllZmJiNmMyNjI1NDZhZmVkNDkzNDQxNzFhOTVA\n
-        bG9jYWxob3N0LmNvbT7CjAQQFgoAHQUCYwJShAQLCQcIAxUICgQWAAIBAhkB\n
-        AhsDAh4BACEJEJg3MgXeYx2EFiEEY26Uvly3JjUkYvXSmDcyBd5jHYSUJAD7\n
-        BHICtm2d3fKRPiQeuzS9zHuSmFG9+tpJNOtak6zM2rsA/RxvYi/wITtPhzPM\n
-        QicbN8xtAqyjlSz5bjlPqOzqAVsOx4sEYwJShBIKKwYBBAGXVQEFAQEHQHrc\n
-        jzqHkGcs13B6JqSU64hSUUPIVo3xi4xvpiG6zHVxAwEIB/4JAwhRcLP5XiBl\n
-        7eAw5ZRJe8OGVRJTI/cikyck55tAwM5yXXGZQyvDoW0bzAvyIAVeYe4VoMC5\n
-        2ygjXiYuTGB/qTgVoL5uzdV8IPkZT5rDv+E3wngEGBYIAAkFAmMCUoQCGwwA\n
-        IQkQmDcyBd5jHYQWIQRjbpS+XLcmNSRi9dKYNzIF3mMdhP/tAP9m7l+5NzPn\n
-        nt//5rumqxIxmqswSpnGYJuHaWka82j/3AEA0wDpkTboL4KbSPaiVZzUKCtD\n
-        IfICvDdmN0GG8WAqVwg=\n=rQnr\n-----END PGP PRIVATE KEY BLOCK-----`
+        PGPInstanceToShare.address = '0x93120bA8FBb9eF2f6744C7d50803A4390E4eF961';
+        PGPInstanceToShare.privateKey = '41582c42e41141d40b2e42ec53252a4f31a849758a115df2b8eb94fc1abfcc54';
+        PGPInstanceToShare.publicKeySpecial = `-----BEGIN PGP PUBLIC KEY BLOCK-----\n\n
+        xjMEYxPc1xYJKwYBBAHaRw8BAQdAISEl5yOPoIrEsNid5TrO+AsWUWVeYwf1\n
+        eVFkJTCPbMrNZTB4MWUxZjY4OTgyMjliMDhiOTY3ZGQxN2U2MTE1Zjg5MDZi\n
+        MDA4MDQzMyA8MHgxZTFmNjg5ODIyOWIwOGI5NjdkZDE3ZTYxMTVmODkwNmIw\n
+        MDgwNDMzQGxvY2FsaG9zdC5jb20+wowEEBYKAB0FAmMT3NcECwkHCAMVCAoE\n
+        FgACAQIZAQIbAwIeAQAhCRA4wRQ+4Mv5GBYhBHy3yQxDQqK36+MXmTjBFD7g\n
+        y/kYM/4A/0f2mVcSNB0iJYKSVK2E9ZT8ubB6eW+CkRb3Gvnq2IAnAQC400Wm\n
+        Vh0JHr5sr3VJMf6sH+9YOrfkQ+FEouuebtKSCc44BGMT3NcSCisGAQQBl1UB\n
+        BQEBB0B2/IRCPPEqYG4E78eT3r5X0xWyn+8+2YPu9/ZV5iVycgMBCAfCeAQY\n
+        FggACQUCYxPc1wIbDAAhCRA4wRQ+4Mv5GBYhBHy3yQxDQqK36+MXmTjBFD7g\n
+        y/kYWFEBAKS9Al6PI9IG8zLeO8y+EPTikvhNYvubUP1/BNUqbR12AP9MC7Fc\n
+        sQOpqThNHpZiQS/f0wEdlqV7j6tVimnUit1DAw==\n=xhBn\n-----END PGP PUBLIC KEY BLOCK-----`;
+        PGPInstanceToShare.privateKeySpecial = `-----BEGIN PGP PRIVATE KEY BLOCK-----\n\n
+        xYYEYxPc1xYJKwYBBAHaRw8BAQdAISEl5yOPoIrEsNid5TrO+AsWUWVeYwf1\n
+        eVFkJTCPbMr+CQMIH5LUSZBxClHgLYFtKNFfBUKxMTtmOBBEftR7CuATrLf8\n
+        SLRIoRqpXTjBCIfBtwvs1qApWOQPOJkSeTw8ocLSsf8fIUJ1hgOFPWWWxFES\n
+        Is1lMHgxZTFmNjg5ODIyOWIwOGI5NjdkZDE3ZTYxMTVmODkwNmIwMDgwNDMz\n
+        IDwweDFlMWY2ODk4MjI5YjA4Yjk2N2RkMTdlNjExNWY4OTA2YjAwODA0MzNA\n
+        bG9jYWxob3N0LmNvbT7CjAQQFgoAHQUCYxPc1wQLCQcIAxUICgQWAAIBAhkB\n
+        AhsDAh4BACEJEDjBFD7gy/kYFiEEfLfJDENCorfr4xeZOMEUPuDL+Rgz/gD/\n
+        R/aZVxI0HSIlgpJUrYT1lPy5sHp5b4KRFvca+erYgCcBALjTRaZWHQkevmyv\n
+        dUkx/qwf71g6t+RD4USi655u0pIJx4sEYxPc1xIKKwYBBAGXVQEFAQEHQHb8\n
+        hEI88SpgbgTvx5PevlfTFbKf7z7Zg+739lXmJXJyAwEIB/4JAwh3gzs8Axv8\n
+        sOBlBVssCRcdRqModA+NC6nK0JSUdaAZu2lo4j9ufJY+CFXBO77UyJDGuRnf\n
+        UhzYjQDiFphUnJYNIH4bEbeHWgLD/mtm9trawngEGBYIAAkFAmMT3NcCGwwA\n
+        IQkQOMEUPuDL+RgWIQR8t8kMQ0Kit+vjF5k4wRQ+4Mv5GFhRAQCkvQJejyPS\n
+        BvMy3jvMvhD04pL4TWL7m1D9fwTVKm0ddgD/TAuxXLEDqak4TR6WYkEv39MB\n
+        HZale4+rVYpp1IrdQwM=\n=P8nQ\n-----END PGP PRIVATE KEY BLOCK-----`;
 
-        interaction.setIdentity(aesInstance);
+        interaction.setIdentity(AESInstance);
     });
 
     test('Should add new encrypted file', async () => {
@@ -112,17 +138,17 @@ describe('Testing document sharing', () => {
         nock('http://localhost:3000')
             .post('/file')
             .reply(200, {
-                    CID: 'fe5c3e7fa0f43b8cbfed5e69c9a19c722c1900ff893ce7fa6b40646b88e46f48.txt'
-            })
+                CID: 'fe5c3e7fa0f43b8cbfed5e69c9a19c722c1900ff893ce7fa6b40646b88e46f48.txt'
+            });
 
         const options = {
-            file: fs.createReadStream(path.resolve(__dirname, './resources/test.txt')),
+            file: fs.readFileSync(path.resolve(__dirname, './resources/test.txt')).toString('base64'),
             fileName: 'test.txt',
             contractInteraction: interaction,
             consentId: 'AAA1'
         };
              
-        cid = await documentSharing.saveFile(aesInstance, options);
+        cid = await documentSharing.saveFile(AESInstance, options);
 
         expect(cid).not.toBe('');
     });
@@ -130,29 +156,29 @@ describe('Testing document sharing', () => {
     test('Should get encrypted file', async () => {
         nock('http://localhost:3000')
             .get('/file')
-            .query({ address: aesInstance.address, cid: cid })
+            .query({ address: AESInstance.address, cid: cid })
             .reply(200, {
-                    file: 'ZTE3YmUzZGUzYTg0MDQ0OWM5MGM2YTRhYTVkZGI2YmZkODdlNzQxZmE0M2M3ZDc4NDQwNjdlOTcyOWRjYTllY2R1b3o5bGxEUW1aSmUvRGI2d1hiK3c9PQ=='
-            })
+                file: 'NGVjN2YxNDRmNjkyNzI0Mzk5YjdjYmYxYjIxZWUxMDJkMWExMDdmNDcxMWVhNDlkMzRhOWQ5OWMxMDljZTM2YlBXUStaY3FuYW4xb2tXTzJMNTdBN1E9PQ=='
+            });
 
         const options = {
             cid: cid
-        }
+        };
 
-        const file = await documentSharing.getFile(aesInstance, options);
-
-        expect(Buffer.from(file, 'base64').toString()).toBe('testv10');
+        const file = await documentSharing.getFile(AESInstance, options);
+        
+        expect(Buffer.from(file, 'base64').toString()).toBe('testV10');
     });
 
     test('Should update an encrypted file', async() => {
         const options = {
-            file: fs.createReadStream(path.resolve(__dirname, './resources/testUpdate.txt')),
+            file: fs.readFileSync(path.resolve(__dirname, './resources/testUpdate.txt')).toString('base64'),
             cid: cid
         };
 
         nock('http://localhost:3000')
             .get('/challenge')
-            .query({ address: aesInstance.address })
+            .query({ address: AESInstance.address })
             .reply(200, {
                 'hash': '71baf499ea88cf4c4cf06b9480e48ffae11e987e49f0d6a6c7061f4f02a4b0d2'
             });
@@ -161,7 +187,7 @@ describe('Testing document sharing', () => {
             .put('/file')
             .reply(200);
 
-        await documentSharing.updateFile(aesInstance, options);
+        await documentSharing.updateFile(AESInstance, options);
         
         const getOptions = {
             cid: cid
@@ -169,181 +195,164 @@ describe('Testing document sharing', () => {
 
         nock('http://localhost:3000')
             .get('/file')
-            .query({ address: aesInstance.address, cid: cid })
+            .query({ address: AESInstance.address, cid: cid })
             .reply(200, {
-                file: 'NWNiMmU4NzBlNWVhYmJiZWE1ZmViN2ZhZGYyNWU1NzE1ZWNhMGUxZTJjMjE5NDI1NWU1Zjk0YmYzNDVjMjg0M1ZaNG9JbEZQdmorTEluZ3VQaUhUMVE9PQ=='
+                file: 'MjViNjEzYzRkZGUxMDg2MzgyMzE2OWMyZmIwYTEzMmQyZDNiMGNhNTRjMjQwMzg2N2IxOGFkOWVkNjcyMWQ0YXNVWnIrSGIrbmE1WUVLTXVPWUVWdlE9PQ=='
             });
 
-        const file = await documentSharing.getFile(aesInstance, getOptions);
+        const file = await documentSharing.getFile(AESInstance, getOptions);
 
-        expect(Buffer.from(file, 'base64').toString()).toBe('testv11');
-    })
+        expect(Buffer.from(file, 'base64').toString()).toBe('testV11');
+    });
 
     test('Should shared an encrypted file if the consent is approved', async () => {
         nock('http://localhost:3000')
             .post('/file')
             .reply(200, {
-                    CID: 'fe5c3e7fa0f43b8cbfed5e69c9a19c722c1900ff893ce7fa6b40646b88e46f48.txt'
-            })
+                CID: 'fe5c3e7fa0f43b8cbfed5e69c9a19c722c1900ff893ce7fa6b40646b88e46f48.txt'
+            });
 
-        firstUser = await keysGeneratos.generateKeys({ name: 'first', email: 'first@email.com' });
+        firstUser = await keysGenerator.generateKeys({ name: 'first', email: 'first@email.com' });
 
-        const pgpKeys = `${pgpInstanceToShare.publicKeySpecial},${firstUser.publicKey}`;
+        const PGPKeys = `${PGPInstanceToShare.publicKeySpecial},${firstUser.publicKey}`;
 
         const options = {
-            file: fs.createReadStream(path.resolve(__dirname, './resources/test.txt')),
+            file: fs.readFileSync(path.resolve(__dirname, './resources/test.txt')).toString('base64'),
             fileName: 'test.txt',
             contractInteraction: interaction,
             consentId: 'AAA1'
-        }
+        };
 
-        cidShared = await documentSharing.sharedFile(pgpInstance, options, pgpKeys);
+        cidShared = await documentSharing.sharedFile(PGPInstance, options, PGPKeys);
 
         expect(cidShared).not.toBe('');
 
         jest.spyOn(AccessInteraction.prototype, 'giveAccess').mockImplementation(async() => await true);
-        await interaction.acccessInteraction.giveAccess(cidShared, 'AAA1', [pgpInstanceToShare.address], 'test.txt', pgpInstance);
+        await interaction.accessInteraction.giveAccess(cidShared, 'AAA1', [PGPInstanceToShare.address], 'test.txt', PGPInstance);
 
         nock('http://localhost:3000')
             .get('/file')
-            .query({ address: pgpInstance.address, cid: cidShared })
+            .query({ address: PGPInstance.address, cid: cidShared })
             .reply(200, {
-                file: 'LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgp3VjREOXNlYlo4cTN2UzRTQVFkQXFOVjJJbE14REhTTUFWVjRTN0lPeEVqbEpzZS9XejIyQjluZHZQSWgKMnlNd2xPc2NzRWVwQ0VjNXFaT3hjOElOcnA1Snh1Z3ArbkU2bGh2aHFPYzRNdTJKblB3ZG1Bd3h5d3F5CnppbWlER3dld1Y0RHNER05FdDhmMlY4U0FRZEFkQXZyalVGdGdKS2RlMDJ0QzJEUkswZXA2RWcwMnZIYworQzVPeTBpTUZpWXdCbTFsY3lwYnBhajJ1a01TYzlvTkUvcXdlYzZLZmVjdnl3cWs3S2pSZzltdXJoN1YKalBDM3IyMHFHd1lJR3E4MXdWNERHZHdsWnB6cVo5OFNBUWRBR1czUC9lS0wxZ2lFQjFYdFZnZ2E1ZmxXCkVkaytoS0tPZzNQcE4rSXZvbTB3ZGpXSFZBbFFRVzBremxUYndwZC9HOXpWVi9WRFpQRlJyQmF3RVhsZQo0RTBEdlRYVU8zRDVLRkRyVnJFeStCSVUwajBCQlFtUXZBY1hYeURTcEJManNzUFF2K2ZpUnZzSzhjNDAKb2x3Z1ZVT1QxSkxiTGlEayt5RmZXcEJGZmFIa3R6WU01RlR6SHZFbXRZZXVFYTU2Cj1vaFh3Ci0tLS0tRU5EIFBHUCBNRVNTQUdFLS0tLS0K'
-            })
+                file: 'LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgp3VjRESkk3TXhsV3d5dk1TQVFkQUNKUytLL2RBbE1MMmRncm1UYjZjT1ZoSTZXQXhCWE9uTnA0UFdLMHcKcEZRd1JxUVJ4NFlDNXF1T3BoSng0WExXMGRjamplTlVlYklBVEdScUlEbCtXRjY0M3VFZ01ENzV2UmxTCmhsV3BIN0pZd1Y0REpBWGdPNThPQ1E0U0FRZEE1QzVacGd1QmI3VGs4dW5IKzlPellkVGc5MXp3MWNrQgp0QzFtL2pzdkZtOHdDWXdWdU9qQ1M4SXJSU25OejlQN0k2SHRxNVF1a1VwR3R4ZERuTjFXbUR4UlRPSGEKdmVOaWtKVGRlcjJYTEtHT3dWNERKSTdNeGxXd3l2TVNBUWRBRFlTR0luWDF4SDdwQmxxVHBCd3RtWWhWCmVDV3NCeThnSGE1Z1F4UUw2RlV3aitXTFpWY01neElpY3NLd01QbUVrT3NXQS9FSi85TW1sbkYvN2U1cgp6NHFDQ0JRbTAzMjR1MEpTZzN2cXlHOFAwajBCTE5hYyt3enVna1RRRWRKOEl2YWd4NlFJQ0JwOUZkV08KS2gzcXRCekNUSzRGeXRpTDUxbE40VGswR1IyRHBMeTQ2bmJwSkZvaThJRmFWQytxCj0rWXFPCi0tLS0tRU5EIFBHUCBNRVNTQUdFLS0tLS0K'
+            });
 
         const getOptions = {
             cid: cidShared,
-            owner: pgpInstance.address,
+            owner: PGPInstance.address,
             contractInteraction: interaction,
             consentId: 'AAA1'
-        }
+        };
         jest.spyOn(AccessInteraction.prototype, 'checkAccess').mockImplementation(async() => await true);
-        const file = await documentSharing.getSharedFile(pgpInstance, getOptions);
+        const file = await documentSharing.getSharedFile(PGPInstance, getOptions);
 
-        expect(Buffer.from(file, 'base64').toString()).toBe('testv10');
+        expect(Buffer.from(file, 'base64').toString()).toBe('testV10');
     });
 
     test('Should get shared file if user is added on list to shared', async () => {
         nock('http://localhost:3000')
             .get('/file')
-            .query({ address: pgpInstance.address, cid: cidShared })
+            .query({ address: PGPInstance.address, cid: cidShared })
             .reply(200, {
-                file: 'LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgp3VjREOXNlYlo4cTN2UzRTQVFkQXFOVjJJbE14REhTTUFWVjRTN0lPeEVqbEpzZS9XejIyQjluZHZQSWgKMnlNd2xPc2NzRWVwQ0VjNXFaT3hjOElOcnA1Snh1Z3ArbkU2bGh2aHFPYzRNdTJKblB3ZG1Bd3h5d3F5CnppbWlER3dld1Y0RHNER05FdDhmMlY4U0FRZEFkQXZyalVGdGdKS2RlMDJ0QzJEUkswZXA2RWcwMnZIYworQzVPeTBpTUZpWXdCbTFsY3lwYnBhajJ1a01TYzlvTkUvcXdlYzZLZmVjdnl3cWs3S2pSZzltdXJoN1YKalBDM3IyMHFHd1lJR3E4MXdWNERHZHdsWnB6cVo5OFNBUWRBR1czUC9lS0wxZ2lFQjFYdFZnZ2E1ZmxXCkVkaytoS0tPZzNQcE4rSXZvbTB3ZGpXSFZBbFFRVzBremxUYndwZC9HOXpWVi9WRFpQRlJyQmF3RVhsZQo0RTBEdlRYVU8zRDVLRkRyVnJFeStCSVUwajBCQlFtUXZBY1hYeURTcEJManNzUFF2K2ZpUnZzSzhjNDAKb2x3Z1ZVT1QxSkxiTGlEayt5RmZXcEJGZmFIa3R6WU01RlR6SHZFbXRZZXVFYTU2Cj1vaFh3Ci0tLS0tRU5EIFBHUCBNRVNTQUdFLS0tLS0K'
-            })
+                file: 'LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgp3VjRESkk3TXhsV3d5dk1TQVFkQUNKUytLL2RBbE1MMmRncm1UYjZjT1ZoSTZXQXhCWE9uTnA0UFdLMHcKcEZRd1JxUVJ4NFlDNXF1T3BoSng0WExXMGRjamplTlVlYklBVEdScUlEbCtXRjY0M3VFZ01ENzV2UmxTCmhsV3BIN0pZd1Y0REpBWGdPNThPQ1E0U0FRZEE1QzVacGd1QmI3VGs4dW5IKzlPellkVGc5MXp3MWNrQgp0QzFtL2pzdkZtOHdDWXdWdU9qQ1M4SXJSU25OejlQN0k2SHRxNVF1a1VwR3R4ZERuTjFXbUR4UlRPSGEKdmVOaWtKVGRlcjJYTEtHT3dWNERKSTdNeGxXd3l2TVNBUWRBRFlTR0luWDF4SDdwQmxxVHBCd3RtWWhWCmVDV3NCeThnSGE1Z1F4UUw2RlV3aitXTFpWY01neElpY3NLd01QbUVrT3NXQS9FSi85TW1sbkYvN2U1cgp6NHFDQ0JRbTAzMjR1MEpTZzN2cXlHOFAwajBCTE5hYyt3enVna1RRRWRKOEl2YWd4NlFJQ0JwOUZkV08KS2gzcXRCekNUSzRGeXRpTDUxbE40VGswR1IyRHBMeTQ2bmJwSkZvaThJRmFWQytxCj0rWXFPCi0tLS0tRU5EIFBHUCBNRVNTQUdFLS0tLS0K'
+            });
 
         const options = {
             cid: cidShared,
-            owner: pgpInstance.address,
+            owner: PGPInstance.address,
             contractInteraction: interaction,
             consentId: 'AAA1'
-        }
+        };
 
-        const file = await documentSharing.getSharedFile(pgpInstanceToShare, options);
+        const file = await documentSharing.getSharedFile(PGPInstanceToShare, options);
 
-        expect(Buffer.from(file, 'base64').toString()).toBe('testv10');
+        expect(Buffer.from(file, 'base64').toString()).toBe('testV10');
     });
 
     test('Should not get shared file if the identity is not on list to shared', async () => {
-        try {
-            nock('http://localhost:3000')
+        nock('http://localhost:3000')
             .get('/file')
-            .query({ address: pgpInstance.address, cid: cidShared })
+            .query({ address: PGPInstance.address, cid: cidShared })
             .reply(200, {
-                file: 'LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgp3VjREK0N3dUxRbWRnL0lTQVFkQS8vMXFrbVFFaHlIeWNlQXIzc0xyZCtoZXVvTWU2djEwR29kendpbFQKd1Fzd3g5NGtXa3NOY0tNTkM3aFlTSEZFeTRpME5pMU1HOGdXU0U3YUtCNmxJQnB4SGpUZU1raERUMWRVCjdCQ1NLRWRpd1Y0RDF6aHpTbU96Z0lnU0FRZEF5VXdpUVJvb0wrZnR4Z1FXdG9YaGJ1d1h0OVdhazRIYQphN05kUWJnOGFDWXdkODZzZ1dFRW13cmFqakg2NFBkRThvNWR1ay9zZXJwV3pLWWFTV2cwRUVhWFFCYU0KUFI2QTRIYllSZi9LT0tRa3dWNERsaE1sNEw0NkJFQVNBUWRBaUR6dVJGWnRtWEhUYjVrY1lJRm9lMXhtCmtJdC9sdHVKMVdiSVNYUGRUakF3VTJiek1pbm1uNDVRczBWbzZNMWE4NWo3c2Z1UTNzVEJwREd1Y21ySwpDSnJJT1FxQ2tzV1BUbkRDb1VxV2dnMGIwajBCTUZJYnlHSzFsMjNKTVUyTUZ1SFZxeXRLQXI1b3NFZk0KWjdnRlZkWVpOVTIxQ1U3TWVLSEdvems1UDVhOWpTbzV3VGFSZ01vaTNQanVQN3BOCj1WMGV0Ci0tLS0tRU5EIFBHUCBNRVNTQUdFLS0tLS0K'
-            })
+                file: 'LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgp3VjRESkk3TXhsV3d5dk1TQVFkQUNKUytLL2RBbE1MMmRncm1UYjZjT1ZoSTZXQXhCWE9uTnA0UFdLMHcKcEZRd1JxUVJ4NFlDNXF1T3BoSng0WExXMGRjamplTlVlYklBVEdScUlEbCtXRjY0M3VFZ01ENzV2UmxTCmhsV3BIN0pZd1Y0REpBWGdPNThPQ1E0U0FRZEE1QzVacGd1QmI3VGs4dW5IKzlPellkVGc5MXp3MWNrQgp0QzFtL2pzdkZtOHdDWXdWdU9qQ1M4SXJSU25OejlQN0k2SHRxNVF1a1VwR3R4ZERuTjFXbUR4UlRPSGEKdmVOaWtKVGRlcjJYTEtHT3dWNERKSTdNeGxXd3l2TVNBUWRBRFlTR0luWDF4SDdwQmxxVHBCd3RtWWhWCmVDV3NCeThnSGE1Z1F4UUw2RlV3aitXTFpWY01neElpY3NLd01QbUVrT3NXQS9FSi85TW1sbkYvN2U1cgp6NHFDQ0JRbTAzMjR1MEpTZzN2cXlHOFAwajBCTE5hYyt3enVna1RRRWRKOEl2YWd4NlFJQ0JwOUZkV08KS2gzcXRCekNUSzRGeXRpTDUxbE40VGswR1IyRHBMeTQ2bmJwSkZvaThJRmFWQytxCj0rWXFPCi0tLS0tRU5EIFBHUCBNRVNTQUdFLS0tLS0K'
+            });
 
-            const instance: IdentityManager = factoryIdentity.generateIdentity('pgp', 'pgp');
-            instance.generateIdentity();
+        const instance: IdentityManager = factoryIdentity.generateIdentity('PGP', 'PGP');
+        instance.generateIdentity();
 
-            const options = {
-                cid: cidShared,
-                owner: pgpInstance.address,
-                contractInteraction: interaction,
-                consentId: 'AAA1'
-            };
+        const options = {
+            cid: cidShared,
+            owner: PGPInstance.address,
+            contractInteraction: interaction,
+            consentId: 'AAA1'
+        };
 
-            await documentSharing.getSharedFile(instance, options);
-        } catch (error) {
-            expect(error).toBeInstanceOf(Error);
-            expect([
-                `Error decrypting message: Session key decryption failed.`,
-                `Returned error: Error: VM Exception while processing transaction: reverted with reason string 'You don't have permission over this resource'`
-            ]).toContain(error.message);
-        }
+        jest.spyOn(AccessInteraction.prototype, 'checkAccess').mockImplementation(async () => Promise.reject(new Error('Returned error: Error: VM Exception while processing transaction: reverted with reason string \'You don\'t have permission over this resource\'')));
+        await expect(documentSharing.getSharedFile(instance, options)).rejects.toThrow('Returned error: Error: VM Exception while processing transaction: reverted with reason string \'You don\'t have permission over this resource\'');
     });
 
     test('Should not shared an encrypted file if the consent is not approved', async () => {
-        try {
-            firstUser = await keysGeneratos.generateKeys({ name: 'first', email: 'first@email.com' });
+        try{
+            firstUser = await keysGenerator.generateKeys({ name: 'first', email: 'first@email.com' });
 
-            const pgpKeys = `${pgpInstanceToShare.publicKeySpecial},${firstUser.publicKey}`;
+            const PGPKeys = `${PGPInstanceToShare.publicKeySpecial},${firstUser.publicKey}`;
 
             const options = {
-                file: fs.createReadStream(path.resolve(__dirname, './resources/test.txt')),
+                file: fs.readFileSync(path.resolve(__dirname, './resources/test.txt')).toString('base64'),
                 fileName: 'test.txt',
                 contractInteraction: interaction,
                 consentId: 'AAA2'
-            }
+            };
 
-            jest.spyOn(ConsentInteraction.prototype, 'getConsentById').mockImplementation(async () => Promise.reject(new Error(`Returned error: Error: VM Exception while processing transaction: reverted with reason string 'Consent not registered'`)));
-            cidShared = await documentSharing.sharedFile(pgpInstance, options, pgpKeys);
+            jest.spyOn(ConsentInteraction.prototype, 'getConsentById').mockImplementation(async () => Promise.reject(new Error('Returned error: Error: VM Exception while processing transaction: reverted with reason string \'Consent not registered\'')));
+            cidShared = await documentSharing.sharedFile(PGPInstance, options, PGPKeys);
 
             expect(cidShared).not.toBe('');
 
             const getOptions = {
                 cid: cidShared,
-                owner: pgpInstance.address
-            }
+                owner: PGPInstance.address
+            };
 
-            await documentSharing.getSharedFile(pgpInstance, getOptions);
+            await documentSharing.getSharedFile(PGPInstance, getOptions);
         } catch (error) {
             expect(error).toBeInstanceOf(Error);
-            expect(error.message).toBe(`Returned error: Error: VM Exception while processing transaction: reverted with reason string 'Consent not registered'`);
+            expect((error as Error).message).toBe('Returned error: Error: VM Exception while processing transaction: reverted with reason string \'Consent not registered\'');
         }
     });
 
     test('Should not get an encrypted file when the identity does not own the file', async () => {
-        try {
-            const instance: IdentityManager = factoryIdentity.generateIdentity('pgp', 'pgp');
-            instance.generateIdentity();
+        const instance: IdentityManager = factoryIdentity.generateIdentity('PGP', 'PGP');
+        instance.generateIdentity();
 
-            nock('http://localhost:3000')
+        nock('http://localhost:3000')
             .get('/file')
             .query({ address: instance.address, cid: cid })
             .reply(404, {
                 message: 'File not found'
-            })
+            });
 
-            const options = {
-                cid: cid
-            };
-            
-            await documentSharing.getFile(instance, options);
-        } catch (error) {
-            expect(error).toBeInstanceOf(Error);
-            expect(error.response.data.message).toBe('File not found');
-        }
+        const options = {
+            cid: cid
+        };
+        
+        await expect(documentSharing.getFile(instance, options)).rejects.toThrow('Request failed with status code 404');
     });
 
     test('Should not add new encrypted file if consent is not approved', async () => {
-        try {
-            nock('http://localhost:3000')
+        nock('http://localhost:3000')
             .post('/file')
             .reply(200, {
-                    CID: 'fe5c3e7fa0f43b8cbfed5e69c9a19c722c1900ff893ce7fa6b40646b88e46f48.txt'
-            })
+                CID: 'fe5c3e7fa0f43b8cbfed5e69c9a19c722c1900ff893ce7fa6b40646b88e46f48.txt'
+            });
 
-            const options = {
-                file: fs.createReadStream(path.resolve(__dirname, './resources/test.txt')),
-                fileName: 'test.txt',
-                contractInteraction: interaction,
-                consentId: 'AAA2'
-            };
-                 
-            await documentSharing.saveFile(aesInstance, options);   
-        } catch (error) {
-            expect(error).toBeInstanceOf(Error);
-            expect(error.message).toBe(`Returned error: Error: VM Exception while processing transaction: reverted with reason string 'Consent not registered'`);
-        }
+        const options = {
+            file: fs.createReadStream(path.resolve(__dirname, './resources/test.txt')),
+            fileName: 'test.txt',
+            contractInteraction: interaction,
+            consentId: 'AAA2'
+        };
+                
+        await expect(documentSharing.saveFile(AESInstance, options)).rejects.toThrow('Returned error: Error: VM Exception while processing transaction: reverted with reason string \'Consent not registered\'');
     });
 });
