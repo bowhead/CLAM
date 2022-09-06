@@ -1,5 +1,5 @@
 # CLAM
-=========================
+
 ## About
 
 CLAM stands for Consent and Content Access Management Library. It is a users' data privacy first and extensible tool that abstracts the complexity of different technologies, like blockchain and IPFS. 
@@ -68,6 +68,7 @@ Generate your identity in **Javascript**
 
 ```js
 const  { IdentityManager, ShareableIdentity }  =  require("bowhead-clam");
+
 const  generateIdentityMethod  =  async  ()  =>  {
 	console.log("\n-->This is the implementation of generateIdentity method<--");
 	try  {
@@ -211,249 +212,346 @@ const  decryptDataMethod  =  async  ()  =>  {
 ```
 
 ### How to accept a consent
+Load modules, create instances and initialized them.
 ```js
+// Load Web3Provider, FactoryIdentity and FactoryInteraction modules
 import { Web3Provider, FactoryIdentity, FactoryInteraction } from 'bowhead-clam';
+// Load Web3 library
 import Web3 from 'web3';
 
+// Create  new FactoryIdentity instance
 const factoryIdentity = new FactoryIdentity();
-
+// Create new FactoryInteraction instance
 const factoryInteraction = new FactoryInteraction();
+// Create instance to interact with smart contracts
+const cotractInteraction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
 
-const cotractInteraction = factoryInteraction.generateInteraction("clam", "clam", "clam");
+// Get identity instance that will use Open PGP to encrypt files
+const identity = factoryIdentity.generateIdentity('PGP', 'PGP');
 
-const identity = factoryIdentity.generateIdentity('pgp', 'pgp');
-
+// Generate identity info
 identity.generateIdentity();
 
+// Get web3 provider instance
 const web3Provider = Web3Provider.getInstance();
 ```
 
+Set Web3 provider configuration.
 ```js
+// Set provider
 const web3 = new Web3(urlProvider);
 
+// Set address and ABI for Consent contract
 const consentConfig = { address: '0x09Fe1b1A9Cd73F35945Bfdc0378c9aCC227c0DBF', abi: ABIConsent };
+// Set address and ABI for Access contract
 const accessConfig = { address: '0x82E54b8B226b007704D1203f0951138338CB921F', abi: ABIAccess };
+// Set address and ABI for Consent Resource contract
 const consentResourceConfig = { address: '0x639c9197aB9be745A6D2CB6cB8c2d46D7BB9A412', abi: ABIConsentResource };
+// Set address and ABI for IPFS management contract
 const IPFSManagementConfig = { address: '0xB19Fb08e183fF19989792ceD10325BF0C45CCd27', abi: ABIIPFSManagement };
 
+// Set Web3 provider configuration
 web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
 ```
 
+Save consent approval.
 ```js
+// Consent identifier
 const consentId = 'AAA1'
 
+// Call saveConsent that it's contained in consentInteraction
 await interaction.consentInteraction.saveConsent(consentId, identity);
 ```
 
 ### How to share a document with other accounts
+Load modules, create instances and initialized them.
 ```js
+// Load Web3Provider, FactoryIdentity and FactoryInteraction modules
 import { Web3Provider, FactoryIdentity, FactoryInteraction } from 'bowhead-clam';
+// Load Web3 library
 import Web3 from 'web3';
 
+// Create  new FactoryIdentity instance
 const factoryIdentity = new FactoryIdentity();
-
+// Create new FactoryInteraction instance
 const factoryInteraction = new FactoryInteraction();
-
+// Create instance to interact with smart contracts
 const cotractInteraction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
 
+// Get identity instance that will use Open PGP to encrypt files
 const identity = factoryIdentity.generateIdentity('PGP', 'PGP');
 
+// Generate identity info
 identity.generateIdentity();
 
+// Get web3 provider instance
 const web3Provider = Web3Provider.getInstance();
 ```
 
+Set Web3 provider configuration.
 ```js
+// Set provider
 const web3 = new Web3(urlProvider);
 
+// Set address and ABI for Consent contract
 const consentConfig = { address: '0x09Fe1b1A9Cd73F35945Bfdc0378c9aCC227c0DBF', abi: ABIConsent };
+// Set address and ABI for Access contract
 const accessConfig = { address: '0x82E54b8B226b007704D1203f0951138338CB921F', abi: ABIAccess };
+// Set address and ABI for Consent Resource contract
 const consentResourceConfig = { address: '0x639c9197aB9be745A6D2CB6cB8c2d46D7BB9A412', abi: ABIConsentResource };
+// Set address and ABI for IPFS management contract
 const IPFSManagementConfig = { address: '0xB19Fb08e183fF19989792ceD10325BF0C45CCd27', abi: ABIIPFSManagement };
 
+// Set Web3 provider configuration
 web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
 ```
 
+Add new user to allowed list to share documents by consent.
 ```js
+// Consent Identifier
 const consentId = 'AAA1'
+// Address of the user to add
 const addressUserToShare = '0x93120bA8FBb9eF2f6744C7d50803A4390E4eF961'
+// PGP public key of the user to add
 const publicPGPKeyUserToShare = '-----BEGIN PGP PUBLIC KEY BLOCK----- ...'
 
-
+// Call addKey that it's contained in consentInteraction
 await interaction.consentInteraction.addKey(consentId, addressUserToShare, publicPGPKeyUserToShare, identity);
 ```
 
 ### How to decrypt a shared document by other account
+Load modules, create instances and initialized them.
 ```js
+// Load Web3Provider, FactoryIdentity, FactoryInteraction, StorageEngine and DocumentSharing modules
 import { Web3Provider, FactoryIdentity, FactoryInteraction, StorageEngine, DocumentSharing } from 'bowhead-clam';
+// Load Web3 library
 import Web3 from 'web3';
 
+// Create  new FactoryIdentity instance
 const factoryIdentity = new FactoryIdentity();
-
+// Create new FactoryInteraction instance
 const factoryInteraction = new FactoryInteraction();
-
+// Create instance to interact with smart contracts
 const cotractInteraction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
 
+// Get identity instance that will use Open PGP to encrypt files
 const identity = factoryIdentity.generateIdentity('PGP', 'PGP');
 
+// Generate identity info
 identity.generateIdentity();
 
+// Get web3 provider instance
 const web3Provider = Web3Provider.getInstance();
 
+// Create a new instance of StorageEngine and pass the configuration
 const storageEngine: IStorageEngine = new StorageEngine({
 	URL: 'http://localhost:3000',
 	ApiKey: 'wXW9c5NObnsrZIY1J3Tqhvz4cZ7YQrrKnbJpo9xOqJM=',
 	timeout: 2000
 	});
 
+// Create DocumentSharing instance
 const documentSharing = new DocumentSharing(storageEngine);
 ```
 
+Set Web3 provider configuration.
 ```js
+// Set provider
 const web3 = new Web3(urlProvider);
 
+// Set address and ABI for Consent contract
 const consentConfig = { address: '0x09Fe1b1A9Cd73F35945Bfdc0378c9aCC227c0DBF', abi: ABIConsent };
+// Set address and ABI for Access contract
 const accessConfig = { address: '0x82E54b8B226b007704D1203f0951138338CB921F', abi: ABIAccess };
+// Set address and ABI for Consent Resource contract
 const consentResourceConfig = { address: '0x639c9197aB9be745A6D2CB6cB8c2d46D7BB9A412', abi: ABIConsentResource };
+// Set address and ABI for IPFS management contract
 const IPFSManagementConfig = { address: '0xB19Fb08e183fF19989792ceD10325BF0C45CCd27', abi: ABIIPFSManagement };
 
+// Set Web3 provider configuration
 web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
 ```
 
+Get shared file.
 ```js
 const options = {
-	cid: 'fe5c3e7fa0f43b8cbfed5e69c9a19c722c1900ff893ce7fa6b40646b88e46f48.txt',
-	owner: '0x93120bA8FBb9eF2f6744C7d50803A4390E4eF961',
-	contractInteraction: cotractInteraction,
-	consentId: 'SHARED'
+	cid: 'fe5c3e7fa0f43b8cbfed5e69c9a19c722c1900ff893ce7fa6b40646b88e46f48.txt', // CID file
+	owner: '0x93120bA8FBb9eF2f6744C7d50803A4390E4eF961', // File owner address
+	contractInteraction: cotractInteraction, // ContractInteraction instance
+	consentId: 'SHARED' // Consent identifier
 };
 
+// Call getSharedFile function, return file in base64
 const file = await documentSharing.getSharedFile(identity, options); // => 'dGVzdFYxMA=='
 ```
 
 ### How to encrypt, save and decrypt a document using AES
+Load modules, create instances and initialized them.
 ```js
+// Load Web3Provider, FactoryIdentity, FactoryInteraction, StorageEngine and DocumentSharing modules
 import { Web3Provider, FactoryIdentity, FactoryInteraction, StorageEngine, DocumentSharing } from 'bowhead-clam';
+// Load Web3 library
 import Web3 from 'web3';
 
+// Create  new FactoryIdentity instance
 const factoryIdentity = new FactoryIdentity();
-
+// Create new FactoryInteraction instance
 const factoryInteraction = new FactoryInteraction();
-
+// Create instance to interact with smart contracts
 const cotractInteraction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
 
+// Get identity instance that will use AES to encrypt files
 const identity = factoryIdentity.generateIdentity('AES', 'PGP');
 
+// Generate identity info
 identity.generateIdentity();
 
+// Get web3 provider instance
 const web3Provider = Web3Provider.getInstance();
 
+// Create a new instance of StorageEngine and pass the configuration
 const storageEngine: IStorageEngine = new StorageEngine({
 	URL: 'http://localhost:3000',
 	ApiKey: 'wXW9c5NObnsrZIY1J3Tqhvz4cZ7YQrrKnbJpo9xOqJM=',
 	timeout: 2000
 	});
 
+// Create DocumentSharing instance
 const documentSharing = new DocumentSharing(storageEngine);
 ```
 
+Set Web3 provider configuration.
 ```js
+// Set provider
 const web3 = new Web3(urlProvider);
 
+// Set address and ABI for Consent contract
 const consentConfig = { address: '0x09Fe1b1A9Cd73F35945Bfdc0378c9aCC227c0DBF', abi: ABIConsent };
+// Set address and ABI for Access contract
 const accessConfig = { address: '0x82E54b8B226b007704D1203f0951138338CB921F', abi: ABIAccess };
+// Set address and ABI for Consent Resource contract
 const consentResourceConfig = { address: '0x639c9197aB9be745A6D2CB6cB8c2d46D7BB9A412', abi: ABIConsentResource };
+// Set address and ABI for IPFS management contract
 const IPFSManagementConfig = { address: '0xB19Fb08e183fF19989792ceD10325BF0C45CCd27', abi: ABIIPFSManagement };
 
+// Set Web3 provider configuration
 web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
 ```
 
+Save encrypted file with AES.
 ```js
 const options = {
-	file: 'dGVzdFYxMA==',
-	fileName: 'test.txt',
-	contractInteraction: cotractInteraction,
-	consentId: 'AAA1'
+	file: 'dGVzdFYxMA==', // File in base64
+	fileName: 'test.txt', // File name
+	contractInteraction: cotractInteraction, // ContractInteraction instance
+	consentId: 'AAA1' // Consent identifier
 };
 
+// Call save file function
 const cid = await documentSharing.saveFile(identity, options);
 
+// Save file register on IPFS Management contract
 await contractInteraction.IPFSManagementInteraction.addFile(cid, options.fileName, identity);
 ```
 
+Get encrypted file with AES.
 ```js
 const options = {
-            cid: cid
-        };
+	cid: cid // CID file
+};
 
-const file = await documentSharing.getFile(AESInstance, options);
+// Call getFile function, return file in base64
+const file = await documentSharing.getFile(identity, options);
 ```
 
 ### How to encrypt, save and decrypt a document using Open PGP
-
+Load modules, create instances and initialized them.
 ```js
+// Load Web3Provider, FactoryIdentity, FactoryInteraction, StorageEngine and DocumentSharing modules
 import { Web3Provider, FactoryIdentity, FactoryInteraction, StorageEngine, DocumentSharing } from 'bowhead-clam';
+// Load Web3 library
 import Web3 from 'web3';
 
+// Create  new FactoryIdentity instance
 const factoryIdentity = new FactoryIdentity();
-
+// Create new FactoryInteraction instance
 const factoryInteraction = new FactoryInteraction();
-
+// Create instance to interact with smart contracts
 const cotractInteraction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
 
+// Get identity instance that will use Open PGP to encrypt files
 const identity = factoryIdentity.generateIdentity('PGP', 'PGP');
 
+// Generate identity info
 identity.generateIdentity();
 
+// Get web3 provider instance
 const web3Provider = Web3Provider.getInstance();
 
+// Create a new instance of StorageEngine and pass the configuration
 const storageEngine: IStorageEngine = new StorageEngine({
 	URL: 'http://localhost:3000',
 	ApiKey: 'wXW9c5NObnsrZIY1J3Tqhvz4cZ7YQrrKnbJpo9xOqJM=',
 	timeout: 2000
 	});
 
+// Create DocumentSharing instance
 const documentSharing = new DocumentSharing(storageEngine);
 ```
 
+Set Web3 provider configuration.
 ```js
+// Set provider
 const web3 = new Web3(urlProvider);
 
+// Set address and ABI for Consent contract
 const consentConfig = { address: '0x09Fe1b1A9Cd73F35945Bfdc0378c9aCC227c0DBF', abi: ABIConsent };
+// Set address and ABI for Access contract
 const accessConfig = { address: '0x82E54b8B226b007704D1203f0951138338CB921F', abi: ABIAccess };
+// Set address and ABI for Consent Resource contract
 const consentResourceConfig = { address: '0x639c9197aB9be745A6D2CB6cB8c2d46D7BB9A412', abi: ABIConsentResource };
+// Set address and ABI for IPFS management contract
 const IPFSManagementConfig = { address: '0xB19Fb08e183fF19989792ceD10325BF0C45CCd27', abi: ABIIPFSManagement };
 
+// Set Web3 provider configuration
 web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
 ```
 
+Save encrypted file with Open PGP
 ```js
 const options = {
-	file: 'dGVzdFYxMA==',
-	fileName: 'test.txt',
-	contractInteraction: cotractInteraction,
-	consentId: 'AAA1'
+	file: 'dGVzdFYxMA==', // File in base64
+	fileName: 'test.txt', // File name
+	contractInteraction: cotractInteraction, // ContractInteraction instance
+	consentId: 'AAA1' // Consent identifier
 };
 
+// Get the list of users allowed to share files by consent
 const usersToShare = await contractInteraction.consentInteraction.getKeys(options.consentId, options.identity);
 
-const cid = await documentSharing.sharedFile(options.identity, options, pgpKeys);
+// Save file encrypted with Open GPG
+const cid = await documentSharing.sharedFile(identity, options, usersToShare.pgpKeys);
 
+// Save file register on IPFS Management contract
 await contractInteraction.IPFSManagementInteraction.addFile(cid, options.fileName, identity);
 
+// Add the address of the users who can get the file in the Access contract
 await this.contractInteraction.acccessInteraction.giveAccess(cid, options.consentId, [options.identity.address], options.fileName, options.identity);
 ```
 
+// Get encrypted file with Open PGP
 ```js
 const getOptions = {
-            cid: cidShared,
-            owner: PGPInstance.address,
-            contractInteraction: interaction,
-            consentId: 'SHARED1'
-        };
-		
-const fileShared1 = await documentSharing.getSharedFile(PGPInstanceToShare, getOptions);
+	cid: cid, // CID file
+	owner: '0x93120bA8FBb9eF2f6744C7d50803A4390E4eF961', // File owner address
+	contractInteraction: cotractInteraction, // ContractInteraction instance
+	consentId: 'SHARED1' // Consent identifier
+};
+
+// Call getSharedFile function, return file in base64
+const fileShared1 = await documentSharing.getSharedFile(identity, getOptions);
 ```
+
 ### Use a custom encryption algorithm
 
 ### Use a custom storage engine
