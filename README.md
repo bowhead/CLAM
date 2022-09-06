@@ -1,27 +1,68 @@
 # CLAM
+=========================
+## About
 
-###  Getting started
+CLAM stands for Consent and Content Access Management Library. It is a users' data privacy first and extensible tool that abstracts the complexity of different technologies, like blockchain and IPFS. 
 
-####  Node.js
+Using blockchain as basis, CLAM helps developers to focus on the implementation of their solution and not worry about technical details of two common cases when a system is built to handle sensitive data:
 
-```sh
+* Consent: Acquiring users' consent where they agree to share their delicate data is a challenge. With an anonymous, decentralized and immutable consent, the users’ enrollment increases by giving them the option to quit at any time they want, propagating the change to all linked systems without no effort.
 
-npm i bowhead-clam
+* Content access management: the users’ can decide when and with whom the information is shared, everything is handled by smart contracts whose main purpose is to decentralize the logic and make the process transparent for all the stakeholders. The information is always encrypted and cannot be accessed by anyone except the user owner and those that she decided to share, who could be a doctor, researchers or any actor that the user trusts.
+
+## Table of Contents
+- [Getting Started](#getting-started)
+	- [Installing](#installing)
+	- [Usage](#usage)
+- [Examples](#examples)
+	- [How to create an identity](#how-to-create-an-identity)
+	- [How to accept a consent](#how-to-accept-a-consent)
+	- [How to share a document with other accounts](#how-to-share-a-document-with-other-accounts)
+	- [How to decrypt a shared document by other account](#how-to-decrypt-a-shared-document-by-other-account)
+	- [How to encrypt, save and decrypt a document using AES](#how-to-encrypt-save-and-decrypt-a-document-using-aes)
+	- [How to encrypt, save and decrypt a document using Open PGP](#how-to-encrypt-save-and-decrypt-a-document-using-open-pgp)
+	- [Use a custom encryption algorithm](#use-a-custom-encryption-algorithm)
+	- [Use a custom storage engine](#use-a-custom-storage-engine)
+- [License](#license)
+
+## Getting started
+
+####  Installing
+
+Using npm:
+
+```bash
+$ npm install bowhead-clam
+```
+
+####  Usage
+
+ES6:
+```ts
+
+import * as clam from 'bowhead-clam';
 
 ```
 
-Javascript
+Modular include:
+
+```js
+
+const { IdentityManager } = require('bowhead-clam');
+
+```
+
+Including all libraries,
 
 ```js
 
 const clam = require('bowhead-clam');
 
 ```
-Typescrypt
-```ts
 
-import * as clam from 'bowhead-clam';
-```
+## Examples
+
+### How to create an identity
 
 Generate your identity in **Javascript**
 
@@ -169,4 +210,254 @@ const  decryptDataMethod  =  async  ()  =>  {
 }
 ```
 
+### How to accept a consent
+```js
+import { Web3Provider, FactoryIdentity, FactoryInteraction } from 'bowhead-clam';
+import Web3 from 'web3';
+
+const factoryIdentity = new FactoryIdentity();
+
+const factoryInteraction = new FactoryInteraction();
+
+const cotractInteraction = factoryInteraction.generateInteraction("clam", "clam", "clam");
+
+const identity = factoryIdentity.generateIdentity('pgp', 'pgp');
+
+identity.generateIdentity();
+
+const web3Provider = Web3Provider.getInstance();
+```
+
+```js
+const web3 = new Web3(urlProvider);
+
+const consentConfig = { address: '0x09Fe1b1A9Cd73F35945Bfdc0378c9aCC227c0DBF', abi: ABIConsent };
+const accessConfig = { address: '0x82E54b8B226b007704D1203f0951138338CB921F', abi: ABIAccess };
+const consentResourceConfig = { address: '0x639c9197aB9be745A6D2CB6cB8c2d46D7BB9A412', abi: ABIConsentResource };
+const IPFSManagementConfig = { address: '0xB19Fb08e183fF19989792ceD10325BF0C45CCd27', abi: ABIIPFSManagement };
+
+web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
+```
+
+```js
+const consentId = 'AAA1'
+
+await interaction.consentInteraction.saveConsent(consentId, identity);
+```
+
+### How to share a document with other accounts
+```js
+import { Web3Provider, FactoryIdentity, FactoryInteraction } from 'bowhead-clam';
+import Web3 from 'web3';
+
+const factoryIdentity = new FactoryIdentity();
+
+const factoryInteraction = new FactoryInteraction();
+
+const cotractInteraction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
+
+const identity = factoryIdentity.generateIdentity('PGP', 'PGP');
+
+identity.generateIdentity();
+
+const web3Provider = Web3Provider.getInstance();
+```
+
+```js
+const web3 = new Web3(urlProvider);
+
+const consentConfig = { address: '0x09Fe1b1A9Cd73F35945Bfdc0378c9aCC227c0DBF', abi: ABIConsent };
+const accessConfig = { address: '0x82E54b8B226b007704D1203f0951138338CB921F', abi: ABIAccess };
+const consentResourceConfig = { address: '0x639c9197aB9be745A6D2CB6cB8c2d46D7BB9A412', abi: ABIConsentResource };
+const IPFSManagementConfig = { address: '0xB19Fb08e183fF19989792ceD10325BF0C45CCd27', abi: ABIIPFSManagement };
+
+web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
+```
+
+```js
+const consentId = 'AAA1'
+const addressUserToShare = '0x93120bA8FBb9eF2f6744C7d50803A4390E4eF961'
+const publicPGPKeyUserToShare = '-----BEGIN PGP PUBLIC KEY BLOCK----- ...'
+
+
+await interaction.consentInteraction.addKey(consentId, addressUserToShare, publicPGPKeyUserToShare, identity);
+```
+
+### How to decrypt a shared document by other account
+```js
+import { Web3Provider, FactoryIdentity, FactoryInteraction, StorageEngine, DocumentSharing } from 'bowhead-clam';
+import Web3 from 'web3';
+
+const factoryIdentity = new FactoryIdentity();
+
+const factoryInteraction = new FactoryInteraction();
+
+const cotractInteraction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
+
+const identity = factoryIdentity.generateIdentity('PGP', 'PGP');
+
+identity.generateIdentity();
+
+const web3Provider = Web3Provider.getInstance();
+
+const storageEngine: IStorageEngine = new StorageEngine({
+	URL: 'http://localhost:3000',
+	ApiKey: 'wXW9c5NObnsrZIY1J3Tqhvz4cZ7YQrrKnbJpo9xOqJM=',
+	timeout: 2000
+	});
+
+const documentSharing = new DocumentSharing(storageEngine);
+```
+
+```js
+const web3 = new Web3(urlProvider);
+
+const consentConfig = { address: '0x09Fe1b1A9Cd73F35945Bfdc0378c9aCC227c0DBF', abi: ABIConsent };
+const accessConfig = { address: '0x82E54b8B226b007704D1203f0951138338CB921F', abi: ABIAccess };
+const consentResourceConfig = { address: '0x639c9197aB9be745A6D2CB6cB8c2d46D7BB9A412', abi: ABIConsentResource };
+const IPFSManagementConfig = { address: '0xB19Fb08e183fF19989792ceD10325BF0C45CCd27', abi: ABIIPFSManagement };
+
+web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
+```
+
+```js
+const options = {
+	cid: 'fe5c3e7fa0f43b8cbfed5e69c9a19c722c1900ff893ce7fa6b40646b88e46f48.txt',
+	owner: '0x93120bA8FBb9eF2f6744C7d50803A4390E4eF961',
+	contractInteraction: cotractInteraction,
+	consentId: 'SHARED'
+};
+
+const file = await documentSharing.getSharedFile(identity, options); // => 'dGVzdFYxMA=='
+```
+
+### How to encrypt, save and decrypt a document using AES
+```js
+import { Web3Provider, FactoryIdentity, FactoryInteraction, StorageEngine, DocumentSharing } from 'bowhead-clam';
+import Web3 from 'web3';
+
+const factoryIdentity = new FactoryIdentity();
+
+const factoryInteraction = new FactoryInteraction();
+
+const cotractInteraction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
+
+const identity = factoryIdentity.generateIdentity('AES', 'PGP');
+
+identity.generateIdentity();
+
+const web3Provider = Web3Provider.getInstance();
+
+const storageEngine: IStorageEngine = new StorageEngine({
+	URL: 'http://localhost:3000',
+	ApiKey: 'wXW9c5NObnsrZIY1J3Tqhvz4cZ7YQrrKnbJpo9xOqJM=',
+	timeout: 2000
+	});
+
+const documentSharing = new DocumentSharing(storageEngine);
+```
+
+```js
+const web3 = new Web3(urlProvider);
+
+const consentConfig = { address: '0x09Fe1b1A9Cd73F35945Bfdc0378c9aCC227c0DBF', abi: ABIConsent };
+const accessConfig = { address: '0x82E54b8B226b007704D1203f0951138338CB921F', abi: ABIAccess };
+const consentResourceConfig = { address: '0x639c9197aB9be745A6D2CB6cB8c2d46D7BB9A412', abi: ABIConsentResource };
+const IPFSManagementConfig = { address: '0xB19Fb08e183fF19989792ceD10325BF0C45CCd27', abi: ABIIPFSManagement };
+
+web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
+```
+
+```js
+const options = {
+	file: 'dGVzdFYxMA==',
+	fileName: 'test.txt',
+	contractInteraction: cotractInteraction,
+	consentId: 'AAA1'
+};
+
+const cid = await documentSharing.saveFile(identity, options);
+
+await contractInteraction.IPFSManagementInteraction.addFile(cid, options.fileName, identity);
+```
+
+```js
+const options = {
+            cid: cid
+        };
+
+const file = await documentSharing.getFile(AESInstance, options);
+```
+
+### How to encrypt, save and decrypt a document using Open PGP
+
+```js
+import { Web3Provider, FactoryIdentity, FactoryInteraction, StorageEngine, DocumentSharing } from 'bowhead-clam';
+import Web3 from 'web3';
+
+const factoryIdentity = new FactoryIdentity();
+
+const factoryInteraction = new FactoryInteraction();
+
+const cotractInteraction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
+
+const identity = factoryIdentity.generateIdentity('PGP', 'PGP');
+
+identity.generateIdentity();
+
+const web3Provider = Web3Provider.getInstance();
+
+const storageEngine: IStorageEngine = new StorageEngine({
+	URL: 'http://localhost:3000',
+	ApiKey: 'wXW9c5NObnsrZIY1J3Tqhvz4cZ7YQrrKnbJpo9xOqJM=',
+	timeout: 2000
+	});
+
+const documentSharing = new DocumentSharing(storageEngine);
+```
+
+```js
+const web3 = new Web3(urlProvider);
+
+const consentConfig = { address: '0x09Fe1b1A9Cd73F35945Bfdc0378c9aCC227c0DBF', abi: ABIConsent };
+const accessConfig = { address: '0x82E54b8B226b007704D1203f0951138338CB921F', abi: ABIAccess };
+const consentResourceConfig = { address: '0x639c9197aB9be745A6D2CB6cB8c2d46D7BB9A412', abi: ABIConsentResource };
+const IPFSManagementConfig = { address: '0xB19Fb08e183fF19989792ceD10325BF0C45CCd27', abi: ABIIPFSManagement };
+
+web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
+```
+
+```js
+const options = {
+	file: 'dGVzdFYxMA==',
+	fileName: 'test.txt',
+	contractInteraction: cotractInteraction,
+	consentId: 'AAA1'
+};
+
+const usersToShare = await contractInteraction.consentInteraction.getKeys(options.consentId, options.identity);
+
+const cid = await documentSharing.sharedFile(options.identity, options, pgpKeys);
+
+await contractInteraction.IPFSManagementInteraction.addFile(cid, options.fileName, identity);
+
+await this.contractInteraction.acccessInteraction.giveAccess(cid, options.consentId, [options.identity.address], options.fileName, options.identity);
+```
+
+```js
+const getOptions = {
+            cid: cidShared,
+            owner: PGPInstance.address,
+            contractInteraction: interaction,
+            consentId: 'SHARED1'
+        };
+		
+const fileShared1 = await documentSharing.getSharedFile(PGPInstanceToShare, getOptions);
+```
+### Use a custom encryption algorithm
+
+### Use a custom storage engine
+
+## License
+[MIT](LICENSE)
 
