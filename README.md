@@ -11,6 +11,7 @@ Using blockchain as basis, CLAM helps developers to focus on the implementation 
 * Content access management: the users’ can decide when and with whom the information is shared, everything is handled by smart contracts whose main purpose is to decentralize the logic and make the process transparent for all the stakeholders. The information is always encrypted and cannot be accessed by anyone except the user owner and those that she decided to share, who could be a doctor, researchers or any actor that the user trusts.
 
 ## Table of Contents
+- [Requirements](#requirements)
 - [Getting Started](#getting-started)
 	- [Installing](#installing)
 	- [Usage](#usage)
@@ -22,8 +23,13 @@ Using blockchain as basis, CLAM helps developers to focus on the implementation 
 	- [How to encrypt, save and decrypt a document using AES](#how-to-encrypt-save-and-decrypt-a-document-using-aes)
 	- [How to encrypt, save and decrypt a document using Open PGP](#how-to-encrypt-save-and-decrypt-a-document-using-open-pgp)
 	- [Use a custom encryption algorithm](#use-a-custom-encryption-algorithm)
-	- [Use a custom storage engine](#use-a-custom-storage-engine)
+	<!-- - [Use a custom storage engine](#use-a-custom-storage-engine) -->
 - [License](#license)
+
+## Requirements
+
+- NodeJS
+- npm (Node.js package manager)
 
 ## Getting started
 
@@ -64,44 +70,25 @@ const clam = require('bowhead-clam');
 
 ### How to create an identity
 
-Generate your identity in **Javascript**
-
-```js
-const  { IdentityManager, ShareableIdentity }  =  require("bowhead-clam");
-
-const  generateIdentityMethod  =  async  ()  =>  {
-	console.log("\n-->This is the implementation of generateIdentity method<--");
-	try  {
-		const  identity  =  new  IdentityManager();
-		await  identity.generateIdentity();
-		console.log(identity);
-	}  catch  (error)  {
-		console.log(error);
-	}
-}
-```
-
-Generate your identity in **Typescript**
-
 ```ts
+// Load IdentityManager module
 import { IdentityManager } from "bowhead-clam";
+
 const  generateIdentityMethod  =  async  ()  =>  {
-	console.log("\n-->This is the implementation of generateIdentity method<--");
 	try  {
-		const  identity:  IdentityManager  =  new  IdentityManager();
+		const  identity : IdentityManager = new IdentityManager();
+
 		await  identity.generateIdentity();
-		console.log(identity);
 	}  catch  (error)  {
 		console.log(error);
 	}
 }
 ```
 
-Generate your identities based on the main identity  in **Javascript**
+<!-- Generate your identities based on the main identity  in **Javascript**
 ```js
 const { IdentityManager, ShareableIdentity } = require("bowhead-clam");
 const  generateIdentitiesMethod  =  async  ()  =>  {
-	console.log("\n-->This is the implementation of the generateIdentities method<--");
 	try  {
 		const  identity  =  new  IdentityManager();
 		await  identity.generateIdentity();
@@ -112,12 +99,11 @@ const  generateIdentitiesMethod  =  async  ()  =>  {
 		console.log(error);
 	}
 }
-```
-Generate your identities based on the main identity  in **Typescript**
+``` -->
+<!-- Generate your identities based on the main identity  in **Typescript**
 ```ts
 import { ShareableIdentity, IdentityManager } from "bowhead-clam";
 const  generateIdentitiesMethod  =  async  ()  =>  {
-	console.log("\n-->This is the implementation of the generateIdentities method<--");
 	try  {
 		const  identity:  IdentityManager  =  new  IdentityManager();
 		await  identity.generateIdentity();
@@ -128,14 +114,13 @@ const  generateIdentitiesMethod  =  async  ()  =>  {
 		console.log(error);
 	}
 }
-```
+``` -->
 
 
-Encrypt a string using the public PGP key in **Javascript**
+<!-- Encrypt a string using the public PGP key in **Javascript**
 ```js
 const { IdentityManager } = require("bodhead-clam");
 const  encryptDataMethod  =  async  ()  =>  {
-	console.log("\n-->This is the implementation of the encryptData method<--");
 	try  {
 		const  identity  =  new  IdentityManager();
 		await  identity.generateIdentity();
@@ -149,12 +134,11 @@ const  encryptDataMethod  =  async  ()  =>  {
 		console.log(error);
 	}
 }
-```
-Encrypt a string using the public PGP key in **Typescript**
+``` -->
+<!-- Encrypt a string using the public PGP key in **Typescript**
 ```ts
 import { IdentityManager } from "bowhead-clam"; 
 const  encryptDataMethod  =  async  ()  =>  {
-	console.log("\n-->This is the implementation of the encryptData method<--");
 	try  {
 		const  identity:  IdentityManager  =  new  IdentityManager();
 		await  identity.generateIdentity();
@@ -168,14 +152,13 @@ const  encryptDataMethod  =  async  ()  =>  {
 		console.log(error);
 	}
 }
-```
+``` -->
 
 
-Decrypt a string the message encrypted an the private PGP key **Javascript**
+<!-- Decrypt a string the message encrypted an the private PGP key **Javascript**
 ```js
 const { IdentityManager } = require("bodhead-clam");
 const  decryptDataMethod  =  async  ()  =>  {
-	console.log("\n-->This the implementation of the decryptData method<--");
 	try  {
 		const  identity  =  new  IdentityManager();
 		await  identity.generateIdentity();
@@ -189,13 +172,12 @@ const  decryptDataMethod  =  async  ()  =>  {
 		console.log(error);
 	}
 }
-```
+``` -->
 
-Decrypt a string the message encrypted an the private PGP key **Typescript**
-```ts
-import { IdentityManager } from "bowhead-clam";
+<!-- Decrypt a string the message encrypted an the private PGP key **Typescript** -->
+
+<!-- import { IdentityManager } from "bowhead-clam";
 const  decryptDataMethod  =  async  ()  =>  {
-	console.log("\n-->This the implementation of the decryptData method<--");
 	try  {
 		const  identity:  IdentityManager  =  new  IdentityManager();
 		await  identity.generateIdentity();
@@ -208,8 +190,8 @@ const  decryptDataMethod  =  async  ()  =>  {
 	}  catch  (error)  {
 		console.log(error);
 	}
-}
-```
+} -->
+
 
 ### How to accept a consent
 Load modules, create instances and initialized them.
@@ -553,8 +535,56 @@ const fileShared1 = await documentSharing.getSharedFile(identity, getOptions);
 ```
 
 ### Use a custom encryption algorithm
+Create new implementation based on IEncryptionLayer
+```js
+import { IEncryptionLayer } from 'bowhead-clam'
 
-### Use a custom storage engine
+/**
+ * Class EncryptionLayerLULU
+ */
+class EncryptionLayerLULU implements IEncryptionLayer {
+    /**
+     * Code
+     * 
+     * @param {string} key parameter
+     * @param {string} data parameter
+     * @returns {Promise<string>} return string
+     */
+    async ecryptData(key: string, data: string): Promise<string> {
+        const dataEncrypted: string = key + '-' + data;
+        return dataEncrypted;
+    }
+
+    /**
+     * Code
+     * 
+     * @param {string} key parameter
+     * @param {string} data parameter
+     * @returns {Promise<string>} return string 
+     */
+    async decryptData(key: string, data: string): Promise<string> {
+        console.log(key);
+        const dataDecrypted: string = data.split('-')[1];
+        return dataDecrypted;
+    }
+
+}
+```
+
+Register the new implementation
+```js
+// Load FactoryIndentity module
+import { FactoryIdentity } from 'bowhead-clam'
+
+// Create new FactoryIdentity instance
+const factoryIdentity = new FactoryIdentity();
+
+// Register a new encryption implementation
+factoryIdentity.setOptionEncryption({ name: 'LULU', option: EncryptionLayerLULU });
+
+// Get an identity instance that will use the new encryption implementation
+const identity: IdentityManager = factoryIdentity.generateIdentity('LULU', 'PGP');
+```
 
 ## License
 [MIT](LICENSE)
