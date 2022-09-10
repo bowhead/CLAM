@@ -90,6 +90,7 @@ module.exports = {
                     'ecsign',
                     'decrypted',
                     'decrypting',
+                    'Pkcs7',
                     'Pkcs',
                     'Utf8',
                     'passphrase',

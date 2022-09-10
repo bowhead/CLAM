@@ -1,3 +1,4 @@
+require('dotenv').config()
 import { 
     DocumentSharing,
     IdentityManager,
@@ -41,7 +42,7 @@ describe('Testing document sharing', () => {
         timeout: 2000
     });
     const documentSharing = new DocumentSharing(storageEngine);
-    let firstUser : IKeys;
+    let firstUser: IKeys;
     let cid: string;
     let cidShared: string;
     let factoryInteraction: FactoryInteraction;
@@ -56,13 +57,12 @@ describe('Testing document sharing', () => {
         factoryInteraction = new FactoryInteraction();
         web3Provider = Web3Provider.getInstance();
 
-        const web3 = new Web3('http://localhost:8545');
-        const consentConfig:IContractConfig = { address: '0x09Fe1b1A9Cd73F35945Bfdc0378c9aCC227c0DBF', abi: ABIConsent.abi as unknown as AbiItem };
-        const accessConfig:IContractConfig = { address: '0x82E54b8B226b007704D1203f0951138338CB921F', abi: ABIAccess.abi as unknown as AbiItem };
-        const consentResourceConfig:IContractConfig = { address: '0x639c9197aB9be745A6D2CB6cB8c2d46D7BB9A412', abi: ABIConsentResource.abi as unknown as AbiItem };
-        const IPFSManagementConfig:IContractConfig = { address: '0xB19Fb08e183fF19989792ceD10325BF0C45CCd27', abi: ABIIPFSManagement.abi  as unknown as AbiItem};
+        const web3 = new Web3(String(process.env.CLAM_BLOCKCHAIN_LOCALTION));
+        const consentConfig = { address: process.env.CLAM_CONSENT_ADDRESS, abi: ABIConsent.abi };
+        const accessConfig = { address: process.env.CLAM_ACCESS_ADDRESS, abi: ABIAccess.abi };
+        const consentResourceConfig = { address: process.env.CLAM_CONSENT_RESOURCE_ADDRESS, abi: ABIConsentResource.abi };
+        const IPFSManagementConfig = { address: process.env.CLAM_IPFS_ADDRESS, abi: ABIIPFSManagement.abi };
         web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
-
         interaction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
 
         AESInstance.address = '0x8B3921DA1090CF8de6a34dcb929Be0df53AB81Fa';
@@ -134,7 +134,7 @@ describe('Testing document sharing', () => {
     });
 
     test('Should add new encrypted file', async () => {
-        jest.spyOn(ConsentInteraction.prototype, 'getConsentById').mockImplementation(async() => await true);
+        jest.spyOn(ConsentInteraction.prototype, 'getConsentById').mockImplementation(async () => await true);
         nock('http://localhost:3000')
             .post('/file')
             .reply(200, {
@@ -170,7 +170,7 @@ describe('Testing document sharing', () => {
         expect(Buffer.from(file, 'base64').toString()).toBe('testV10');
     });
 
-    test('Should update an encrypted file', async() => {
+    test('Should update an encrypted file', async () => {
         const options = {
             file: fs.readFileSync(path.resolve(__dirname, './resources/testUpdate.txt')).toString('base64'),
             cid: cid
@@ -308,7 +308,6 @@ describe('Testing document sharing', () => {
             cidShared = await documentSharing.sharedFile(PGPInstance, options, PGPKeys);
 
             expect(cidShared).not.toBe('');
-
             const getOptions = {
                 cid: cidShared,
                 owner: PGPInstance.address
@@ -324,7 +323,7 @@ describe('Testing document sharing', () => {
     test('Should not get an encrypted file when the identity does not own the file', async () => {
         const instance: IdentityManager = factoryIdentity.generateIdentity('PGP', 'PGP');
         instance.generateIdentity();
-
+        
         nock('http://localhost:3000')
             .get('/file')
             .query({ address: instance.address, cid: cid })
