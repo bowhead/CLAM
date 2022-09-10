@@ -6,6 +6,7 @@ import { IdentityManager } from '../../indentityManager';
 import IAccessResource from './IAccessResource';
 import IWeb3Provider from '../interaction/web3Provider/IWeb3Provider';
 import FactoryWeb3Interaction from '../interaction/web3Provider/FactoryWeb3Interaction';
+import IContractActions from '../interaction/web3Provider/IContractActions';
 
 /**
  * 
@@ -31,9 +32,13 @@ class AccessInteraction implements IAccessInteraction {
         if (resource.trim() === '' || resource.trim().length === 0) throw new Error('The resource must have at least one character');
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('The consentID must have at least one character');
         if (accounts.length === 0) throw new Error('Accounts must have at least one element');
-        const transaction = this.provider.getMethods("access").giveAccess(resource, Web3.utils.fromAscii(consentId), accounts, Web3.utils.fromAscii(resourceName));
-        const receipt = await this.provider.signTransaction(transaction, identity);
-        return receipt;
+        const contract = this.provider.getMethods('access');
+        const options: IContractActions = {
+            action: 'send',
+            methodName: 'giveAccess'
+        }
+        const result = await this.provider.useContractMethod(contract, identity, options, resource, Web3.utils.fromAscii(consentId), accounts, Web3.utils.fromAscii(resourceName))
+        return result.status;
     }
 
     /**
@@ -47,8 +52,12 @@ class AccessInteraction implements IAccessInteraction {
     async checkAccess(resource: string, consentId: string, identity: IdentityManager): Promise<boolean> {
         if (resource.trim() === '' || resource.trim().length === 0) throw new Error('The resource must have at least one character');
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('The consentID must have at least one character');
-        const method: Function = this.provider.getMethods("access").checkAccess(resource, Web3.utils.fromAscii(consentId));
-        return await this.provider.callContractMethod(method, identity);
+        const contract = this.provider.getMethods('access');
+        const options: IContractActions = {
+            action: 'call',
+            methodName: 'checkAccess'
+        }
+        return await this.provider.useContractMethod(contract, identity, options, resource, Web3.utils.fromAscii(consentId))
     }
 
     /**
@@ -60,8 +69,12 @@ class AccessInteraction implements IAccessInteraction {
      */
     async getResourceByConsent(consentId: string, identity: IdentityManager): Promise<IAccessResource> {
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('The consentID must have at least one character');
-        const method: Function = this.provider.getMethods("access").getResourceByConsent(Web3.utils.fromAscii(consentId));
-        return await this.provider.callContractMethod(method, identity);
+        const contract = this.provider.getMethods('access');
+        const options: IContractActions = {
+            action: 'call',
+            methodName: 'getResourceByConsent'
+        }
+        return this.provider.useContractMethod(contract, identity, options, Web3.utils.fromAscii(consentId));
     }
 
 }

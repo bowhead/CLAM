@@ -9,7 +9,7 @@ import Web3ProviderBowhead from "./Web3ProviderBowhead";
 
 
 class FactoryWeb3Interaction {
-    private config: IInteractionConfig;
+    public config: IInteractionConfig;
     private web3Providers: IOption[];
     public static intance: FactoryWeb3Interaction;
 

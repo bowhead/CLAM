@@ -7,6 +7,7 @@ import { IdentityManager } from '../../indentityManager';
 import IConsentKeys from './IConsentKeys';
 import FactoryWeb3Interaction from '../interaction/web3Provider/FactoryWeb3Interaction';
 import IWeb3Provider from '../interaction/web3Provider/IWeb3Provider';
+import IContractActions from '../interaction/web3Provider/IContractActions';
 
 /**
  * This class represent the implementation of IConsentInteraction interface,
@@ -25,9 +26,13 @@ class ConsentInteraction implements IConsentInteraction {
      */
     async saveConsent(consentId: string, identity: IdentityManager): Promise<boolean> {
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('contentID must have at least 1 character');
-        const transaction = this.provider.getMethods("consent").updateConsent(Web3.utils.fromAscii(consentId), true);
-        const receipt = await this.provider.signTransaction(transaction, identity);
-        return receipt;
+        const contract = this.provider.getMethods('consent');
+        const options: IContractActions = {
+            action: 'send',
+            methodName: 'updateConsent'
+        }
+        const result = await this.provider.useContractMethod(contract, identity, options, Web3.utils.fromAscii(consentId), true);
+        return result.status;
     }
 
     /**
@@ -39,9 +44,13 @@ class ConsentInteraction implements IConsentInteraction {
      */
     async cancelConsent(consentId: string, identity: IdentityManager): Promise<boolean> {
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('contentID must have at least 1 character');
-        const transaction = this.provider.getMethods("consent").updateConsent(Web3.utils.fromAscii(consentId), false);
-        const receipt = await this.provider.signTransaction(transaction, identity);
-        return receipt;
+        const contract = this.provider.getMethods('consent');
+        const options: IContractActions = {
+            action: 'send',
+            methodName: 'updateConsent'
+        }
+        const result = await this.provider.useContractMethod(contract, identity, options, Web3.utils.fromAscii(consentId), false);
+        return result.status;
     }
 
     /**
@@ -56,8 +65,12 @@ class ConsentInteraction implements IConsentInteraction {
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('contentID must have at least 1 character');
         if (owner.trim() === '' || owner.trim().length === 0) throw new Error('Owner must have at least 1 character');
         if (!owner.trim().includes('0x')) throw new Error('Invalid owner, the string with has a correct format.');
-        const method: Function = this.provider.getMethods("consent").getConsent(Web3.utils.fromAscii(consentId), owner);
-        return await this.provider.callContractMethod(method, identity);
+        const contract = this.provider.getMethods('consent');
+        const options: IContractActions = {
+            action: 'call',
+            methodName: 'getConsent'
+        }
+        return await this.provider.useContractMethod(contract, identity, options, Web3.utils.fromAscii(consentId), owner)
     }
 
     /**
@@ -75,9 +88,13 @@ class ConsentInteraction implements IConsentInteraction {
         if (addressConsent.trim() === '' || addressConsent.trim().length === 0) throw new Error('AddressConsent must have at least 1 character');
         if (!addressConsent.trim().includes('0x')) throw new Error('Invalid addressConsent, the string with has a correct format.');
         if (key.trim().length === 0 || key.trim() === '') throw new Error('Key must have at least 1 character');
-        const transaction = this.provider.getMethods("consent").addPGPKey(Web3.utils.fromAscii(consentId), addressConsent, key);
-        const receipt = await this.provider.signTransaction(transaction, identity);
-        return receipt;
+        const contract = this.provider.getMethods('consent');
+        const options: IContractActions = {
+            action: 'send',
+            methodName: 'addPGPKey'
+        }
+        const result =  await this.provider.useContractMethod(contract, identity, options, Web3.utils.fromAscii(consentId), addressConsent, key);
+        return result.status;
     }
 
     /**
@@ -89,8 +106,13 @@ class ConsentInteraction implements IConsentInteraction {
      */
     async getKeys(consentId: string, identity: IdentityManager): Promise<IConsentKeys> {
         if (consentId.trim() === '' || consentId.trim().length === 0) throw new Error('contentID must have at least 1 character');
-        const method: Function = this.provider.getMethods("consent").getPGPKeys(Web3.utils.fromAscii(consentId));
-        return await this.provider.callContractMethod(method, identity);
+        const contract = this.provider.getMethods('consent');
+        const options: IContractActions = {
+            action: 'call',
+            methodName: 'getPGPKeys'
+        }
+        return await this.provider.useContractMethod(contract, identity, options, Web3.utils.fromAscii(consentId));
+
     }
 }
 

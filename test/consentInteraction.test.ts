@@ -19,8 +19,9 @@ describe('Testing consent interaction', () => {
         factoryInteraction = new FactoryInteraction();
         factoryIdentity = new FactoryIdentity();
         factoryWeb3Provider = FactoryWeb3Interaction.getInstance();
-        const interactionConfig:IInteractionConfig = {
+        const interactionConfig: IInteractionConfig = {
             provider: String(process.env.CLAM_BLOCKCHAIN_LOCALTION),
+            chainId: 13,
             consent: { address: String(process.env.CLAM_CONSENT_ADDRESS), abi: ABIConsent.abi },
             access: { address: String(process.env.CLAM_ACCESS_ADDRESS), abi: ABIAccess.abi },
             consentResource: { address: String(process.env.CLAM_CONSENT_RESOURCE_ADDRESS), abi: ABIConsentResource.abi },

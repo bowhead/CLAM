@@ -3,6 +3,7 @@ import { IdentityManager } from "../../../indentityManager";
 import IInteractionConfig from "../IInteractionConfig";
 import IWeb3Provider from "./IWeb3Provider";
 import { injectable, inject } from "tsyringe";
+import IContractActions from "./IContractActions";
 
 @injectable()
 class Web3Provider implements IWeb3Provider {
@@ -13,15 +14,15 @@ class Web3Provider implements IWeb3Provider {
         this.provider = new Web3(provider);
         this.interactionConfig = interactionConfig;
     }
+
     getMethods(interactionType: string) {
         if (interactionType.trim().length === 0 || interactionType.trim() === '') throw new Error("Please pass the contract name to interact.");
-
         let abi: any;
         let address: string = "";
-        if (interactionType === "consent") {
+        if (interactionType.trim().toLowerCase() === "consent") {
             abi = this.interactionConfig.consent.abi;
             address = this.interactionConfig.consent.address;
-        } else if (interactionType === "access") {
+        } else if (interactionType.trim().toLowerCase() === "access") {
             abi = this.interactionConfig.access.abi;
             address = this.interactionConfig.access.address;
         } else {
@@ -31,16 +32,24 @@ class Web3Provider implements IWeb3Provider {
         return contract.methods;
     }
 
-    async callContractMethod(method: Function, identity: IdentityManager, __more: object[]) {
-        return new Promise((resolve, reject) => {
-            method.call({ from: identity.address }, function (error: Error, result: boolean) {
-                if (!error) resolve(result);
-                else reject(error);
+    async useContractMethod(contract: any, identity: IdentityManager, options: IContractActions, ...params: any[]) {
+        if (options.action.trim().toLowerCase() === 'call') {
+            return new Promise((resolve, reject) => {
+                contract[options.methodName](...params).call({ from: identity.address }, function (error: Error, result: boolean) {
+                    if (!error) resolve(result);
+                    else reject(error);
+                });
             });
-        });
+        } else if (options.action.trim().toLowerCase() === 'send') {
+            const transaction = contract[options.methodName](...params);
+            const receipt = await this.signTransaction(transaction, identity);
+            return receipt;
+        } else {
+            throw new Error("Invalid action, please select (send or call)");
+        }
     }
 
-    async signTransaction(transaction: any, identity: IdentityManager): Promise<boolean> {
+    async signTransaction(transaction: any, identity: IdentityManager): Promise<any> {
         const options = {
             to: transaction._parent._address,
             data: transaction.encodeABI(),
@@ -49,7 +58,7 @@ class Web3Provider implements IWeb3Provider {
         };
         const signed = await this.provider.eth.accounts.signTransaction(options, identity.privateKey);
         const receipt = await this.provider.eth.sendSignedTransaction(signed.rawTransaction as string);
-        return receipt.status;
+        return receipt;
     }
 
 

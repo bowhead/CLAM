@@ -1,9 +1,10 @@
 import { IdentityManager } from "../../../indentityManager";
+import IContractActions from "./IContractActions";
 
 interface IWeb3Provider {
     getMethods(interactionType: string): any;
-    callContractMethod(method: Function, identity: IdentityManager, ...args: object[]): Promise<any>;
-    signTransaction(transaction: any, identity: IdentityManager): Promise<boolean>;
+    useContractMethod(contract: any, identity: IdentityManager, options: IContractActions, ...params: any[]): Promise<any>;
+    signTransaction(transaction: any, identity: IdentityManager): Promise<any>;
 }
 
 export default IWeb3Provider;
