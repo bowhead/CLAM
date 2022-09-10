@@ -1,9 +1,7 @@
-/*global expect, test, describe*/
-
 import { IdentityManager } from '../src';
 import { FactoryInteraction, IAccessInteraction, IConsentInteraction } from '../src/contractIntegration';
-
-
+import IAccessResource from '../src/contractIntegration/accessInteraction/IAccessResource';
+import IConsentKeys from '../src/contractIntegration/consentInteraction/IConsentKeys';
 
 /**
  * Class
@@ -14,20 +12,20 @@ class ConsentInteractionOther implements IConsentInteraction {
      * 
      * @param {string} consentId This parameter is the consentID to identify consent.
      * @param {IdentityManager} identity This parameter is the Identity to configurate the smart contract interaction.
-     * @returns {Promise<any>} return the address of the transaction.
+     * @returns {Promise<boolean>} return the address of the transaction.
      */
-    async saveConsent(consentId: string, identity: IdentityManager): Promise<any> {
-        return consentId + identity;
+    async saveConsent(consentId: string, identity: IdentityManager): Promise<boolean> {
+        return consentId && identity ? true : false;
     }
     /**
      * This function cancel a consent based in the consentID passed in th eparameter.
      * 
      * @param {string} consentId This parameter is the consentID to identify consent.
      * @param {IdentityManager} identity This parameter is the Identity to configurate the smart contract interaction.
-     * @returns {Promise<any>} return the address of the transaction.
+     * @returns {Promise<boolean>} return the address of the transaction.
      */
-    async cancelConsent(consentId: string, identity: IdentityManager): Promise<any> {
-        return consentId + identity;
+    async cancelConsent(consentId: string, identity: IdentityManager): Promise<boolean> {
+        return consentId && identity? true : false;
 
     }
 
@@ -37,10 +35,10 @@ class ConsentInteractionOther implements IConsentInteraction {
      * @param {string} consentId This parameters is the consentID to indentify the consent.
      * @param {string} owner This parameter is the owner addres.
      * @param {IdentityManager} identity This parameter is the Identity to configurate the smart contract interaction.
-     * @returns {Promise<any>} return the consent status. 
+     * @returns {Promise<boolean>} return the consent status. 
      */
-    async getConsentById(consentId: string, owner: string, identity: IdentityManager): Promise<any> {
-        return consentId + owner + identity;
+    async getConsentById(consentId: string, owner: string, identity: IdentityManager): Promise<boolean> {
+        return consentId && owner && identity ? true : false;
     }
 
     /**
@@ -51,10 +49,10 @@ class ConsentInteractionOther implements IConsentInteraction {
      * @param {string} addressConsent This parameter is the adressConsent to indentify the consent.
      * @param {string} key  This parameter is the key to be added in the consent.
      * @param {IdentityManager} identity This parameter is the Identity to configurate the smart contract interaction. 
-     * @returns {Promise<any>}  return the address of the transaction.  
+     * @returns {Promise<boolean>}  return the address of the transaction.  
      */
-    async addKey(consentId: string, addressConsent: string, key: string, identity: IdentityManager): Promise<any> {
-        return consentId + addressConsent + identity + key;
+    async addKey(consentId: string, addressConsent: string, key: string, identity: IdentityManager): Promise<boolean> {
+        return consentId && addressConsent && identity && key? true : false;
     }
 
     /**
@@ -64,8 +62,8 @@ class ConsentInteractionOther implements IConsentInteraction {
      * @param {IdentityManager} identity This parameter is the Identity to configurate the smart contract interaction. 
      * @returns {Promise<any>} return the addres's and keys's
      */
-    async getKeys(consentId: string, identity: IdentityManager): Promise<any> {
-        return consentId + identity;
+    async getKeys(consentId: string, identity: IdentityManager): Promise<IConsentKeys> {
+        return {'0': [consentId], '1': [identity? '': '']};
     }
 
 }
@@ -84,8 +82,8 @@ class AccessInteractionOther implements IAccessInteraction {
      * @param {string} identity This parameter is the Identity to configurate the smart contract interaction. 
      * @returns {Promise<any>} Return the trasaction address.
      */
-    async giveAccess(resource: string, consentId: string, accounts: string[], resourceName: string, identity: IdentityManager): Promise<any> {
-        return resource + consentId + accounts + resourceName + identity;
+    async giveAccess(resource: string, consentId: string, accounts: string[], resourceName: string, identity: IdentityManager): Promise<boolean> {
+        return resource + consentId + accounts + resourceName + identity ? true : false;
     }
 
     /**
@@ -97,7 +95,7 @@ class AccessInteractionOther implements IAccessInteraction {
      * @param {IdentityManager} identity This parameter is the Identity to configurate the smart contract interaction. 
      * @returns {Promise<any>} Return the trasaction address.
      */
-    async revokeAccess(resource: string, consentId: string, account: string, identity: IdentityManager): Promise<any> {
+    async revokeAccess(resource: string, consentId: string, account: string, identity: IdentityManager): Promise<string> {
         return resource + consentId + account + identity;
     }
     /**
@@ -106,10 +104,10 @@ class AccessInteractionOther implements IAccessInteraction {
      * @param {string} resource This parameter is the resource to be checked. 
      * @param {string} consentId This parameter is the id of the consent to be checked.
      * @param {IdentityManager} identity This parameter is the Identity to configurate the smart contract interaction. 
-     * @returns {Promise<any>} Return if the user has access in this consent.
+     * @returns {Promise<boolean>} Return if the user has access in this consent.
      */
-    async checkAccess(resource: string, consentId: string, identity: IdentityManager): Promise<any> {
-        return resource + consentId + identity;
+    async checkAccess(resource: string, consentId: string, identity: IdentityManager): Promise<boolean> {
+        return resource && consentId && identity ? true : false;
     }
 
     /**
@@ -117,10 +115,10 @@ class AccessInteractionOther implements IAccessInteraction {
      * 
      * @param {string} consentId This parameter is the resource to be returned. 
      * @param {IdentityManager} identity This parameter is the Identity to configurate the smart contract interaction. 
-     * @returns {Promise<any>} Return addres and state of the user in this consent.
+     * @returns {Promise<IAccessResource>} Return addres and state of the user in this consent.
      */
-    async getResourceByConsent(consentId: string, identity: IdentityManager): Promise<any> {
-        return consentId + identity;
+    async getResourceByConsent(consentId: string, identity: IdentityManager): Promise<IAccessResource> {
+        return {'0':[consentId], '1': [identity?'':''], '2': []};
     }
 
 }
@@ -141,20 +139,20 @@ describe('Testing interaction component using the CLAM implementation', () => {
         const factoryInteraction: FactoryInteraction = new FactoryInteraction();
         const interaction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
         const keys = Object.keys(interaction);
-        expect(keys.includes('acccessInteraction')).toBe(true);
+        expect(keys.includes('accessInteraction')).toBe(true);
         expect(keys.includes('consentInteraction')).toBe(true);
         expect(keys.includes('IPFSManagementInteraction')).toBe(true);
         expect(keys.length).toBe(3);
     });
 
-    test('should not generate an interaction if we dont specifie the consentInteraction type', async () => {
+    test('should not generate an interaction if we don´t specific the consentInteraction type', async () => {
         await expect(async () => {
             const factoryInteraction: FactoryInteraction = new FactoryInteraction();
             factoryInteraction.generateInteraction('not', 'clam', 'clam');
-        }).rejects.toThrow(`The consentInteraction type doesn\'t exist`);
+        }).rejects.toThrow('The consentInteraction type doesn\'t exist');
     });
 
-    test('should not generate an interaction if we dont specifie the accessInteraction type', async () => {
+    test('should not generate an interaction if we don´t specific the accessInteraction type', async () => {
         await expect(async () => {
             const factoryInteraction: FactoryInteraction = new FactoryInteraction();
             factoryInteraction.generateInteraction('clam', 'not', 'clam');

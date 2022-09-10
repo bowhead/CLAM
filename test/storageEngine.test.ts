@@ -15,7 +15,6 @@ describe('Testing storage engine using IPFS service as default', () => {
         timeout: 2000
     });
 
-
     let cid: string;
     const address = '0x7EEc887Ff77e28D7Cbd2057E1da4251F48B81336';
     const privateKey = 'bebefc9fd249df72a5b010e92adac9353ea11cc5825e5c710ef2da831e948c74';
@@ -31,7 +30,7 @@ describe('Testing storage engine using IPFS service as default', () => {
             fileName: 'test.txt'
         };
         cid = await storageEngine.saveFile(options);
-        // await ipfsManagement.addFile(cid, options.fileName);
+
         expect(cid).not.toBe('');
     });
 
@@ -44,10 +43,10 @@ describe('Testing storage engine using IPFS service as default', () => {
             .get('/file')
             .query({ address: address, cid: cid })
             .reply(200, {
-                file: 'dGVzdHYxMA=='
+                file: 'dGVzdFYxMA=='
             });
         const file = await storageEngine.getFile(options);
-        expect(Buffer.from(file, 'base64').toString()).toBe('testv10');
+        expect(Buffer.from(file, 'base64').toString()).toBe('testV10');
     });
 
     test('Should update file by CID', async () => {
@@ -75,10 +74,10 @@ describe('Testing storage engine using IPFS service as default', () => {
             .get('/file')
             .query({ address: address, cid: cid })
             .reply(200, {
-                file: 'dGVzdHYxMQ=='
+                file: 'dGVzdFYxMQ=='
             });
         const file = await storageEngine.getFile(getOptions);
-        expect(Buffer.from(file, 'base64').toString()).toBe('testv11');
+        expect(Buffer.from(file, 'base64').toString()).toBe('testV11');
     });
 
     test('Should delete file by CID', async () => {
