@@ -24,6 +24,12 @@ interface IStorageEngine {
      * @param {object} options - Identifier of the file to delete and additional parameters
      */
     deleteFile(options: object): Promise<void>;
+
+    /**
+     * Set storage engine configurations
+     * @param {object} options - Configuration options
+     */
+    setConfiguration(options: object): void;
 }
 
 export default IStorageEngine;
