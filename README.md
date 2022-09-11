@@ -23,7 +23,7 @@ Using blockchain as basis, CLAM helps developers to focus on the implementation 
 	- [How to encrypt, save and decrypt a document using AES](#how-to-encrypt-save-and-decrypt-a-document-using-aes)
 	- [How to encrypt, save and decrypt a document using Open PGP](#how-to-encrypt-save-and-decrypt-a-document-using-open-pgp)
 	- [Use a custom encryption algorithm](#use-a-custom-encryption-algorithm)
-	<!-- - [Use a custom storage engine](#use-a-custom-storage-engine) -->
+	- [Use a custom storage engine](#use-a-custom-storage-engine)
 - [License](#license)
 
 ## Requirements
@@ -584,6 +584,108 @@ factoryIdentity.setOptionEncryption({ name: 'LULU', option: EncryptionLayerLULU 
 
 // Get an identity instance that will use the new encryption implementation
 const identity: IdentityManager = factoryIdentity.generateIdentity('LULU', 'PGP');
+```
+
+### Use a custom storage engine
+Create new implementation based on IStorageEngine
+```js
+// Load IStorageEngine module
+import { IStorageEngine } from 'bowhead-clam'
+
+/**
+ * Temporal file type
+ */
+class TemporalFile {
+	name: string;
+	cid: string;
+	file: string;
+}
+
+/**
+ * Temporal file search
+ */
+class TemporalFileSearch {
+	cid: string;
+}
+
+/**
+ * Temporal storage engine
+ */
+class TemporalEngine implements IStorageEngine {
+	private files = new Array<TemporalFile>;
+
+	/**
+	 * Save temporal file
+	 * @param {object} options - File to save and additional parameters
+	 * @returns {string} returns the file identifier or location
+	 */
+	async saveFile(options: object): Promise<string> {
+		const fileInfo = options as TemporalFile;
+		const cid = (Math.random() + 1).toString(36).substring(7);
+		fileInfo.cid = cid;
+		this.files.push(fileInfo);
+		return cid;
+	}
+
+	/**
+	 * Get file from storage engine
+	 * @param {object} options - File identifier or location and additional parameters
+	 * @returns {string} returns the file
+	 */
+	async getFile(options: object): Promise<string> {
+		const fileInfo = options as TemporalFileSearch;
+		
+		const file = this.files.find(file => {
+			return file.cid === fileInfo.cid;
+		});
+
+		return file?.file || '';
+	}
+
+	/**
+	 * Update file stored
+	 * @param {object} options - File identifier or location and additional parameters
+	 */
+	async updateFile(options: object): Promise<void> {
+		const fileInfo = options as TemporalFile;
+
+		const index = this.files.findIndex((file => file.cid === fileInfo.cid));
+
+		this.files[index].file = fileInfo.file;
+	}
+
+	/**
+	 * Delete file from storage engine
+	 * @param {object} options - Identifier of the file to delete and additional parameters
+	 */
+	async deleteFile(options: object): Promise<void> {
+		const fileInfo = options as TemporalFileSearch;
+
+		const index = this.files.map(file => file.cid).indexOf(fileInfo.cid);
+
+		this.files.splice(index, 1);
+	}
+
+	/**
+	 * Set storage options
+	 * @param {object} options - Configuration options
+	 */
+	setConfiguration(options: object): void {
+		console.error(options);
+	}
+}
+```
+
+Register the new implementation
+```js
+// Load StorageEngine module
+import { StorageEngine } from 'bowhead-clam'
+
+// Create a storage engine instance and pass the new implementation as a parameter in the constructor
+const storageEngineFactory = new StorageEngine(TemporalEngine);
+
+// Get storage engine
+const storageEngine = storageEngineFactory.getStorageEngine();
 ```
 
 ## License
