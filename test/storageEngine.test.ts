@@ -1,6 +1,3 @@
-/*global describe, test, expect, __dirname, Buffer */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable spellcheck/spell-checker */
 import { StorageEngine } from '../src';
 import * as fs from 'fs';
 import path from 'path';

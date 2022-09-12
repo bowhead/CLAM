@@ -110,7 +110,8 @@ module.exports = {
                     'Uint',
                     'keypair',
                     'txt',
-                    'Misformed'
+                    'Misformed',
+                    'dotenv'
                 ],
                 'skipIfMatch': [
                     '.+\.txt',

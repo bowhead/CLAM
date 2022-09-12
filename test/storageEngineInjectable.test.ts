@@ -1,4 +1,3 @@
-/* eslint-disable spellcheck/spell-checker */
 import { StorageEngine, IStorageEngine } from '../src';
 import * as fs from 'fs';
 import path from 'path';
@@ -111,7 +110,7 @@ describe('Testing inject new storage engine', () => {
 
         const file = await storageEngine.getFile(options);
 
-        expect(Buffer.from(file, 'base64').toString()).toBe('testv10');
+        expect(Buffer.from(file, 'base64').toString()).toBe('testV10');
     });
 
     test('Should update file by CID', async () => {
@@ -129,7 +128,7 @@ describe('Testing inject new storage engine', () => {
 
         const file = await storageEngine.getFile(getOptions);
 
-        expect(Buffer.from(file, 'base64').toString()).toBe('testv11');
+        expect(Buffer.from(file, 'base64').toString()).toBe('testV11');
     });
 
     test('Should delete file by CID', async () => {

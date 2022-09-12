@@ -1,9 +1,9 @@
-require('dotenv').config()
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+require('dotenv').config();
 import { 
     DocumentSharing,
     IdentityManager,
     FactoryIdentity,
-    IStorageEngine,
     StorageEngine,
     IKeysGenerator,
     KeysGeneratorPGP, 
@@ -20,7 +20,6 @@ import Web3Provider from '../src/contractIntegration/interaction/Web3Provider';
 import { AccessInteraction, ConsentInteraction, FactoryInteraction ,Interaction } from '../src/contractIntegration';
 import nock from 'nock';
 import Web3 from 'web3';
-import { IContractConfig } from '../src/contractIntegration/interaction/types/IContractConfig';
 import { AbiItem } from 'web3-utils';
 
 describe('Testing document sharing', () => {
@@ -36,7 +35,9 @@ describe('Testing document sharing', () => {
     const PGPInstanceToShare: IdentityManager = factoryIdentity.generateIdentity('PGP', 'PGP');
     PGPInstanceToShare.generateIdentity();
 
-    const storageEngine: IStorageEngine = new StorageEngine({
+    const storageEngineFactory = new StorageEngine();
+    const storageEngine = storageEngineFactory.getStorageEngine();
+    storageEngine.setConfiguration({
         URL: 'http://localhost:3000',
         ApiKey: 'wXW9c5NObnsrZIY1J3Tqhvz4cZ7YQrrKnbJpo9xOqJM=',
         timeout: 2000
@@ -58,10 +59,10 @@ describe('Testing document sharing', () => {
         web3Provider = Web3Provider.getInstance();
 
         const web3 = new Web3(String(process.env.CLAM_BLOCKCHAIN_LOCALTION));
-        const consentConfig = { address: process.env.CLAM_CONSENT_ADDRESS, abi: ABIConsent.abi };
-        const accessConfig = { address: process.env.CLAM_ACCESS_ADDRESS, abi: ABIAccess.abi };
-        const consentResourceConfig = { address: process.env.CLAM_CONSENT_RESOURCE_ADDRESS, abi: ABIConsentResource.abi };
-        const IPFSManagementConfig = { address: process.env.CLAM_IPFS_ADDRESS, abi: ABIIPFSManagement.abi };
+        const consentConfig = { address: process.env.CLAM_CONSENT_ADDRESS || '', abi: ABIConsent.abi as unknown as AbiItem };
+        const accessConfig = { address: process.env.CLAM_ACCESS_ADDRESS || '', abi: ABIAccess.abi as unknown as AbiItem};
+        const consentResourceConfig = { address: process.env.CLAM_CONSENT_RESOURCE_ADDRESS || '', abi: ABIConsentResource.abi as unknown as AbiItem};
+        const IPFSManagementConfig = { address: process.env.CLAM_IPFS_ADDRESS || '', abi: ABIIPFSManagement.abi as unknown as AbiItem};
         web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
         interaction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
 

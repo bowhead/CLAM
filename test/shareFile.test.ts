@@ -22,7 +22,9 @@ describe('User owned file flow', () => {
 
     const AESInstance: IdentityManager = factoryIdentity.generateIdentity('AES', 'PGP');
     AESInstance.generateIdentity();
-    const storageEngine: IStorageEngine = new StorageEngine({
+    const storageEngineFactory = new StorageEngine();
+    const storageEngine = storageEngineFactory.getStorageEngine();
+    storageEngine.setConfiguration({
         URL: 'http://localhost:3000',
         ApiKey: 'wXW9c5NObnsrZIY1J3Tqhvz4cZ7YQrrKnbJpo9xOqJM=',
         timeout: 2000
