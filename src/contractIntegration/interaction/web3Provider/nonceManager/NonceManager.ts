@@ -4,7 +4,7 @@ import { container } from "tsyringe";
 import MemoryCacheEngine from "./MemoryCacheEngine";
 import LocalStorageCacheEngine from "./LocalStorageCacheEngine";
 
-container.register("cache", MemoryCacheEngine);
+container.register("memory", MemoryCacheEngine);
 container.register("localStorage", LocalStorageCacheEngine);
 
 class NonceManager {
