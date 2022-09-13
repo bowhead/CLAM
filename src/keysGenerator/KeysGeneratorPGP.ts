@@ -2,6 +2,7 @@ import { injectable } from 'tsyringe';
 import IKeysGenerator from './IKeysGenerator';
 import IKeys from './IKeys';
 import { generateKey } from 'openpgp';
+import { IKeysInfo } from './types/IKeysInfo';
 
 /**
  * This class
@@ -15,12 +16,12 @@ class KeysGeneratorPGP implements IKeysGenerator {
      * @param {any} data This parameter is the information to generate the keys.
      * @returns {Primise<IKeys>} return the keys.
      */
-    public generateKeys = async (data: any): Promise<IKeys> => {
-        const pgpKeys: IKeys = {
+    public generateKeys = async (data: object): Promise<IKeys> => {
+        const PGPKeys: IKeys = {
             privateKey: '',
             publicKey: ''
         };
-        const { name, email } = data;
+        const { name, email } = data as IKeysInfo;
         const { privateKey, publicKey } = await generateKey({
             type: 'ecc',
             curve: 'curve25519',
@@ -28,10 +29,10 @@ class KeysGeneratorPGP implements IKeysGenerator {
             passphrase: 'passphrase',
             format: 'armored'
         });
-        pgpKeys.privateKey = privateKey;
-        pgpKeys.publicKey = publicKey;
-        return pgpKeys;
-    }
+        PGPKeys.privateKey = privateKey;
+        PGPKeys.publicKey = publicKey;
+        return PGPKeys;
+    };
 
 }
 

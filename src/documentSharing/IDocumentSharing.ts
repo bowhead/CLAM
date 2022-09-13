@@ -1,4 +1,4 @@
-import { IdentityManager } from "../indentityManager";
+import { IdentityManager } from '../indentityManager';
 
 interface IDocumentSharing {
     /**
@@ -12,7 +12,7 @@ interface IDocumentSharing {
     /**
      * Get unencrypted file 
      * @param {IdentityManager} identity - User identity
-     * @param {object} options - File identifier or location and additional paramters
+     * @param {object} options - File identifier or location and additional parameters
      * @returns {Promise<string>} returns the file
      */
     getFile(identity: IdentityManager, options: object): Promise<string>;
@@ -27,7 +27,7 @@ interface IDocumentSharing {
     /**
      * Shared file 
      * @param {IdentityManager} identity - User identity 
-     * @param {object} options - File identifier or location and additional paramters
+     * @param {object} options - File identifier or location and additional parameters
      * @param {string} userIds - Users id to share file
      */
     sharedFile(identity: IdentityManager, options: object, userIds: string): Promise<string>;
@@ -35,7 +35,7 @@ interface IDocumentSharing {
     /**
      * Get shared file 
      * @param {IdentityManager} identity - User identity
-     * @param {object} options - File identifier or location and additional paramters
+     * @param {object} options - File identifier or location and additional parameters
      * @returns {Promise<string>} returns the file
      */
     getSharedFile(identity: IdentityManager, options: object): Promise<string>;

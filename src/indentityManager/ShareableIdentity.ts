@@ -1,13 +1,11 @@
-/* eslint-disable no-undef */
-/* eslint-disable @typescript-eslint/no-var-requires */
-
 import IdentityManager from './IdentityManager';
 import FactoryIdentity from '../factoryIdentity/FactoryIdentity';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { fromMnemonic } = require('ethereum-hdwallet');
 
 /**
- * This class allows you to create N indentities based on a main indentity, 
- * thus generating compatible and child indentities based on the main indentity.
+ * This class allows you to create N identities based on a main identity, 
+ * thus generating compatible and child identities based on the main identity.
  */
 class ShareableIdentity {
     public mainIdentity: IdentityManager;
@@ -58,24 +56,24 @@ class ShareableIdentity {
             throw new Error('The main identity has to be initialized');
         }
 
-    }
+    };
 
     /**
-     * This function returns a specific indetity.
+     * This function returns a specific identity.
      * 
      * @param {number} index This parameter is the specific position in your identities.
-     * @returns {IdentityManager} an instance of IdentityManeger class.
+     * @returns {IdentityManager} an instance of IdentityManager class.
      */
     public getIdentityByIndex = (index: number): IdentityManager => {
         if (index < 0) throw new Error('Position must be equal or greater than 0');
         const factoryIdentity: FactoryIdentity = new FactoryIdentity();
-        let identity: IdentityManager = factoryIdentity.generateIdentity('pgp', 'pgp');
+        let identity: IdentityManager = factoryIdentity.generateIdentity('PGP', 'PGP');
         if (index >= 0 && index < this.identities.length) {
             identity = this.identities[index];
             this.identities[index];
         }
         return identity;
-    }
+    };
 }
 
 export default ShareableIdentity;

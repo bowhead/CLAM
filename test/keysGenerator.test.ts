@@ -32,6 +32,6 @@ describe('Testing keys generator', () => {
                 email: 'email'
             };
             await generatorPGP.generateKeys(data);
-        }).rejects.toThrow('Error generating keypair: Invalid user ID format')
+        }).rejects.toThrow('Error generating keypair: Invalid user ID format');
     });
 });

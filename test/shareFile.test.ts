@@ -1,4 +1,4 @@
-import { 
+import {
     DocumentSharing,
     IdentityManager,
     FactoryIdentity,
@@ -12,133 +12,129 @@ import ABIAccess from './utilities/Access.json';
 import ABIConsentResource from './utilities/ConsentResource.json';
 import ABIIPFSManagement from './utilities/IPFSManagement.json';
 import Web3Provider from '../src/contractIntegration/interaction/Wbe3Provider';
-import { FactoryInteraction ,Interaction } from '../src/contractIntegration';
+import { FactoryInteraction, Interaction } from '../src/contractIntegration';
 import Web3 from 'web3';
+import IInteractionConfig from '../src/contractIntegration/interaction/IInteractionConfig';
+import FactoryWeb3Interaction from '../src/contractIntegration/interaction/web3Provider/FactoryWeb3Interaction';
 
 describe('User owned file flow', () => {
-    const factoryIdentity: FactoryIdentity = new FactoryIdentity();
-
-    const aesInstance: IdentityManager = factoryIdentity.generateIdentity('aes', 'pgp');
-    aesInstance.generateIdentity();
-    const storageEngine: IStorageEngine = new StorageEngine({
+    let factoryIdentity = new FactoryIdentity();
+    const AESInstance: IdentityManager = factoryIdentity.generateIdentity('AES', 'PGP');
+    AESInstance.generateIdentity();
+    const storageEngineFactory = new StorageEngine();
+    const storageEngine = storageEngineFactory.getStorageEngine();
+    storageEngine.setConfiguration({
         URL: 'http://localhost:3000',
         ApiKey: 'wXW9c5NObnsrZIY1J3Tqhvz4cZ7YQrrKnbJpo9xOqJM=',
         timeout: 2000
-    })
+    });
     const documentSharing = new DocumentSharing(storageEngine);
-
     let cid: string;
-    let web3Provider: Web3Provider;
-    let interaction: Interaction;
     let factoryInteraction: FactoryInteraction;
+    let factoryWeb3Provider: FactoryWeb3Interaction;
+    let interaction: Interaction;
 
     beforeEach(() => {
         factoryInteraction = new FactoryInteraction();
-        web3Provider = Web3Provider.getInstance();
+        factoryWeb3Provider = FactoryWeb3Interaction.getInstance();
 
-        const web3 = new Web3('http://localhost:8545');
-        const consentConfig = { address: '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9', abi: ABIConsent.abi };
-        const accessConfig = { address: '0xa513E6E4b8f2a923D98304ec87F64353C4D5C853', abi: ABIAccess.abi };
-        const consentResourceConfig = { address: '0x5FC8d32690cc91D4c39d9d3abcBD16989F875707', abi: ABIConsentResource.abi };
-        const IPFSManagementConfig = { address: '0x8A791620dd6260079BF849Dc5567aDC3F2FdC318', abi: ABIIPFSManagement.abi };
-        web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
+        const interactionConfig: IInteractionConfig = {
+            provider: String(process.env.CLAM_BLOCKCHAIN_LOCALTION),
+            chainId: 13,
+            consent: { address: String(process.env.CLAM_CONSENT_ADDRESS), abi: ABIConsent.abi },
+            access: { address: String(process.env.CLAM_ACCESS_ADDRESS), abi: ABIAccess.abi },
+            consentResource: { address: String(process.env.CLAM_CONSENT_RESOURCE_ADDRESS), abi: ABIConsentResource.abi },
+            ipfs: { address: String(process.env.CLAM_IPFS_ADDRESS), abi: ABIIPFSManagement.abi }
+        }
+        factoryWeb3Provider.setConfig(interactionConfig);
 
         interaction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
 
-        aesInstance.address = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266';
-        aesInstance.privateKey = 'ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80';
+        AESInstance.address = '0x8B3921DA1090CF8de6a34dcb929Be0df53AB81Fa';
+        AESInstance.privateKey = '0a6a24eac9cd5adf1d4b447fdc3316623d362480d6a835da70860b4d4cb0f82f';
 
-        interaction.setIdentity(aesInstance);
-    })
+        interaction.setIdentity(AESInstance);
+    });
 
     test('Should approve consent, add new encrypted file and save register on IPFS Management contract', async () => {
         const options = {
-            file: fs.createReadStream(path.resolve(__dirname, './resources/test.txt')),
+            file: await fs.promises.readFile(path.resolve(__dirname, './resources/test.txt'), 'base64'),
             fileName: 'test.txt',
             contractInteraction: interaction,
-            consentId: 'AAA1'
+            consentId: 'AAA1',
+            keepOriginalName: false
         };
 
         try {
-            let consentApproved = await interaction.consentInteraction.getConsentById(options.consentId, aesInstance.address, aesInstance);
+            const consentApproved = await interaction.consentInteraction.getConsentById(options.consentId, AESInstance.address, AESInstance);
 
             if (!consentApproved) {
-                await interaction.consentInteraction.saveConsent(options.consentId, aesInstance);
+                await interaction.consentInteraction.saveConsent(options.consentId, AESInstance);
             }
         } catch (error) {
-            await interaction.consentInteraction.saveConsent(options.consentId, aesInstance);
+            await interaction.consentInteraction.saveConsent(options.consentId, AESInstance);
         }
-             
-        cid = await documentSharing.saveFile(aesInstance, options);
+
+        cid = await documentSharing.saveFile(AESInstance, options);
 
         expect(cid).not.toBe('');
 
-        await interaction.IPFSManagementInteraction.addFile(cid, options.fileName, aesInstance);
+        await interaction.IPFSManagementInteraction.addFile(cid, options.fileName, AESInstance);
     });
 
-    test('Should not add new encrypted file if the consent is not approved', async() => {
-        try {
-            const options = {
-                file: fs.createReadStream(path.resolve(__dirname, './resources/test.txt')),
-                fileName: 'test.txt',
-                contractInteraction: interaction,
-                consentId: 'AAA2'
-            };
-                 
-            await documentSharing.saveFile(aesInstance, options);
-        } catch (error) {
-            expect(error).toBeInstanceOf(Error);
-            expect(error.message).toBe(`Returned error: Error: VM Exception while processing transaction: reverted with reason string 'Consent not registered'`);          
-        }
+    test('Should not add new encrypted file if the consent is not approved', async () => {
+        const options = {
+            file: await fs.promises.readFile(path.resolve(__dirname, './resources/test.txt'), 'base64'),
+            fileName: 'test.txt',
+            contractInteraction: interaction,
+            consentId: 'AAA2'
+        };
+
+        await expect(documentSharing.saveFile(AESInstance, options)).rejects.toThrow('Consent not registered');
     });
 
-    test('Should check if file is registered on IPFS management contract and get unencrypted file', async() => {
-        let fileExists = await interaction.IPFSManagementInteraction.fileIsAvailable(cid, aesInstance);
+    test('Should check if file is registered on IPFS management contract and get decrypted file', async () => {
+        const fileExists = await interaction.IPFSManagementInteraction.fileIsAvailable(cid, AESInstance);
 
         expect(fileExists).toBe(true);
 
         const options = {
             cid: cid
-        }
+        };
 
-        const file = await documentSharing.getFile(aesInstance, options);
+        const file = await documentSharing.getFile(AESInstance, options);
 
-        expect(Buffer.from(file, 'base64').toString()).toBe('testv10');
+        expect(Buffer.from(file, 'base64').toString()).toBe('testV10');
     });
 
     test('Should not get an encrypted file when the identity does not own the file', async () => {
-        try {
-            const secondIdentity: IdentityManager = factoryIdentity.generateIdentity('aes', 'pgp');
-            secondIdentity.generateIdentity();
-            secondIdentity.address = '0x70997970C51812dc3A010C7d01b50e0d17dc79C8';
+        const secondIdentity: IdentityManager = factoryIdentity.generateIdentity('AES', 'PGP');
+        secondIdentity.generateIdentity();
+        secondIdentity.address = '0x93120bA8FBb9eF2f6744C7d50803A4390E4eF961';
 
-            let fileExists = await interaction.IPFSManagementInteraction.fileIsAvailable(cid, aesInstance);
+        const fileExists = await interaction.IPFSManagementInteraction.fileIsAvailable(cid, AESInstance);
 
-            expect(fileExists).toBe(true);
+        expect(fileExists).toBe(true);
 
-            const options = {
-                cid: cid
-            }
-            
-            await documentSharing.getFile(aesInstance, options);
-        } catch (error) {
-            expect(error).toBeInstanceOf(Error);
-            expect(error.message).toBe(`Returned error: Error: VM Exception while processing transaction: reverted with reason string 'File does not exist'`);
-        }
-    })
+        const options = {
+            cid: cid
+        };
+
+        await expect(documentSharing.getFile(secondIdentity, options)).rejects.toThrow('Request failed with status code 404');
+    });
 });
 
 describe('User sharing files flow', () => {
     const factoryIdentity: FactoryIdentity = new FactoryIdentity();
 
-    const pgpInstance: IdentityManager = factoryIdentity.generateIdentity('pgp', 'pgp');
-    pgpInstance.generateIdentity();
+    const PGPInstance: IdentityManager = factoryIdentity.generateIdentity('PGP', 'PGP');
+    PGPInstance.generateIdentity();
 
-    const pgpInstanceToShare: IdentityManager = factoryIdentity.generateIdentity('pgp', 'pgp');
-    pgpInstanceToShare.generateIdentity();
+    const PGPInstanceToShare: IdentityManager = factoryIdentity.generateIdentity('PGP', 'PGP');
+    PGPInstanceToShare.generateIdentity();
 
-    const pgpSecondInstanceToShare: IdentityManager = factoryIdentity.generateIdentity('pgp', 'pgp');
-    pgpSecondInstanceToShare.generateIdentity();
+    const PGPSecondInstanceToShare: IdentityManager = factoryIdentity.generateIdentity('PGP', 'PGP');
+    PGPSecondInstanceToShare.generateIdentity();
 
     const storageEngine: IStorageEngine = new StorageEngine({
         URL: 'http://localhost:3000',
@@ -152,28 +148,33 @@ describe('User sharing files flow', () => {
     let interaction: Interaction;
 
     beforeEach(() => {
+        jest.setTimeout(10000);
         factoryInteraction = new FactoryInteraction();
         web3Provider = Web3Provider.getInstance();
 
-        const web3 = new Web3('http://localhost:8545');
-        const consentConfig = { address: '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9', abi: ABIConsent.abi };
-        const accessConfig = { address: '0xa513E6E4b8f2a923D98304ec87F64353C4D5C853', abi: ABIAccess.abi };
-        const consentResourceConfig = { address: '0x5FC8d32690cc91D4c39d9d3abcBD16989F875707', abi: ABIConsentResource.abi };
-        const IPFSManagementConfig = { address: '0x8A791620dd6260079BF849Dc5567aDC3F2FdC318', abi: ABIIPFSManagement.abi };
-        web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
+        const interactionConfig: IInteractionConfig = {
+            provider: String(process.env.CLAM_BLOCKCHAIN_LOCALTION),
+            consent: { address: String(process.env.CLAM_CONSENT_ADDRESS), abi: ABIConsent.abi },
+            access: { address: String(process.env.CLAM_ACCESS_ADDRESS), abi: ABIAccess.abi },
+            consentResource: { address: String(process.env.CLAM_CONSENT_RESOURCE_ADDRESS), abi: ABIConsentResource.abi },
+            ipfs: { address: String(process.env.CLAM_IPFS_ADDRESS), abi: ABIIPFSManagement.abi }
+        }
+
+        const web3 = new Web3(interactionConfig.provider);
+        web3Provider.setConfig(web3,interactionConfig);
 
         interaction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
 
-        pgpInstance.address = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266';
-        pgpInstance.privateKey = 'ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80';
+        PGPInstance.address = '0x8B3921DA1090CF8de6a34dcb929Be0df53AB81Fa';
+        PGPInstance.privateKey = '0a6a24eac9cd5adf1d4b447fdc3316623d362480d6a835da70860b4d4cb0f82f';
 
-        pgpInstanceToShare.address = '0x70997970C51812dc3A010C7d01b50e0d17dc79C8';
-        pgpInstanceToShare.privateKey = '59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d';
+        PGPInstanceToShare.address = '0x93120bA8FBb9eF2f6744C7d50803A4390E4eF961';
+        PGPInstanceToShare.privateKey = '41582c42e41141d40b2e42ec53252a4f31a849758a115df2b8eb94fc1abfcc54';
 
-        pgpSecondInstanceToShare.address = '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC';
-        pgpSecondInstanceToShare.privateKey = '5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a';
+        PGPSecondInstanceToShare.address = '0x6042bc18e1EeF555Ce703Bbcfe82cA4FBE0e569c';
+        PGPSecondInstanceToShare.privateKey = '7a89bdee51c2dd476de56ab9d03faf6a62526b1e94859f601f5cbbd6b8817cd4';
 
-        interaction.setIdentity(pgpInstance);
+        interaction.setIdentity(PGPInstance);
     });
 
     test(`Should approve consent,
@@ -182,67 +183,63 @@ describe('User sharing files flow', () => {
         save register on IPFS management contract 
         and add user accounts allowed on access contract`, async () => {
         const options = {
-            file: fs.createReadStream(path.resolve(__dirname, './resources/test.txt')),
+            file: await fs.promises.readFile(path.resolve(__dirname, './resources/test.txt'), 'base64'),
             fileName: 'test.txt',
+            contractInteraction: interaction,
+            consentId: 'SHARED',
+            keepOriginalName: false
+        };
+
+        try {
+            const consentApproved = await interaction.consentInteraction.getConsentById(options.consentId, PGPInstance.address, PGPInstance);
+
+            if (!consentApproved) {
+                await interaction.consentInteraction.saveConsent(options.consentId, PGPInstance);
+            }
+        } catch (error) {
+            await interaction.consentInteraction.saveConsent(options.consentId, PGPInstance);
+        }
+
+        await interaction.consentInteraction.addKey(options.consentId, PGPInstanceToShare.address, PGPInstanceToShare.publicKeySpecial, PGPInstance);
+
+        const usersToShare = await interaction.consentInteraction.getKeys(options.consentId, PGPInstance);
+
+        const PGPKeys = usersToShare[1].join(',');
+
+        cidShared = await documentSharing.sharedFile(PGPInstance, options, PGPKeys);
+
+        expect(cidShared).not.toBe('');
+
+        await interaction.IPFSManagementInteraction.addFile(cidShared, options.fileName, PGPInstance);
+
+        await interaction.accessInteraction.giveAccess(cidShared, options.consentId, usersToShare[0], options.fileName, PGPInstance);
+    });
+
+    test('Should get shared file if user is added on list to shared', async () => {
+        const options = {
+            cid: cidShared,
+            owner: PGPInstance.address,
             contractInteraction: interaction,
             consentId: 'SHARED'
         };
 
-        try {
-            let consentApproved = await interaction.consentInteraction.getConsentById(options.consentId, pgpInstance.address, pgpInstance);
+        const file = await documentSharing.getSharedFile(PGPInstanceToShare, options);
 
-            if (!consentApproved) {
-                await interaction.consentInteraction.saveConsent(options.consentId, pgpInstance);
-            }
-        } catch (error) {
-            await interaction.consentInteraction.saveConsent(options.consentId, pgpInstance);
-        }
-
-        await interaction.consentInteraction.addKey(options.consentId, pgpInstanceToShare.address, pgpInstanceToShare.publicKeySpecial, pgpInstance);
-
-        const usersToShare = await interaction.consentInteraction.getKeys(options.consentId, pgpInstance);
-
-        const pgpKeys = usersToShare[1].join(',');
-
-        cidShared = await documentSharing.sharedFile(pgpInstance, options, pgpKeys);
-
-        expect(cidShared).not.toBe('');
-
-        await interaction.IPFSManagementInteraction.addFile(cidShared, options.fileName, pgpInstance);
-
-        await interaction.acccessInteraction.giveAccess(cidShared, options.consentId, usersToShare[0], options.fileName, pgpInstance);
-    });
-
-    test('Should get shared file if user is added on list to shared', async() => {
-        const options = {
-            cid: cidShared,
-            owner: pgpInstance.address,
-            contractInteraction: interaction,
-            consentId: 'SHARED'
-        }
-
-        const file = await documentSharing.getSharedFile(pgpInstanceToShare, options);
-
-        expect(Buffer.from(file, 'base64').toString()).toBe('testv10');
+        expect(Buffer.from(file, 'base64').toString()).toBe('testV10');
     });
 
     test('Should not get an encrypted file when the identity does not own the file', async () => {
-        try {
-            const instance: IdentityManager = factoryIdentity.generateIdentity('pgp', 'pgp');
-            instance.generateIdentity();
+        const instance: IdentityManager = factoryIdentity.generateIdentity('PGP', 'PGP');
+        instance.generateIdentity();
 
-            const options = {
-                cid: cidShared,
-                owner: pgpInstance.address,
-                contractInteraction: interaction,
-                consentId: 'SHARED'
-            };
-            
-            await documentSharing.getSharedFile(instance, options);
-        } catch (error) {
-            expect(error).toBeInstanceOf(Error);
-            expect(error.data.message).toBe(`Error: VM Exception while processing transaction: reverted with reason string 'You don't have permission over this resource'`);
-        }
+        const options = {
+            cid: cidShared,
+            owner: PGPInstance.address,
+            contractInteraction: interaction,
+            consentId: 'SHARED'
+        };
+
+        await expect(documentSharing.getSharedFile(instance, options)).rejects.toThrow('You don\'t have permission over this resource');
     });
 
     test(`Should approve consent,
@@ -252,51 +249,52 @@ describe('User sharing files flow', () => {
         add user accounts allowed on access contract
         and decrypt file with different keys`, async () => {
         const options = {
-            file: fs.createReadStream(path.resolve(__dirname, './resources/test.txt')),
+            file: await fs.promises.readFile(path.resolve(__dirname, './resources/test.txt'), 'base64'),
             fileName: 'test.txt',
+            contractInteraction: interaction,
+            consentId: 'SHARED1',
+            keepOriginalName: false
+        };
+
+        try {
+            const consentApproved = await interaction.consentInteraction.getConsentById(options.consentId, PGPInstance.address, PGPInstance);
+
+            if (!consentApproved) {
+                await interaction.consentInteraction.saveConsent(options.consentId, PGPInstance);
+            }
+        } catch (error) {
+            await interaction.consentInteraction.saveConsent(options.consentId, PGPInstance);
+        }
+
+        await interaction.consentInteraction.addKey(options.consentId, PGPInstanceToShare.address, PGPInstanceToShare.publicKeySpecial, PGPInstance);
+
+        await interaction.consentInteraction.addKey(options.consentId, PGPSecondInstanceToShare.address, PGPSecondInstanceToShare.publicKeySpecial, PGPInstance);
+
+        const usersToShare = await interaction.consentInteraction.getKeys(options.consentId, PGPInstance);
+
+        const PGPKeys = usersToShare[1].join(',');
+
+        cidShared = await documentSharing.sharedFile(PGPInstance, options, PGPKeys);
+
+        expect(cidShared).not.toBe('');
+
+        await interaction.IPFSManagementInteraction.addFile(cidShared, options.fileName, PGPInstance);
+
+        await interaction.accessInteraction.giveAccess(cidShared, options.consentId, usersToShare[0], options.fileName, PGPInstance);
+
+        const getOptions = {
+            cid: cidShared,
+            owner: PGPInstance.address,
             contractInteraction: interaction,
             consentId: 'SHARED1'
         };
 
-        try {
-            let consentApproved = await interaction.consentInteraction.getConsentById(options.consentId, pgpInstance.address, pgpInstance);
+        const fileShared1 = await documentSharing.getSharedFile(PGPInstanceToShare, getOptions);
 
-            if (!consentApproved) {
-                await interaction.consentInteraction.saveConsent(options.consentId, pgpInstance);
-            }
-        } catch (error) {
-            await interaction.consentInteraction.saveConsent(options.consentId, pgpInstance);
-        }
+        expect(Buffer.from(fileShared1, 'base64').toString()).toBe('testV10');
 
-        await interaction.consentInteraction.addKey(options.consentId, pgpInstanceToShare.address, pgpInstanceToShare.publicKeySpecial, pgpInstance);
+        const fileShared2 = await documentSharing.getSharedFile(PGPSecondInstanceToShare, getOptions);
 
-        await interaction.consentInteraction.addKey(options.consentId, pgpSecondInstanceToShare.address, pgpSecondInstanceToShare.publicKeySpecial, pgpInstance);
-
-        const usersToShare = await interaction.consentInteraction.getKeys(options.consentId, pgpInstance);
-
-        const pgpKeys = usersToShare[1].join(',');
-
-        cidShared = await documentSharing.sharedFile(pgpInstance, options, pgpKeys);
-
-        expect(cidShared).not.toBe('');
-
-        await interaction.IPFSManagementInteraction.addFile(cidShared, options.fileName, pgpInstance);
-
-        await interaction.acccessInteraction.giveAccess(cidShared, options.consentId, usersToShare[0], options.fileName, pgpInstance);
-
-        const getOptions = {
-            cid: cidShared,
-            owner: pgpInstance.address,
-            contractInteraction: interaction,
-            consentId: 'SHARED1'
-        }
-
-        const fileShared1 = await documentSharing.getSharedFile(pgpInstanceToShare, getOptions);
-
-        expect(Buffer.from(fileShared1, 'base64').toString()).toBe('testv10');
-
-        const fileShared2 = await documentSharing.getSharedFile(pgpSecondInstanceToShare, getOptions);
-
-        expect(Buffer.from(fileShared2, 'base64').toString()).toBe('testv10');
+        expect(Buffer.from(fileShared2, 'base64').toString()).toBe('testV10');
     });
 });

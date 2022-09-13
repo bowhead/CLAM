@@ -15,7 +15,7 @@ class DocumentSharing implements IDocumentSharing {
     /**
      * Document sharing constructor
      * Using to set storage engine instance
-     * @param {IStorageEngine} instance - Storage engine instace
+     * @param {IStorageEngine} instance - Storage engine instance
      */
     constructor (instance: IStorageEngine) {
         this.storageEngine = instance;
@@ -36,15 +36,16 @@ class DocumentSharing implements IDocumentSharing {
         
         if (!consentApproved) throw new Error('Consent is not approved');
 
-        const fileEncrypted = await identity.encryptionLayer.ecryptData(identity.privateKey, body.file || '');
+        const fileEncrypted = await identity.encryptionLayer.encryptData(identity.privateKey, body.file || '');
 
         const data = {
             file: fileEncrypted,
             address: identity.address,
-            fileName: body.fileName
+            fileName: body.fileName,
+            keepOriginalName: body.keepOriginalName || false
         };
 
-        let cid = await this.storageEngine.saveFile(data);
+        const cid = await this.storageEngine.saveFile(data);
 
         return cid;
     }
@@ -84,7 +85,7 @@ class DocumentSharing implements IDocumentSharing {
 
         if(!body.file) throw new Error('File parameter is missing');
 
-        const fileEncrypted = await identity.encryptionLayer.ecryptData(identity.privateKey, body.file)
+        const fileEncrypted = await identity.encryptionLayer.encryptData(identity.privateKey, body.file);
 
         const data = {
             file: fileEncrypted,
@@ -114,15 +115,16 @@ class DocumentSharing implements IDocumentSharing {
 
         userIds += `,${identity.publicKeySpecial}`;
 
-        const fileEncrypted = await identity.encryptionLayer.ecryptData(userIds, body.file)
+        const fileEncrypted = await identity.encryptionLayer.encryptData(userIds, body.file);
 
         const data = {
             file: fileEncrypted,
             address: identity.address,
-            fileName: body.fileName
+            fileName: body.fileName,
+            keepOriginalName: body.keepOriginalName || false
         };
 
-        let cid = await this.storageEngine.saveFile(data);
+        const cid = await this.storageEngine.saveFile(data);
 
         return cid;
     }
@@ -138,7 +140,7 @@ class DocumentSharing implements IDocumentSharing {
 
         if (!info.cid) throw new Error('File identifier is missing');
 
-        const access = await info.contractInteraction.acccessInteraction.checkAccess(info.cid, info.consentId, identity);
+        const access = await info.contractInteraction.accessInteraction.checkAccess(info.cid, info.consentId, identity);
 
         if (!access) throw new Error('You do not have access to the resource');
 
@@ -151,7 +153,7 @@ class DocumentSharing implements IDocumentSharing {
 
         const decodeFile = Buffer.from(file, 'base64').toString('utf8');
 
-        const decryptedFile = identity.encryptionLayer.decryptData(identity.privateKeySpecial, decodeFile);
+        const decryptedFile = await identity.encryptionLayer.decryptData(identity.privateKeySpecial, decodeFile);
 
         return decryptedFile;
     }

@@ -1,10 +1,10 @@
 import 'reflect-metadata';
-import { IEncryptionLayer, EncryptionLayerPGP, EncryptioLayerAES } from './encryptionLayer';
+import { IEncryptionLayer, EncryptionLayerPGP, EncryptionLayerAES } from './encryptionLayer';
 import { IdentityManager, ShareableIdentity } from './indentityManager';
 import { IKeys, IKeysGenerator, KeysGeneratorPGP } from './keysGenerator';
 import FactoryIdentity from './factoryIdentity/FactoryIdentity';
-import { StorageEngine, IStorageEngine } from './storageEngine';
-import {FactoryInteraction} from "./contractIntegration";
+import { StorageEngine, Storage, IStorageEngine } from './storageEngine';
+import {FactoryInteraction} from './contractIntegration';
 import Web3Provider from './contractIntegration/interaction/Wbe3Provider';
 import { DocumentSharing, IDocumentSharing } from './documentSharing';
 
@@ -12,7 +12,7 @@ export {
     IdentityManager,
     ShareableIdentity,
     EncryptionLayerPGP,
-    EncryptioLayerAES,
+    EncryptionLayerAES,
     FactoryIdentity,
     FactoryInteraction,
     KeysGeneratorPGP,
@@ -20,6 +20,7 @@ export {
     IKeys,
     IKeysGenerator,
     StorageEngine,
+    Storage,
     IStorageEngine,
     Web3Provider,
     DocumentSharing,

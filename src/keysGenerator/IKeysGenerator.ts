@@ -5,7 +5,7 @@ interface IKeysGenerator {
     /**
      * This method generates your keys using PGP.
      */
-    generateKeys(data: any): Promise<IKeys>;
+    generateKeys(data: object): Promise<IKeys>;
 
 }
 

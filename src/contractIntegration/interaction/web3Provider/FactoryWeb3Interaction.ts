@@ -14,7 +14,7 @@ class FactoryWeb3Interaction {
     public static intance: FactoryWeb3Interaction;
 
     private constructor() {
-        this.web3Providers = [
+        this.web3Providers =[
             { name: "web3", option: Web3Provider },
             { name: "bowhead", option: Web3ProviderBowhead }
         ];

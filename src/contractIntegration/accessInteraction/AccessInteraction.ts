@@ -8,6 +8,7 @@ import IWeb3Provider from '../interaction/web3Provider/IWeb3Provider';
 import FactoryWeb3Interaction from '../interaction/web3Provider/FactoryWeb3Interaction';
 import IContractActions from '../interaction/web3Provider/IContractActions';
 
+
 /**
  * 
  * This class is the implementation of IAccessInteraction interface,

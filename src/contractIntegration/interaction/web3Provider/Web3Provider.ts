@@ -19,12 +19,15 @@ class Web3Provider implements IWeb3Provider {
         if (interactionType.trim().length === 0 || interactionType.trim() === '') throw new Error("Please pass the contract name to interact.");
         let abi: any;
         let address: string = "";
-        if (interactionType.trim().toLowerCase() === "consent") {
+        if (interactionType.trim().toLowerCase() === 'consent') {
             abi = this.interactionConfig.consent.abi;
             address = this.interactionConfig.consent.address;
-        } else if (interactionType.trim().toLowerCase() === "access") {
+        } else if (interactionType.trim().toLowerCase() === 'access') {
             abi = this.interactionConfig.access.abi;
             address = this.interactionConfig.access.address;
+        } else if (interactionType.trim().toUpperCase() === 'IPFS') {
+            abi = this.interactionConfig.ipfs.abi;
+            address = this.interactionConfig.ipfs.address;
         } else {
             throw new Error("This contract doesn't exist.");
         }

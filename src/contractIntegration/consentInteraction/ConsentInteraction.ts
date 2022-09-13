@@ -1,5 +1,6 @@
 /*globals Promise*/
 require('dotenv').config();
+
 import { injectable } from 'tsyringe';
 import { IConsentInteraction } from '.';
 import Web3 from 'web3';
@@ -8,6 +9,7 @@ import IConsentKeys from './IConsentKeys';
 import FactoryWeb3Interaction from '../interaction/web3Provider/FactoryWeb3Interaction';
 import IWeb3Provider from '../interaction/web3Provider/IWeb3Provider';
 import IContractActions from '../interaction/web3Provider/IContractActions';
+
 
 /**
  * This class represent the implementation of IConsentInteraction interface,
@@ -93,7 +95,7 @@ class ConsentInteraction implements IConsentInteraction {
             action: 'send',
             methodName: 'addPGPKey'
         }
-        const result =  await this.provider.useContractMethod(contract, identity, options, Web3.utils.fromAscii(consentId), addressConsent, key);
+        const result = await this.provider.useContractMethod(contract, identity, options, Web3.utils.fromAscii(consentId), addressConsent, key);
         return result.status;
     }
 

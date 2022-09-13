@@ -1,9 +1,9 @@
-import EncryptioLayerAES from './EncryptioLayerAES';
-import EncryptionLayerPGP from './EncryptioLayerPGP';
+import EncryptionLayerAES from './EncryptionLayerAES';
+import EncryptionLayerPGP from './EncryptionLayerPGP';
 import IEncryptionLayer from './IEncryptionLayer';
 
 export {
-    EncryptioLayerAES,
+    EncryptionLayerAES,
     EncryptionLayerPGP,
     IEncryptionLayer
 };
