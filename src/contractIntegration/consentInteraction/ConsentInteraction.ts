@@ -1,6 +1,8 @@
 /*globals Promise*/
 require('dotenv').config();
-
+require("@babel/core").transformSync("code", {
+    plugins: ["@babel/plugin-proposal-decorators"],
+  });
 import { injectable } from 'tsyringe';
 import { IConsentInteraction } from '.';
 import Web3 from 'web3';

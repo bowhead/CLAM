@@ -1,4 +1,5 @@
 /*global beforeEach, describe, test, expect*/
+import {describe, expect, test} from '@jest/globals';
 require('dotenv').config();
 import { FactoryInteraction, Interaction } from '../src/contractIntegration';
 import { FactoryIdentity, IdentityManager } from '../src/';

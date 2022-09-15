@@ -7,7 +7,7 @@ const NodeEnvironment = require('jest-environment-node');
 /**
  * Custom environment for Jest test cases
  */
-class CustomEnvironment extends NodeEnvironment {
+class CustomEnvironment extends NodeEnvironment.TestEnvironment {
 
     /**
      * 

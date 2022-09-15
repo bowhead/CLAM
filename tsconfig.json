@@ -5,13 +5,14 @@
     "types"
   ],
   "compilerOptions": {
+    "experimentalDecorators": true,                   /* Enable experimental support for TC39 stage 2 draft decorators. */
+    "emitDecoratorMetadata": true,  
     "module": "esnext",
     "lib": [
       "dom",
       "ES2015"
     ],
-    "experimentalDecorators": true,                   /* Enable experimental support for TC39 stage 2 draft decorators. */
-    "emitDecoratorMetadata": true,    
+     
     "importHelpers": true,
     // output .d.ts declaration files for consumers
     "declaration": true,
@@ -28,6 +29,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "resolveJsonModule": true,
+    "outDir": "./dist",
     // use Node's module resolution algorithm, instead of the legacy TS one
     "moduleResolution": "node",
     // transpile JSX to React.createElement
