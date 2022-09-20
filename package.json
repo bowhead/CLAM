@@ -36,6 +36,7 @@
         "@types/jest": "^28.1.4",
         "@typescript-eslint/eslint-plugin": "^5.34.0",
         "@typescript-eslint/parser": "^5.34.0",
+        "babel-plugin-transform-typescript-metadata": "^0.3.1",
         "dotenv": "^16.0.1",
         "eslint": "^8.22.0",
         "eslint-plugin-spellcheck": "^0.0.19",
@@ -56,6 +57,7 @@
     },
     "dependencies": {
         "axios": "^0.27.2",
+        "bitcore-mnemonic": "^8.25.38",
         "bowhead-web3": "github:bowhead/web3.js#bowhead_stable",
         "crypto-js": "^4.1.1",
         "ethereum-hdwallet": "^0.0.1",
