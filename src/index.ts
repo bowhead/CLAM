@@ -3,9 +3,9 @@ import { IEncryptionLayer, EncryptionLayerPGP, EncryptionLayerAES } from './encr
 import { IdentityManager, ShareableIdentity } from './indentityManager';
 import { IKeys, IKeysGenerator, KeysGeneratorPGP } from './keysGenerator';
 import FactoryIdentity from './factoryIdentity/FactoryIdentity';
-import { StorageEngine, IStorageEngine } from './storageEngine';
+import { StorageEngine, Storage, IStorageEngine } from './storageEngine';
 import {FactoryInteraction} from './contractIntegration';
-import Web3Provider from './contractIntegration/interaction/Web3Provider';
+import Web3Provider from './contractIntegration/interaction/Wbe3Provider';
 import { DocumentSharing, IDocumentSharing } from './documentSharing';
 
 export {
@@ -20,6 +20,7 @@ export {
     IKeys,
     IKeysGenerator,
     StorageEngine,
+    Storage,
     IStorageEngine,
     Web3Provider,
     DocumentSharing,
