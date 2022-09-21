@@ -1,4 +1,4 @@
-import { 
+import {
     DocumentSharing,
     IdentityManager,
     FactoryIdentity,
@@ -11,17 +11,17 @@ import ABIConsent from './utilities/Consent.json';
 import ABIAccess from './utilities/Access.json';
 import ABIConsentResource from './utilities/ConsentResource.json';
 import ABIIPFSManagement from './utilities/IPFSManagement.json';
-import Web3Provider from '../src/contractIntegration/interaction/Web3Provider';
-import { FactoryInteraction ,Interaction } from '../src/contractIntegration';
+import Web3Provider from '../src/contractIntegration/interaction/Wbe3Provider';
+import { FactoryInteraction, Interaction } from '../src/contractIntegration';
 import Web3 from 'web3';
-import { IContractConfig } from '../src/contractIntegration/interaction/types/IContractConfig';
-import { AbiItem } from 'web3-utils';
+import IInteractionConfig from '../src/contractIntegration/interaction/IInteractionConfig';
+import FactoryWeb3Interaction from '../src/contractIntegration/interaction/web3Provider/FactoryWeb3Interaction';
 
 describe('User owned file flow', () => {
-    const factoryIdentity: FactoryIdentity = new FactoryIdentity();
-
+    let factoryIdentity = new FactoryIdentity();
     const AESInstance: IdentityManager = factoryIdentity.generateIdentity('AES', 'PGP');
     AESInstance.generateIdentity();
+    
     const storageEngineFactory = new StorageEngine();
     const storageEngine = storageEngineFactory.getStorageEngine();
     storageEngine.setConfiguration({
@@ -29,23 +29,26 @@ describe('User owned file flow', () => {
         ApiKey: 'wXW9c5NObnsrZIY1J3Tqhvz4cZ7YQrrKnbJpo9xOqJM=',
         timeout: 2000
     });
+    
     const documentSharing = new DocumentSharing(storageEngine);
-
     let cid: string;
-    let web3Provider: Web3Provider;
-    let interaction: Interaction;
     let factoryInteraction: FactoryInteraction;
+    let factoryWeb3Provider: FactoryWeb3Interaction;
+    let interaction: Interaction;
 
     beforeEach(() => {
         factoryInteraction = new FactoryInteraction();
-        web3Provider = Web3Provider.getInstance();
+        factoryWeb3Provider = FactoryWeb3Interaction.getInstance();
 
-        const web3 = new Web3('http://localhost:8545');
-        const consentConfig:IContractConfig = { address: '0x09Fe1b1A9Cd73F35945Bfdc0378c9aCC227c0DBF', abi: ABIConsent.abi as unknown as AbiItem };
-        const accessConfig:IContractConfig = { address: '0x82E54b8B226b007704D1203f0951138338CB921F', abi: ABIAccess.abi as unknown as AbiItem};
-        const consentResourceConfig:IContractConfig = { address: '0x639c9197aB9be745A6D2CB6cB8c2d46D7BB9A412', abi: ABIConsentResource.abi as unknown as AbiItem };
-        const IPFSManagementConfig:IContractConfig = { address: '0xB19Fb08e183fF19989792ceD10325BF0C45CCd27', abi: ABIIPFSManagement.abi as unknown as AbiItem };
-        web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
+        const interactionConfig: IInteractionConfig = {
+            provider: String(process.env.CLAM_BLOCKCHAIN_LOCALTION),
+            chainId: 13,
+            consent: { address: String(process.env.CLAM_CONSENT_ADDRESS), abi: ABIConsent.abi },
+            access: { address: String(process.env.CLAM_ACCESS_ADDRESS), abi: ABIAccess.abi },
+            consentResource: { address: String(process.env.CLAM_CONSENT_RESOURCE_ADDRESS), abi: ABIConsentResource.abi },
+            ipfs: { address: String(process.env.CLAM_IPFS_ADDRESS), abi: ABIIPFSManagement.abi }
+        }
+        factoryWeb3Provider.setConfig(interactionConfig);
 
         interaction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
 
@@ -81,18 +84,18 @@ describe('User owned file flow', () => {
         await interaction.IPFSManagementInteraction.addFile(cid, options.fileName, AESInstance);
     });
 
-    test('Should not add new encrypted file if the consent is not approved', async() => {
+    test('Should not add new encrypted file if the consent is not approved', async () => {
         const options = {
             file: await fs.promises.readFile(path.resolve(__dirname, './resources/test.txt'), 'base64'),
             fileName: 'test.txt',
             contractInteraction: interaction,
             consentId: 'AAA2'
         };
-                
+
         await expect(documentSharing.saveFile(AESInstance, options)).rejects.toThrow('Consent not registered');
     });
 
-    test('Should check if file is registered on IPFS management contract and get decrypted file', async() => {
+    test('Should check if file is registered on IPFS management contract and get decrypted file', async () => {
         const fileExists = await interaction.IPFSManagementInteraction.fileIsAvailable(cid, AESInstance);
 
         expect(fileExists).toBe(true);
@@ -118,7 +121,7 @@ describe('User owned file flow', () => {
         const options = {
             cid: cid
         };
-        
+
         await expect(documentSharing.getFile(secondIdentity, options)).rejects.toThrow('Request failed with status code 404');
     });
 });
@@ -134,12 +137,15 @@ describe('User sharing files flow', () => {
 
     const PGPSecondInstanceToShare: IdentityManager = factoryIdentity.generateIdentity('PGP', 'PGP');
     PGPSecondInstanceToShare.generateIdentity();
-
-    const storageEngine: IStorageEngine = new StorageEngine({
+ 
+    const storageEngineFactory = new StorageEngine();
+    const storageEngine = storageEngineFactory.getStorageEngine();
+    storageEngine.setConfiguration({
         URL: 'http://localhost:3000',
         ApiKey: 'wXW9c5NObnsrZIY1J3Tqhvz4cZ7YQrrKnbJpo9xOqJM=',
         timeout: 2000
     });
+    
     const documentSharing = new DocumentSharing(storageEngine);
     let cidShared: string;
     let factoryInteraction: FactoryInteraction;
@@ -151,12 +157,16 @@ describe('User sharing files flow', () => {
         factoryInteraction = new FactoryInteraction();
         web3Provider = Web3Provider.getInstance();
 
-        const web3 = new Web3('http://localhost:8545');
-        const consentConfig:IContractConfig = { address: '0x09Fe1b1A9Cd73F35945Bfdc0378c9aCC227c0DBF', abi: ABIConsent.abi as unknown as AbiItem};
-        const accessConfig:IContractConfig = { address: '0x82E54b8B226b007704D1203f0951138338CB921F', abi: ABIAccess.abi as unknown as AbiItem};
-        const consentResourceConfig:IContractConfig = { address: '0x639c9197aB9be745A6D2CB6cB8c2d46D7BB9A412', abi: ABIConsentResource.abi as unknown as AbiItem};
-        const IPFSManagementConfig:IContractConfig = { address: '0xB19Fb08e183fF19989792ceD10325BF0C45CCd27', abi: ABIIPFSManagement.abi as unknown as AbiItem};
-        web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
+        const interactionConfig: IInteractionConfig = {
+            provider: String(process.env.CLAM_BLOCKCHAIN_LOCALTION),
+            consent: { address: String(process.env.CLAM_CONSENT_ADDRESS), abi: ABIConsent.abi },
+            access: { address: String(process.env.CLAM_ACCESS_ADDRESS), abi: ABIAccess.abi },
+            consentResource: { address: String(process.env.CLAM_CONSENT_RESOURCE_ADDRESS), abi: ABIConsentResource.abi },
+            ipfs: { address: String(process.env.CLAM_IPFS_ADDRESS), abi: ABIIPFSManagement.abi }
+        }
+
+        const web3 = new Web3(interactionConfig.provider);
+        web3Provider.setConfig(web3,interactionConfig);
 
         interaction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
 
@@ -210,7 +220,7 @@ describe('User sharing files flow', () => {
         await interaction.accessInteraction.giveAccess(cidShared, options.consentId, usersToShare[0], options.fileName, PGPInstance);
     });
 
-    test('Should get shared file if user is added on list to shared', async() => {
+    test('Should get shared file if user is added on list to shared', async () => {
         const options = {
             cid: cidShared,
             owner: PGPInstance.address,
@@ -233,7 +243,7 @@ describe('User sharing files flow', () => {
             contractInteraction: interaction,
             consentId: 'SHARED'
         };
-        
+
         await expect(documentSharing.getSharedFile(instance, options)).rejects.toThrow('You don\'t have permission over this resource');
     });
 

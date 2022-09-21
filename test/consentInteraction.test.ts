@@ -2,34 +2,38 @@
 require('dotenv').config();
 import { FactoryInteraction, Interaction } from '../src/contractIntegration';
 import { FactoryIdentity, IdentityManager } from '../src/';
-import Web3Provider from '../src/contractIntegration/interaction/Web3Provider';
+
 import ABIConsent from './utilities/Consent.json';
 import ABIAccess from './utilities/Access.json';
 import ABIConsentResource from './utilities/Consent.json';
 import ABIIPFSManagement from './utilities/IPFSManagement.json';
-import Web3 from 'web3';
-import { AbiItem } from 'web3-utils';
+import IInteractionConfig from '../src/contractIntegration/interaction/IInteractionConfig';
+import FactoryWeb3Interaction from "../src/contractIntegration/interaction/web3Provider/FactoryWeb3Interaction"
 
 describe('Testing consent interaction', () => {
     let factoryInteraction: FactoryInteraction;
     let factoryIdentity: FactoryIdentity;
-    let web3Provider: Web3Provider;
+    let factoryWeb3Provider: FactoryWeb3Interaction;
     let interaction: Interaction;
+    let consentID = "AAA1";
+    let consentIDFail = "AAA3";
 
     const consent = (Math.random() + 1).toString(36).substring(7);
 
     beforeEach(async () => {
         factoryInteraction = new FactoryInteraction();
         factoryIdentity = new FactoryIdentity();
-        web3Provider = Web3Provider.getInstance();
 
-        const web3 = new Web3(String(process.env.CLAM_BLOCKCHAIN_LOCALTION));
-        const consentConfig = { address: process.env.CLAM_CONSENT_ADDRESS || '', abi: ABIConsent.abi as unknown as AbiItem };
-        const accessConfig = { address: process.env.CLAM_ACCESS_ADDRESS || '', abi: ABIAccess.abi as unknown as AbiItem };
-        const consentResourceConfig = { address: process.env.CLAM_CONSENT_RESOURCE_ADDRESS || '', abi: ABIConsentResource.abi as unknown as AbiItem };
-        const IPFSManagementConfig = { address: process.env.CLAM_IPFS_ADDRESS || '', abi: ABIIPFSManagement.abi as unknown as AbiItem };
-        web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
-
+        factoryWeb3Provider = FactoryWeb3Interaction.getInstance();
+        const interactionConfig: IInteractionConfig = {
+            provider: String(process.env.CLAM_BLOCKCHAIN_LOCALTION),
+            chainId: 13,
+            consent: { address: String(process.env.CLAM_CONSENT_ADDRESS), abi: ABIConsent.abi },
+            access: { address: String(process.env.CLAM_ACCESS_ADDRESS), abi: ABIAccess.abi },
+            consentResource: { address: String(process.env.CLAM_CONSENT_RESOURCE_ADDRESS), abi: ABIConsentResource.abi },
+            ipfs: { address: String(process.env.CLAM_IPFS_ADDRESS), abi: ABIIPFSManagement.abi }
+        }
+        factoryWeb3Provider.setConfig(interactionConfig);
         interaction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
 
         const identity: IdentityManager = factoryIdentity.generateIdentity('PGP', 'PGP');
@@ -53,12 +57,13 @@ describe('Testing consent interaction', () => {
 
     test('should get consent by id', async () => {
         const resultGet = await interaction.consentInteraction.getConsentById(consent, interaction.identity.address, interaction.identity);
+
         expect(resultGet).toBe(true);
     });
 
     test('should not get a consent by id (Incorrect consentID)', async () => {
         await expect(async () => {
-            const result = await interaction.consentInteraction.getConsentById('AAA3', interaction.identity.address, interaction.identity);
+            const result = await interaction.consentInteraction.getConsentById(consentIDFail, interaction.identity.address, interaction.identity);
             expect(result).toBe(true);
         }).rejects.toThrow('Returned error: VM Exception while processing transaction: revert Consent not registered');
     });
@@ -87,8 +92,8 @@ describe('Testing consent interaction', () => {
     test('should add keys', async () => {
         const address = '0xbB230b6210C5E4640Cf7d3dC306Cdc5a207C92a6';
         const resultAdd = await interaction.consentInteraction.addKey(consent, address, 'pk1', interaction.identity);
-        expect(resultAdd).toBe(true);
 
+        expect(resultAdd).toBe(true);
     });
 
     test('should not add keys (empty consentID)', async () => {
@@ -103,6 +108,7 @@ describe('Testing consent interaction', () => {
         await expect(async () => {
             const address = '';
             const result = await interaction.consentInteraction.addKey(consent, address, 'pk1', interaction.identity);
+
             expect(result).toBe(true);
         }).rejects.toThrow('AddressConsent must have at least 1 character');
     });
@@ -111,6 +117,7 @@ describe('Testing consent interaction', () => {
         await expect(async () => {
             const address = 'invalid';
             const result = await interaction.consentInteraction.addKey(consent, address, 'pk1', interaction.identity);
+
             expect(result).toBe(true);
         }).rejects.toThrow('Invalid addressConsent, the string with has a correct format.');
     });
@@ -119,12 +126,14 @@ describe('Testing consent interaction', () => {
         await expect(async () => {
             const address = '0xbB230b6210C5E4640Cf7d3dC306Cdc5a207C92a6';
             const result = await interaction.consentInteraction.addKey(consent, address, '', interaction.identity);
+
             expect(result).toBe(true);
         }).rejects.toThrow('Key must have at least 1 character');
     });
 
     test('should get keys', async () => {
         const result = await interaction.consentInteraction.getKeys(consent, interaction.identity);
+
         expect(result[0][0]).toBe('0xbB230b6210C5E4640Cf7d3dC306Cdc5a207C92a6');
         expect(result[1][0]).toBe('pk1');
     });

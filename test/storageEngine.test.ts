@@ -62,6 +62,7 @@ describe('Testing storage engine using IPFS service as default', () => {
         nock('http://localhost:3000')
             .put('/file')
             .reply(200);
+
         await storageEngine.updateFile(options);
         const getOptions = {
             address: address,
@@ -103,6 +104,7 @@ describe('Testing storage engine using IPFS service as default', () => {
             .reply(200, {
                 file: ''
             });
+
         const file = await storageEngine.getFile(getOptions);
         expect(file).toBe('');
     });

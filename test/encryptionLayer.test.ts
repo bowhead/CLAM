@@ -72,7 +72,6 @@ describe('Testing encryption using PGP', () => {
         const messageEncrypted: string = await encryptionPGP.encryptData(publicKey, message);
 
         expect(messageEncrypted.length).toBeGreaterThan(0);
-
         let messageDecrypted: string = await encryptionPGP.decryptData(mainKeys.privateKey, messageEncrypted);
         expect(messageDecrypted).toBe('Hello BowHead');
 

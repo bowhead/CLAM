@@ -142,6 +142,7 @@ describe('Testing document sharing', () => {
                 CID: 'fe5c3e7fa0f43b8cbfed5e69c9a19c722c1900ff893ce7fa6b40646b88e46f48.txt'
             });
 
+            });
         const options = {
             file: fs.readFileSync(path.resolve(__dirname, './resources/test.txt')).toString('base64'),
             fileName: 'test.txt',

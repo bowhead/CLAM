@@ -2,36 +2,39 @@
 require('dotenv').config();
 import { FactoryInteraction, Interaction } from '../src/contractIntegration';
 import { FactoryIdentity, IdentityManager } from '../src/';
-import Web3Provider from '../src/contractIntegration/interaction/Web3Provider';
-import Web3 from 'web3';
 
+import Web3 from 'web3';
 import ABIConsent from './utilities/Consent.json';
 import ABIAccess from './utilities/Access.json';
 import ABIConsentResource from './utilities/Consent.json';
 import ABIIPFSManagement from './utilities/IPFSManagement.json';
-import { AbiItem } from 'web3-utils';
+import IInteractionConfig from '../src/contractIntegration/interaction/IInteractionConfig';
+import FactoryWeb3Interaction from '../src/contractIntegration/interaction/web3Provider/FactoryWeb3Interaction';
 
 describe('Testing access interaction', () => {
     let factoryInteraction: FactoryInteraction;
     let factoryIdentity: FactoryIdentity;
-    let web3Provider: Web3Provider;
+    let factoryWeb3Provider: FactoryWeb3Interaction;
     let interaction: Interaction;
 
     beforeEach(async () => {
         factoryInteraction = new FactoryInteraction();
         factoryIdentity = new FactoryIdentity();
-        web3Provider = Web3Provider.getInstance();
+        factoryWeb3Provider = FactoryWeb3Interaction.getInstance();
 
-        const web3 = new Web3(String(process.env.CLAM_BLOCKCHAIN_LOCALTION));
-        const consentConfig = { address: process.env.CLAM_CONSENT_ADDRESS || '', abi: ABIConsent.abi as unknown as AbiItem };
-        const accessConfig = { address: process.env.CLAM_ACCESS_ADDRESS || '', abi: ABIAccess.abi as unknown as AbiItem };
-        const consentResourceConfig = { address: process.env.CLAM_CONSENT_RESOURCE_ADDRESS || '', abi: ABIConsentResource.abi as unknown as AbiItem };
-        const IPFSManagementConfig = { address: process.env.CLAM_IPFS_ADDRESS || '', abi: ABIIPFSManagement.abi as unknown as AbiItem };
-        web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
+        const interactionConfig: IInteractionConfig = {
+            provider: new Web3(String(process.env.CLAM_BLOCKCHAIN_LOCALTION)),
+            consent: { address: String(process.env.CLAM_CONSENT_ADDRESS), abi: ABIConsent.abi },
+            access: { address: String(process.env.CLAM_ACCESS_ADDRESS), abi: ABIAccess.abi },
+            consentResource: { address: String(process.env.CLAM_CONSENT_RESOURCE_ADDRESS), abi: ABIConsentResource.abi },
+            ipfs: { address: String(process.env.CLAM_IPFS_ADDRESS), abi: ABIIPFSManagement.abi }
+        }
 
+        factoryWeb3Provider.setConfig(interactionConfig);
         interaction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
 
-        const identity: IdentityManager = factoryIdentity.generateIdentity('PGP', 'PGP');
+        const identity: IdentityManager = factoryIdentity.generateIdentity('pgp', 'pgp');
+
         await identity.generateIdentity();
         identity.address = String(process.env.CLAM_USER_ADDRESS);
         identity.privateKey = String(process.env.CLAM_USER_PRIVATEKEY);
@@ -60,7 +63,9 @@ describe('Testing access interaction', () => {
         const interactionX = { ...interaction };
         interactionX.identity.address = '0xbB230b6210C5E4640Cf7d3dC306Cdc5a207C92a6';
         const result = await interaction.accessInteraction.getResourceByConsent('AAA2', interactionX.identity);
-        expect(result[0][0]).toBe('0x8B3921DA1090CF8de6a34dcb929Be0df53AB81Fa');
+
+        expect(result[0][0]).toBe('0x751bdD89dDD33849507334d9C802a15aAE05D826');
+
         expect(result[1][0].includes('BBB1')).toBe(true);
     });
 
