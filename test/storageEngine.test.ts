@@ -27,6 +27,7 @@ describe('Testing storage engine using IPFS service as default', () => {
             fileName: 'test.txt'
         };
         cid = await storageEngine.saveFile(options);
+
         expect(cid).not.toBe('');
     });
 
@@ -39,7 +40,6 @@ describe('Testing storage engine using IPFS service as default', () => {
             .get('/file')
             .query({ address: address, cid: cid })
             .reply(200, {
-
                 file: 'dGVzdFYxMA=='
             });
         const file = await storageEngine.getFile(options);
@@ -61,8 +61,8 @@ describe('Testing storage engine using IPFS service as default', () => {
             });
         nock('http://localhost:3000')
             .put('/file')
-
             .reply(200);
+
         await storageEngine.updateFile(options);
         const getOptions = {
             address: address,
@@ -92,7 +92,6 @@ describe('Testing storage engine using IPFS service as default', () => {
             });
         nock('http://localhost:3000')
             .delete('/file')
-
             .reply(200);
         await storageEngine.deleteFile(options);
         const getOptions = {
@@ -104,8 +103,8 @@ describe('Testing storage engine using IPFS service as default', () => {
             .query({ address: address, cid: cid })
             .reply(200, {
                 file: ''
-
             });
+
         const file = await storageEngine.getFile(getOptions);
         expect(file).toBe('');
     });

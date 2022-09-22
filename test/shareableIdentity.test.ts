@@ -27,7 +27,6 @@ describe('Testing ShareableIdentity class', () => {
         expect(identities.length).toBe(5);
     });
 
-
     test('should not generate identities if the main identity is not generated', async () => {
         await expect(async () => {
             const mainIdentity: IdentityManager = factoryIdentity.generateIdentity('PGP', 'PGP');
@@ -38,7 +37,6 @@ describe('Testing ShareableIdentity class', () => {
         }).rejects.toThrow('The main identity has to be initialized');
     });
 
-
     test('should increase by 5 the property lastIdentity when the user wants 4 identities', async () => {
         const mainIdentity: IdentityManager = factoryIdentity.generateIdentity('PGP', 'PGP');
         await mainIdentity.generateIdentity();
@@ -47,7 +45,6 @@ describe('Testing ShareableIdentity class', () => {
         const { lastIdentity } = shareable;
         expect(lastIdentity).toBe(5);
     });
-
 
     test('should not increase the property lastIdentity when the user wants 4 identities', async () => {
         await expect(async () => {

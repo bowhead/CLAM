@@ -1,8 +1,3 @@
-/*global global, expect, test, describe*/
-import { TextEncoder, TextDecoder } from 'util';
-(global as any).TextEncoder = TextEncoder;
-(global as any).TextDecoder = TextDecoder;
-
 import {
     EncryptionLayerPGP,
     EncryptionLayerAES,
@@ -14,7 +9,6 @@ import {
 describe('Testing encryption using PGP', () => {
     const keysGenerator: IKeysGenerator = new KeysGeneratorPGP();
     const encryptionPGP: IEncryptionLayer = new EncryptionLayerPGP();
-
 
     test('should encrypt the message "Hello BowHead"', async () => {
         const keys = await keysGenerator.generateKeys({ name: 'Name', email: 'email@email.com' });
@@ -47,7 +41,6 @@ describe('Testing encryption using PGP', () => {
         expect(messageDecrypted).toBe('Hello BowHead');
     });
 
-
     test('should not decrypt the message encrypted "Hello BowHead" if the private PGP key is not valid', async () => {
         await expect(async () => {
             const keys = await keysGenerator.generateKeys({ name: 'Name', email: 'email@email.com' });
@@ -72,12 +65,16 @@ describe('Testing encryption using PGP', () => {
     test('should encrypt message with multiple key', async () => {
         const mainKeys = await keysGenerator.generateKeys({ name: 'Name', email: 'email@email.com' });
         const secondaryKeys = await keysGenerator.generateKeys({ name: 'Name2', email: 'email@email.com' });
+
         const publicKey = `${mainKeys.publicKey},${secondaryKeys.publicKey}`;
+
         const message = 'Hello BowHead';
         const messageEncrypted: string = await encryptionPGP.encryptData(publicKey, message);
+
         expect(messageEncrypted.length).toBeGreaterThan(0);
         let messageDecrypted: string = await encryptionPGP.decryptData(mainKeys.privateKey, messageEncrypted);
         expect(messageDecrypted).toBe('Hello BowHead');
+
         messageDecrypted = await encryptionPGP.decryptData(secondaryKeys.privateKey, messageEncrypted);
         expect(messageDecrypted).toBe('Hello BowHead');
     });
@@ -89,6 +86,7 @@ describe('Testing encryption using PGP', () => {
 describe('Testing encryption using AES', () => {
     const keysGenerator: IKeysGenerator = new KeysGeneratorPGP();
     const encryptionAES: IEncryptionLayer = new EncryptionLayerAES();
+
     test('should encrypt the message "Hello BowHead" using AES-256 algorithm', async () => {
         const keys = await keysGenerator.generateKeys({ name: 'Name', email: 'email@email.com' });
         const { publicKey } = keys;
@@ -96,6 +94,7 @@ describe('Testing encryption using AES', () => {
         const messageEncrypted: string = await encryptionAES.encryptData(publicKey, message);
         expect(messageEncrypted.length).toBeGreaterThan(0);
     });
+
     test('should throw an error if the data length is equal 0 when encrypting.', async () => {
         await expect(async () => {
             const keys = await keysGenerator.generateKeys({ name: 'Name', email: 'email@email.com' });

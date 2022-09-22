@@ -19,7 +19,6 @@ describe('Testing IdentityManager class', () => {
         expect(objectKeys.length).toBe(9);
     });
 
-
     test('should the mnemonic property length be equal to 0', () => {
         const instance: IdentityManager = factoryIdentity.generateIdentity('PGP', 'PGP');
         expect(instance.mnemonic.length).toBe(0);

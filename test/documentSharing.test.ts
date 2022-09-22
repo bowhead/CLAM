@@ -1,4 +1,3 @@
-
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config();
 import { 
@@ -141,6 +140,7 @@ describe('Testing document sharing', () => {
             .post('/file')
             .reply(200, {
                 CID: 'fe5c3e7fa0f43b8cbfed5e69c9a19c722c1900ff893ce7fa6b40646b88e46f48.txt'
+            });
 
             });
         const options = {
@@ -148,8 +148,10 @@ describe('Testing document sharing', () => {
             fileName: 'test.txt',
             contractInteraction: interaction,
             consentId: 'AAA1'
-        };   
+        };
+             
         cid = await documentSharing.saveFile(AESInstance, options);
+
         expect(cid).not.toBe('');
     });
 
@@ -160,6 +162,7 @@ describe('Testing document sharing', () => {
             .reply(200, {
                 file: 'NGVjN2YxNDRmNjkyNzI0Mzk5YjdjYmYxYjIxZWUxMDJkMWExMDdmNDcxMWVhNDlkMzRhOWQ5OWMxMDljZTM2YlBXUStaY3FuYW4xb2tXTzJMNTdBN1E9PQ=='
             });
+
         const options = {
             cid: cid
         };
@@ -185,7 +188,9 @@ describe('Testing document sharing', () => {
         nock('http://localhost:3000')
             .put('/file')
             .reply(200);
-        await documentSharing.updateFile(AESInstance, options);        
+
+        await documentSharing.updateFile(AESInstance, options);
+        
         const getOptions = {
             cid: cid
         };
@@ -208,6 +213,7 @@ describe('Testing document sharing', () => {
             .reply(200, {
                 CID: 'fe5c3e7fa0f43b8cbfed5e69c9a19c722c1900ff893ce7fa6b40646b88e46f48.txt'
             });
+
         firstUser = await keysGenerator.generateKeys({ name: 'first', email: 'first@email.com' });
 
         const PGPKeys = `${PGPInstanceToShare.publicKeySpecial},${firstUser.publicKey}`;
@@ -218,10 +224,14 @@ describe('Testing document sharing', () => {
             contractInteraction: interaction,
             consentId: 'AAA1'
         };
+
         cidShared = await documentSharing.sharedFile(PGPInstance, options, PGPKeys);
+
         expect(cidShared).not.toBe('');
+
         jest.spyOn(AccessInteraction.prototype, 'giveAccess').mockImplementation(async() => await true);
         await interaction.accessInteraction.giveAccess(cidShared, 'AAA1', [PGPInstanceToShare.address], 'test.txt', PGPInstance);
+
         nock('http://localhost:3000')
             .get('/file')
             .query({ address: PGPInstance.address, cid: cidShared })
@@ -237,6 +247,7 @@ describe('Testing document sharing', () => {
         };
         jest.spyOn(AccessInteraction.prototype, 'checkAccess').mockImplementation(async() => await true);
         const file = await documentSharing.getSharedFile(PGPInstance, getOptions);
+
         expect(Buffer.from(file, 'base64').toString()).toBe('testV10');
     });
 
@@ -267,6 +278,7 @@ describe('Testing document sharing', () => {
             .reply(200, {
                 file: 'LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgp3VjRESkk3TXhsV3d5dk1TQVFkQUNKUytLL2RBbE1MMmRncm1UYjZjT1ZoSTZXQXhCWE9uTnA0UFdLMHcKcEZRd1JxUVJ4NFlDNXF1T3BoSng0WExXMGRjamplTlVlYklBVEdScUlEbCtXRjY0M3VFZ01ENzV2UmxTCmhsV3BIN0pZd1Y0REpBWGdPNThPQ1E0U0FRZEE1QzVacGd1QmI3VGs4dW5IKzlPellkVGc5MXp3MWNrQgp0QzFtL2pzdkZtOHdDWXdWdU9qQ1M4SXJSU25OejlQN0k2SHRxNVF1a1VwR3R4ZERuTjFXbUR4UlRPSGEKdmVOaWtKVGRlcjJYTEtHT3dWNERKSTdNeGxXd3l2TVNBUWRBRFlTR0luWDF4SDdwQmxxVHBCd3RtWWhWCmVDV3NCeThnSGE1Z1F4UUw2RlV3aitXTFpWY01neElpY3NLd01QbUVrT3NXQS9FSi85TW1sbkYvN2U1cgp6NHFDQ0JRbTAzMjR1MEpTZzN2cXlHOFAwajBCTE5hYyt3enVna1RRRWRKOEl2YWd4NlFJQ0JwOUZkV08KS2gzcXRCekNUSzRGeXRpTDUxbE40VGswR1IyRHBMeTQ2bmJwSkZvaThJRmFWQytxCj0rWXFPCi0tLS0tRU5EIFBHUCBNRVNTQUdFLS0tLS0K'
             });
+
         const instance: IdentityManager = factoryIdentity.generateIdentity('PGP', 'PGP');
         instance.generateIdentity();
 
@@ -284,7 +296,9 @@ describe('Testing document sharing', () => {
     test('Should not shared an encrypted file if the consent is not approved', async () => {
         try{
             firstUser = await keysGenerator.generateKeys({ name: 'first', email: 'first@email.com' });
+
             const PGPKeys = `${PGPInstanceToShare.publicKeySpecial},${firstUser.publicKey}`;
+
             const options = {
                 file: fs.readFileSync(path.resolve(__dirname, './resources/test.txt')).toString('base64'),
                 fileName: 'test.txt',

@@ -46,7 +46,7 @@ describe('Testing IPFS storage engine', () => {
             });
 
         const file = await ipfsEngine.getFile(options);
-        expect(Buffer.from(file, 'base64').toString()).toBe('testv10');
+        expect(Buffer.from(file, 'base64').toString()).toBe('testV10');
     });
 
     test('Should update file by CID', async () => {
@@ -77,7 +77,7 @@ describe('Testing IPFS storage engine', () => {
                 file: 'dGVzdHYxMQ=='
             });
         const file = await ipfsEngine.getFile(getOptions);
-        expect(Buffer.from(file, 'base64').toString()).toBe('testv11');
+        expect(Buffer.from(file, 'base64').toString()).toBe('testV11');
     });
 
     test('Should delete file by CID', async () => {

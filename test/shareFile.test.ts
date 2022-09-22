@@ -21,6 +21,7 @@ describe('User owned file flow', () => {
     let factoryIdentity = new FactoryIdentity();
     const AESInstance: IdentityManager = factoryIdentity.generateIdentity('AES', 'PGP');
     AESInstance.generateIdentity();
+    
     const storageEngineFactory = new StorageEngine();
     const storageEngine = storageEngineFactory.getStorageEngine();
     storageEngine.setConfiguration({
@@ -28,6 +29,7 @@ describe('User owned file flow', () => {
         ApiKey: 'wXW9c5NObnsrZIY1J3Tqhvz4cZ7YQrrKnbJpo9xOqJM=',
         timeout: 2000
     });
+    
     const documentSharing = new DocumentSharing(storageEngine);
     let cid: string;
     let factoryInteraction: FactoryInteraction;
@@ -135,12 +137,15 @@ describe('User sharing files flow', () => {
 
     const PGPSecondInstanceToShare: IdentityManager = factoryIdentity.generateIdentity('PGP', 'PGP');
     PGPSecondInstanceToShare.generateIdentity();
-
-    const storageEngine: IStorageEngine = new StorageEngine({
+ 
+    const storageEngineFactory = new StorageEngine();
+    const storageEngine = storageEngineFactory.getStorageEngine();
+    storageEngine.setConfiguration({
         URL: 'http://localhost:3000',
         ApiKey: 'wXW9c5NObnsrZIY1J3Tqhvz4cZ7YQrrKnbJpo9xOqJM=',
         timeout: 2000
     });
+    
     const documentSharing = new DocumentSharing(storageEngine);
     let cidShared: string;
     let factoryInteraction: FactoryInteraction;
