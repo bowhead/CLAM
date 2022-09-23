@@ -1,30 +1,29 @@
+import {describe, expect, test} from '@jest/globals';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config();
 import { FactoryInteraction, Interaction } from '../src/contractIntegration';
 import { FactoryIdentity, IdentityManager } from '../src/';
-
 import ABIConsent from './utilities/Consent.json';
 import ABIAccess from './utilities/Access.json';
 import ABIConsentResource from './utilities/Consent.json';
 import ABIIPFSManagement from './utilities/IPFSManagement.json';
 import IInteractionConfig from '../src/contractIntegration/interaction/IInteractionConfig';
-import FactoryWeb3Interaction from "../src/contractIntegration/interaction/web3Provider/FactoryWeb3Interaction"
+import FactoryWeb3Interaction from '../src/contractIntegration/interaction/web3Provider/FactoryWeb3Interaction';
 
 describe('Testing consent interaction', () => {
     let factoryInteraction: FactoryInteraction;
     let factoryIdentity: FactoryIdentity;
     let factoryWeb3Provider: FactoryWeb3Interaction;
     let interaction: Interaction;
-    let consentID = "AAA1";
-    let consentIDFail = "AAA3";
+    const consentIDFail = 'AAA3';
 
     const consent = (Math.random() + 1).toString(36).substring(7);
 
     beforeEach(async () => {
         factoryInteraction = new FactoryInteraction();
         factoryIdentity = new FactoryIdentity();
-
         factoryWeb3Provider = FactoryWeb3Interaction.getInstance();
+        
         const interactionConfig: IInteractionConfig = {
             provider: String(process.env.CLAM_BLOCKCHAIN_LOCALTION),
             chainId: 13,
@@ -32,7 +31,8 @@ describe('Testing consent interaction', () => {
             access: { address: String(process.env.CLAM_ACCESS_ADDRESS), abi: ABIAccess.abi },
             consentResource: { address: String(process.env.CLAM_CONSENT_RESOURCE_ADDRESS), abi: ABIConsentResource.abi },
             ipfs: { address: String(process.env.CLAM_IPFS_ADDRESS), abi: ABIIPFSManagement.abi }
-        }
+        };
+        
         factoryWeb3Provider.setConfig(interactionConfig);
         interaction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
 

@@ -11,14 +11,14 @@ import ABIConsent from './utilities/Consent.json';
 import ABIAccess from './utilities/Access.json';
 import ABIConsentResource from './utilities/ConsentResource.json';
 import ABIIPFSManagement from './utilities/IPFSManagement.json';
-import Web3Provider from '../src/contractIntegration/interaction/Wbe3Provider';
+import Web3Provider from '../src/contractIntegration/interaction/Web3Provider';
 import { FactoryInteraction, Interaction } from '../src/contractIntegration';
 import Web3 from 'web3';
 import IInteractionConfig from '../src/contractIntegration/interaction/IInteractionConfig';
 import FactoryWeb3Interaction from '../src/contractIntegration/interaction/web3Provider/FactoryWeb3Interaction';
 
 describe('User owned file flow', () => {
-    let factoryIdentity = new FactoryIdentity();
+    const factoryIdentity = new FactoryIdentity();
     const AESInstance: IdentityManager = factoryIdentity.generateIdentity('AES', 'PGP');
     AESInstance.generateIdentity();
     
@@ -47,7 +47,7 @@ describe('User owned file flow', () => {
             access: { address: String(process.env.CLAM_ACCESS_ADDRESS), abi: ABIAccess.abi },
             consentResource: { address: String(process.env.CLAM_CONSENT_RESOURCE_ADDRESS), abi: ABIConsentResource.abi },
             ipfs: { address: String(process.env.CLAM_IPFS_ADDRESS), abi: ABIIPFSManagement.abi }
-        }
+        };
         factoryWeb3Provider.setConfig(interactionConfig);
 
         interaction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
@@ -163,7 +163,7 @@ describe('User sharing files flow', () => {
             access: { address: String(process.env.CLAM_ACCESS_ADDRESS), abi: ABIAccess.abi },
             consentResource: { address: String(process.env.CLAM_CONSENT_RESOURCE_ADDRESS), abi: ABIConsentResource.abi },
             ipfs: { address: String(process.env.CLAM_IPFS_ADDRESS), abi: ABIIPFSManagement.abi }
-        }
+        };
 
         const web3 = new Web3(interactionConfig.provider);
         web3Provider.setConfig(web3,interactionConfig);

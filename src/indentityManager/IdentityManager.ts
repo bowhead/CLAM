@@ -1,9 +1,10 @@
 import { IEncryptionLayer } from '../encryptionLayer';
 import { IKeysGenerator } from '../keysGenerator';
+const Mnemonic = require('bitcore-mnemonic');
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { fromMnemonic } = require('ethereum-hdwallet');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { generateMnemonic } = require('eth-hd-wallet');
 import { injectable, inject } from 'tsyringe';
 
 /**
@@ -51,7 +52,7 @@ class IdentityManager {
     public generateIdentity = async (mnemonic = ''): Promise<void> => {
         if (this.mnemonic.trim() === '' && this.address.trim() === '' &&
             this.privateKey.trim() === '' && this.publicKey.trim() == '') {
-            this.mnemonic = mnemonic.trim() === '' ? generateMnemonic() : mnemonic;
+            this.mnemonic = mnemonic.trim() === '' ? new Mnemonic(Mnemonic.Words.ENHLISH).toString() : mnemonic;
             const hdwallet = fromMnemonic(this.mnemonic);
             this.address = `0x${hdwallet.derive('m/44\'/60\'/0\'/0/0').getAddress().toString('hex')}`;
             this.privateKey = hdwallet.derive('m/44\'/60\'/0\'/0/0').getPrivateKey(true).toString('hex');

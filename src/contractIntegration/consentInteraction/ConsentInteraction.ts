@@ -1,6 +1,9 @@
-/*globals Promise*/
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config();
-
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+require('@babel/core').transformSync('code', {
+    plugins: ['@babel/plugin-proposal-decorators'],
+});
 import { injectable } from 'tsyringe';
 import { IConsentInteraction } from '.';
 import Web3 from 'web3';
@@ -17,7 +20,7 @@ import IContractActions from '../interaction/web3Provider/IContractActions';
  */
 @injectable()
 class ConsentInteraction implements IConsentInteraction {
-    private provider: IWeb3Provider = FactoryWeb3Interaction.getInstance().generateWeb3Provider("web3");
+    private provider: IWeb3Provider = FactoryWeb3Interaction.getInstance().generateWeb3Provider('web3');
 
     /**
      * This function saves a consent with the information passed as parameters. 
@@ -32,7 +35,7 @@ class ConsentInteraction implements IConsentInteraction {
         const options: IContractActions = {
             action: 'send',
             methodName: 'updateConsent'
-        }
+        };
         const result = await this.provider.useContractMethod(contract, identity, options, Web3.utils.fromAscii(consentId), true);
         return result.status;
     }
@@ -50,7 +53,7 @@ class ConsentInteraction implements IConsentInteraction {
         const options: IContractActions = {
             action: 'send',
             methodName: 'updateConsent'
-        }
+        };
         const result = await this.provider.useContractMethod(contract, identity, options, Web3.utils.fromAscii(consentId), false);
         return result.status;
     }
@@ -71,8 +74,8 @@ class ConsentInteraction implements IConsentInteraction {
         const options: IContractActions = {
             action: 'call',
             methodName: 'getConsent'
-        }
-        return await this.provider.useContractMethod(contract, identity, options, Web3.utils.fromAscii(consentId), owner)
+        };
+        return await this.provider.useContractMethod(contract, identity, options, Web3.utils.fromAscii(consentId), owner);
     }
 
     /**
@@ -94,7 +97,7 @@ class ConsentInteraction implements IConsentInteraction {
         const options: IContractActions = {
             action: 'send',
             methodName: 'addPGPKey'
-        }
+        };
         const result = await this.provider.useContractMethod(contract, identity, options, Web3.utils.fromAscii(consentId), addressConsent, key);
         return result.status;
     }
@@ -112,7 +115,7 @@ class ConsentInteraction implements IConsentInteraction {
         const options: IContractActions = {
             action: 'call',
             methodName: 'getPGPKeys'
-        }
+        };
         return await this.provider.useContractMethod(contract, identity, options, Web3.utils.fromAscii(consentId));
 
     }

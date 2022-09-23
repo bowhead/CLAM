@@ -16,15 +16,15 @@ import ABIConsent from './utilities/Consent.json';
 import ABIAccess from './utilities/Access.json';
 import ABIConsentResource from './utilities/ConsentResource.json';
 import ABIIPFSManagement from './utilities/IPFSManagement.json';
-import Web3Provider from '../src/contractIntegration/interaction/Web3Provider';
+import IInteractionConfig from '../src/contractIntegration/interaction/IInteractionConfig';
+import FactoryWeb3Interaction from '../src/contractIntegration/interaction/web3Provider/FactoryWeb3Interaction';
 import { AccessInteraction, ConsentInteraction, FactoryInteraction ,Interaction } from '../src/contractIntegration';
 import nock from 'nock';
-import Web3 from 'web3';
-import { AbiItem } from 'web3-utils';
 
 describe('Testing document sharing', () => {
     const factoryIdentity: FactoryIdentity = new FactoryIdentity();
     const keysGenerator: IKeysGenerator = new KeysGeneratorPGP();
+    let factoryWeb3Provider: FactoryWeb3Interaction;
 
     const AESInstance: IdentityManager = factoryIdentity.generateIdentity('AES', 'PGP');
     AESInstance.generateIdentity();
@@ -47,7 +47,6 @@ describe('Testing document sharing', () => {
     let cid: string;
     let cidShared: string;
     let factoryInteraction: FactoryInteraction;
-    let web3Provider: Web3Provider;
     let interaction: Interaction;
 
     afterAll(() => {
@@ -56,14 +55,18 @@ describe('Testing document sharing', () => {
 
     beforeEach(() => {
         factoryInteraction = new FactoryInteraction();
-        web3Provider = Web3Provider.getInstance();
+        factoryWeb3Provider = FactoryWeb3Interaction.getInstance();
 
-        const web3 = new Web3(String(process.env.CLAM_BLOCKCHAIN_LOCALTION));
-        const consentConfig = { address: process.env.CLAM_CONSENT_ADDRESS || '', abi: ABIConsent.abi as unknown as AbiItem };
-        const accessConfig = { address: process.env.CLAM_ACCESS_ADDRESS || '', abi: ABIAccess.abi as unknown as AbiItem};
-        const consentResourceConfig = { address: process.env.CLAM_CONSENT_RESOURCE_ADDRESS || '', abi: ABIConsentResource.abi as unknown as AbiItem};
-        const IPFSManagementConfig = { address: process.env.CLAM_IPFS_ADDRESS || '', abi: ABIIPFSManagement.abi as unknown as AbiItem};
-        web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
+        const interactionConfig: IInteractionConfig = {
+            provider: String(process.env.CLAM_BLOCKCHAIN_LOCALTION),
+            chainId: 13,
+            consent: { address: String(process.env.CLAM_CONSENT_ADDRESS), abi: ABIConsent.abi },
+            access: { address: String(process.env.CLAM_ACCESS_ADDRESS), abi: ABIAccess.abi },
+            consentResource: { address: String(process.env.CLAM_CONSENT_RESOURCE_ADDRESS), abi: ABIConsentResource.abi },
+            ipfs: { address: String(process.env.CLAM_IPFS_ADDRESS), abi: ABIIPFSManagement.abi }
+        };
+
+        factoryWeb3Provider.setConfig(interactionConfig);
         interaction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
 
         AESInstance.address = '0x8B3921DA1090CF8de6a34dcb929Be0df53AB81Fa';
@@ -141,8 +144,7 @@ describe('Testing document sharing', () => {
             .reply(200, {
                 CID: 'fe5c3e7fa0f43b8cbfed5e69c9a19c722c1900ff893ce7fa6b40646b88e46f48.txt'
             });
-
-            });
+        
         const options = {
             file: fs.readFileSync(path.resolve(__dirname, './resources/test.txt')).toString('base64'),
             fileName: 'test.txt',
@@ -162,7 +164,6 @@ describe('Testing document sharing', () => {
             .reply(200, {
                 file: 'NGVjN2YxNDRmNjkyNzI0Mzk5YjdjYmYxYjIxZWUxMDJkMWExMDdmNDcxMWVhNDlkMzRhOWQ5OWMxMDljZTM2YlBXUStaY3FuYW4xb2tXTzJMNTdBN1E9PQ=='
             });
-
         const options = {
             cid: cid
         };
@@ -213,7 +214,7 @@ describe('Testing document sharing', () => {
             .reply(200, {
                 CID: 'fe5c3e7fa0f43b8cbfed5e69c9a19c722c1900ff893ce7fa6b40646b88e46f48.txt'
             });
-
+        
         firstUser = await keysGenerator.generateKeys({ name: 'first', email: 'first@email.com' });
 
         const PGPKeys = `${PGPInstanceToShare.publicKeySpecial},${firstUser.publicKey}`;
@@ -247,7 +248,6 @@ describe('Testing document sharing', () => {
         };
         jest.spyOn(AccessInteraction.prototype, 'checkAccess').mockImplementation(async() => await true);
         const file = await documentSharing.getSharedFile(PGPInstance, getOptions);
-
         expect(Buffer.from(file, 'base64').toString()).toBe('testV10');
     });
 
@@ -278,7 +278,6 @@ describe('Testing document sharing', () => {
             .reply(200, {
                 file: 'LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgp3VjRESkk3TXhsV3d5dk1TQVFkQUNKUytLL2RBbE1MMmRncm1UYjZjT1ZoSTZXQXhCWE9uTnA0UFdLMHcKcEZRd1JxUVJ4NFlDNXF1T3BoSng0WExXMGRjamplTlVlYklBVEdScUlEbCtXRjY0M3VFZ01ENzV2UmxTCmhsV3BIN0pZd1Y0REpBWGdPNThPQ1E0U0FRZEE1QzVacGd1QmI3VGs4dW5IKzlPellkVGc5MXp3MWNrQgp0QzFtL2pzdkZtOHdDWXdWdU9qQ1M4SXJSU25OejlQN0k2SHRxNVF1a1VwR3R4ZERuTjFXbUR4UlRPSGEKdmVOaWtKVGRlcjJYTEtHT3dWNERKSTdNeGxXd3l2TVNBUWRBRFlTR0luWDF4SDdwQmxxVHBCd3RtWWhWCmVDV3NCeThnSGE1Z1F4UUw2RlV3aitXTFpWY01neElpY3NLd01QbUVrT3NXQS9FSi85TW1sbkYvN2U1cgp6NHFDQ0JRbTAzMjR1MEpTZzN2cXlHOFAwajBCTE5hYyt3enVna1RRRWRKOEl2YWd4NlFJQ0JwOUZkV08KS2gzcXRCekNUSzRGeXRpTDUxbE40VGswR1IyRHBMeTQ2bmJwSkZvaThJRmFWQytxCj0rWXFPCi0tLS0tRU5EIFBHUCBNRVNTQUdFLS0tLS0K'
             });
-
         const instance: IdentityManager = factoryIdentity.generateIdentity('PGP', 'PGP');
         instance.generateIdentity();
 

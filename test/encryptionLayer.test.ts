@@ -94,7 +94,7 @@ describe('Testing encryption using AES', () => {
         const messageEncrypted: string = await encryptionAES.encryptData(publicKey, message);
         expect(messageEncrypted.length).toBeGreaterThan(0);
     });
-
+    
     test('should throw an error if the data length is equal 0 when encrypting.', async () => {
         await expect(async () => {
             const keys = await keysGenerator.generateKeys({ name: 'Name', email: 'email@email.com' });

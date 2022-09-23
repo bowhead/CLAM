@@ -27,7 +27,7 @@ describe('Testing storage engine using IPFS service as default', () => {
             fileName: 'test.txt'
         };
         cid = await storageEngine.saveFile(options);
-
+        
         expect(cid).not.toBe('');
     });
 
@@ -43,6 +43,7 @@ describe('Testing storage engine using IPFS service as default', () => {
                 file: 'dGVzdFYxMA=='
             });
         const file = await storageEngine.getFile(options);
+        
         expect(Buffer.from(file, 'base64').toString()).toBe('testV10');
     });
 

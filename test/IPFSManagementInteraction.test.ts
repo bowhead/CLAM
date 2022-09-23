@@ -5,8 +5,8 @@ import ABIConsent from './utilities/Consent.json';
 import ABIAccess from './utilities/Access.json';
 import ABIConsentResource from './utilities/Consent.json';
 import ABIIPFSManagement from './utilities/IPFSManagement.json';
-import FactoryWeb3Interaction from "../src/contractIntegration/interaction/web3Provider/FactoryWeb3Interaction";
-import IInteractionConfig from "../src/contractIntegration/interaction/IInteractionConfig";
+import FactoryWeb3Interaction from '../src/contractIntegration/interaction/web3Provider/FactoryWeb3Interaction';
+import IInteractionConfig from '../src/contractIntegration/interaction/IInteractionConfig';
 
 describe('Testing IPFS management interaction', () => {
     let factoryInteraction: FactoryInteraction;
@@ -29,7 +29,7 @@ describe('Testing IPFS management interaction', () => {
             access: { address: String(process.env.CLAM_ACCESS_ADDRESS), abi: ABIAccess.abi },
             consentResource: { address: String(process.env.CLAM_CONSENT_RESOURCE_ADDRESS), abi: ABIConsentResource.abi },
             ipfs: { address: String(process.env.CLAM_IPFS_ADDRESS), abi: ABIIPFSManagement.abi }
-        }
+        };
 
         factoryWeb3Provider.setConfig(interactionConfig);
 
@@ -51,13 +51,13 @@ describe('Testing IPFS management interaction', () => {
     test('Should not add the same file twice', async () => {
         await expect(async () => {
             await interaction.IPFSManagementInteraction.addFile(fileHash, fileName, interaction.identity);
-        }).rejects.toThrow(`Returned error: VM Exception while processing transaction: revert File already registered`)
+        }).rejects.toThrow('Returned error: VM Exception while processing transaction: revert File already registered');
     });
 
     test('Should fail if try to check of file is available without upload it yet', async () => {
         await expect(async () => {
             await interaction.IPFSManagementInteraction.fileIsAvailable(fileHash + '2', interaction.identity);
-        }).rejects.toThrow(`Returned error: VM Exception while processing transaction: revert File does not exist`);
+        }).rejects.toThrow('Returned error: VM Exception while processing transaction: revert File does not exist');
 
     });
 
@@ -68,20 +68,20 @@ describe('Testing IPFS management interaction', () => {
 
         await expect(async () => {
             await interaction.IPFSManagementInteraction.removeFile(fileHash, secondIdentity);
-        }).rejects.toThrow(`Returned error: VM Exception while processing transaction: revert File does not exist`);
+        }).rejects.toThrow('Returned error: VM Exception while processing transaction: revert File does not exist');
     });
 
     test('Should delete file', async () => {
         await expect(async () => {
             await interaction.IPFSManagementInteraction.removeFile(fileHash, interaction.identity);
             await interaction.IPFSManagementInteraction.checkAccess(fileHash, interaction.identity);
-        }).rejects.toThrow(`Returned error: VM Exception while processing transaction: revert File already deleted`);
+        }).rejects.toThrow('Returned error: VM Exception while processing transaction: revert File already deleted');
     });
 
     test('Should not delete the same file twice', async () => {
         await expect(async () => {
             await interaction.IPFSManagementInteraction.removeFile(fileHash, interaction.identity);
-        }).rejects.toThrow(`Returned error: VM Exception while processing transaction: revert File already deleted`);
+        }).rejects.toThrow('Returned error: VM Exception while processing transaction: revert File already deleted');
     });
 
     test('Should get all file added by user', async () => {

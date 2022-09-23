@@ -5,8 +5,9 @@ import { IKeys, IKeysGenerator, KeysGeneratorPGP } from './keysGenerator';
 import FactoryIdentity from './factoryIdentity/FactoryIdentity';
 import { StorageEngine, Storage, IStorageEngine } from './storageEngine';
 import {FactoryInteraction} from './contractIntegration';
-import Web3Provider from './contractIntegration/interaction/Wbe3Provider';
+import Web3Provider from './contractIntegration/interaction/Web3Provider';
 import { DocumentSharing, IDocumentSharing } from './documentSharing';
+import FactoryWeb3Interaction from './contractIntegration/interaction/web3Provider/FactoryWeb3Interaction';
 
 export {
     IdentityManager,
@@ -24,5 +25,6 @@ export {
     IStorageEngine,
     Web3Provider,
     DocumentSharing,
-    IDocumentSharing
+    IDocumentSharing,
+    FactoryWeb3Interaction
 };
