@@ -1,4 +1,4 @@
-/*global expect, test, describe*/
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config();
 import { IdentityManager } from '../src';
 import { FactoryInteraction, IAccessInteraction, IConsentInteraction } from '../src/contractIntegration';
@@ -135,13 +135,13 @@ describe('Testing interaction component using the CLAM implementation', () => {
         factoryWeb3Provider = FactoryWeb3Interaction.getInstance();
         const interactionConfig: IInteractionConfig = {
             provider: String(process.env.CLAM_BLOCKCHAIN_LOCALTION),
-            consent: { address: String(process.env.CLAM_CONSENT_ADDRESS), abi: "a" },
-            access: { address: String(process.env.CLAM_ACCESS_ADDRESS), abi: "a" },
-            consentResource: { address: String(process.env.CLAM_CONSENT_RESOURCE_ADDRESS), abi: "a" },
-            ipfs: { address: String(process.env.CLAM_IPFS_ADDRESS), abi: "a" }
-        }
+            consent: { address: String(process.env.CLAM_CONSENT_ADDRESS), abi: 'a' },
+            access: { address: String(process.env.CLAM_ACCESS_ADDRESS), abi: 'a' },
+            consentResource: { address: String(process.env.CLAM_CONSENT_RESOURCE_ADDRESS), abi: 'a' },
+            ipfs: { address: String(process.env.CLAM_IPFS_ADDRESS), abi: 'a' }
+        };
         factoryWeb3Provider.setConfig(interactionConfig);
-    })
+    });
     test('should the factoryInteraction instance have a good structure', () => {
         const factoryInteraction: FactoryInteraction = new FactoryInteraction();
         const keys = Object.keys(factoryInteraction);
@@ -161,14 +161,14 @@ describe('Testing interaction component using the CLAM implementation', () => {
         expect(keys.length).toBe(3);
     });
 
-    test('should not generate an interaction if we dont specifie the consentInteraction type', async () => {
+    test('should not generate an interaction if we don´t specific the consentInteraction type', async () => {
         await expect(async () => {
             const factoryInteraction: FactoryInteraction = new FactoryInteraction();
             factoryInteraction.generateInteraction('not', 'clam', 'clam');
-        }).rejects.toThrow(`The consentInteraction type doesn\'t exist`);
+        }).rejects.toThrow('The consentInteraction type doesn\'t exist');
     });
 
-    test('should not generate an interaction if we dont specifie the accessInteraction type', async () => {
+    test('should not generate an interaction if we don´t specific the accessInteraction type', async () => {
         await expect(async () => {
             const factoryInteraction: FactoryInteraction = new FactoryInteraction();
             factoryInteraction.generateInteraction('clam', 'not', 'clam');

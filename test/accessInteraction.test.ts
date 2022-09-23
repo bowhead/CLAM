@@ -1,5 +1,5 @@
-/*global beforeEach, describe, test, expect*/
-require('dotenv').config()
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+require('dotenv').config();
 import { FactoryInteraction, Interaction } from '../src/contractIntegration';
 import { FactoryIdentity, IdentityManager } from '../src/';
 
@@ -21,13 +21,15 @@ describe('Testing access interaction', () => {
         factoryInteraction = new FactoryInteraction();
         factoryIdentity = new FactoryIdentity();
         factoryWeb3Provider = FactoryWeb3Interaction.getInstance();
+        
         const interactionConfig: IInteractionConfig = {
             provider: new Web3(String(process.env.CLAM_BLOCKCHAIN_LOCALTION)),
             consent: { address: String(process.env.CLAM_CONSENT_ADDRESS), abi: ABIConsent.abi },
             access: { address: String(process.env.CLAM_ACCESS_ADDRESS), abi: ABIAccess.abi },
             consentResource: { address: String(process.env.CLAM_CONSENT_RESOURCE_ADDRESS), abi: ABIConsentResource.abi },
             ipfs: { address: String(process.env.CLAM_IPFS_ADDRESS), abi: ABIIPFSManagement.abi }
-        }
+        };
+        
         factoryWeb3Provider.setConfig(interactionConfig);
         interaction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
         const identity: IdentityManager = factoryIdentity.generateIdentity('pgp', 'pgp');
@@ -60,7 +62,9 @@ describe('Testing access interaction', () => {
         const interactionX = { ...interaction };
         interactionX.identity.address = '0xbB230b6210C5E4640Cf7d3dC306Cdc5a207C92a6';
         const result = await interaction.accessInteraction.getResourceByConsent('AAA2', interactionX.identity);
+        
         expect(result[0][0]).toBe('0x751bdD89dDD33849507334d9C802a15aAE05D826');
+
         expect(result[1][0].includes('BBB1')).toBe(true);
     });
 
@@ -82,7 +86,6 @@ describe('Testing access interaction', () => {
 
     test('should not give and revoke access (empty account)', async () => {
         await expect(async () => {
-
             const result = await interaction.accessInteraction.giveAccess('BBB1', 'AAA2', [], 'test.txt', interaction.identity);
             expect(result).toBe(true);
         }).rejects.toThrow('Accounts must have at least one element');

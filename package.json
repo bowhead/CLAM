@@ -1,7 +1,7 @@
 {
     "name": "bowhead-clam",
     "version": "0.1.0",
-    "author": "TorroSoft",
+    "author": "Bowhead Health",
     "license": "MIT",
     "main": "dist/index.js",
     "typings": "dist/index.d.ts",
@@ -47,7 +47,8 @@
         "bitcore-mnemonic": "^8.25.38",
         "bowhead-web3": "github:bowhead/web3.js#bowhead_stable",
         "crypto-js": "^4.1.1",
-        "ethereum-hdwallet": "^0.0.1",
+        "eth-hd-wallet": "^0.5.1",
+        "ethereum-hdwallet": "^0.1.2",
         "ethereumjs-common": "^1.5.2",
         "ethereumjs-tx": "^2.1.2",
         "ethereumjs-util": "^7.1.5",

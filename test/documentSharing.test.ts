@@ -1,4 +1,3 @@
-
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config();
 import { 
@@ -17,15 +16,15 @@ import ABIConsent from './utilities/Consent.json';
 import ABIAccess from './utilities/Access.json';
 import ABIConsentResource from './utilities/ConsentResource.json';
 import ABIIPFSManagement from './utilities/IPFSManagement.json';
-import Web3Provider from '../src/contractIntegration/interaction/Web3Provider';
+import IInteractionConfig from '../src/contractIntegration/interaction/IInteractionConfig';
+import FactoryWeb3Interaction from '../src/contractIntegration/interaction/web3Provider/FactoryWeb3Interaction';
 import { AccessInteraction, ConsentInteraction, FactoryInteraction ,Interaction } from '../src/contractIntegration';
 import nock from 'nock';
-import Web3 from 'web3';
-import { AbiItem } from 'web3-utils';
 
 describe('Testing document sharing', () => {
     const factoryIdentity: FactoryIdentity = new FactoryIdentity();
     const keysGenerator: IKeysGenerator = new KeysGeneratorPGP();
+    let factoryWeb3Provider: FactoryWeb3Interaction;
 
     const AESInstance: IdentityManager = factoryIdentity.generateIdentity('AES', 'PGP');
     AESInstance.generateIdentity();
@@ -48,7 +47,6 @@ describe('Testing document sharing', () => {
     let cid: string;
     let cidShared: string;
     let factoryInteraction: FactoryInteraction;
-    let web3Provider: Web3Provider;
     let interaction: Interaction;
 
     afterAll(() => {
@@ -57,14 +55,18 @@ describe('Testing document sharing', () => {
 
     beforeEach(() => {
         factoryInteraction = new FactoryInteraction();
-        web3Provider = Web3Provider.getInstance();
+        factoryWeb3Provider = FactoryWeb3Interaction.getInstance();
 
-        const web3 = new Web3(String(process.env.CLAM_BLOCKCHAIN_LOCALTION));
-        const consentConfig = { address: process.env.CLAM_CONSENT_ADDRESS || '', abi: ABIConsent.abi as unknown as AbiItem };
-        const accessConfig = { address: process.env.CLAM_ACCESS_ADDRESS || '', abi: ABIAccess.abi as unknown as AbiItem};
-        const consentResourceConfig = { address: process.env.CLAM_CONSENT_RESOURCE_ADDRESS || '', abi: ABIConsentResource.abi as unknown as AbiItem};
-        const IPFSManagementConfig = { address: process.env.CLAM_IPFS_ADDRESS || '', abi: ABIIPFSManagement.abi as unknown as AbiItem};
-        web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
+        const interactionConfig: IInteractionConfig = {
+            provider: String(process.env.CLAM_BLOCKCHAIN_LOCALTION),
+            chainId: 13,
+            consent: { address: String(process.env.CLAM_CONSENT_ADDRESS), abi: ABIConsent.abi },
+            access: { address: String(process.env.CLAM_ACCESS_ADDRESS), abi: ABIAccess.abi },
+            consentResource: { address: String(process.env.CLAM_CONSENT_RESOURCE_ADDRESS), abi: ABIConsentResource.abi },
+            ipfs: { address: String(process.env.CLAM_IPFS_ADDRESS), abi: ABIIPFSManagement.abi }
+        };
+
+        factoryWeb3Provider.setConfig(interactionConfig);
         interaction = factoryInteraction.generateInteraction('clam', 'clam', 'clam');
 
         AESInstance.address = '0x8B3921DA1090CF8de6a34dcb929Be0df53AB81Fa';
@@ -141,15 +143,17 @@ describe('Testing document sharing', () => {
             .post('/file')
             .reply(200, {
                 CID: 'fe5c3e7fa0f43b8cbfed5e69c9a19c722c1900ff893ce7fa6b40646b88e46f48.txt'
-
             });
+        
         const options = {
             file: fs.readFileSync(path.resolve(__dirname, './resources/test.txt')).toString('base64'),
             fileName: 'test.txt',
             contractInteraction: interaction,
             consentId: 'AAA1'
-        };   
+        };
+             
         cid = await documentSharing.saveFile(AESInstance, options);
+
         expect(cid).not.toBe('');
     });
 
@@ -185,7 +189,9 @@ describe('Testing document sharing', () => {
         nock('http://localhost:3000')
             .put('/file')
             .reply(200);
-        await documentSharing.updateFile(AESInstance, options);        
+
+        await documentSharing.updateFile(AESInstance, options);
+        
         const getOptions = {
             cid: cid
         };
@@ -208,6 +214,7 @@ describe('Testing document sharing', () => {
             .reply(200, {
                 CID: 'fe5c3e7fa0f43b8cbfed5e69c9a19c722c1900ff893ce7fa6b40646b88e46f48.txt'
             });
+        
         firstUser = await keysGenerator.generateKeys({ name: 'first', email: 'first@email.com' });
 
         const PGPKeys = `${PGPInstanceToShare.publicKeySpecial},${firstUser.publicKey}`;
@@ -218,10 +225,14 @@ describe('Testing document sharing', () => {
             contractInteraction: interaction,
             consentId: 'AAA1'
         };
+
         cidShared = await documentSharing.sharedFile(PGPInstance, options, PGPKeys);
+
         expect(cidShared).not.toBe('');
+
         jest.spyOn(AccessInteraction.prototype, 'giveAccess').mockImplementation(async() => await true);
         await interaction.accessInteraction.giveAccess(cidShared, 'AAA1', [PGPInstanceToShare.address], 'test.txt', PGPInstance);
+
         nock('http://localhost:3000')
             .get('/file')
             .query({ address: PGPInstance.address, cid: cidShared })
@@ -284,7 +295,9 @@ describe('Testing document sharing', () => {
     test('Should not shared an encrypted file if the consent is not approved', async () => {
         try{
             firstUser = await keysGenerator.generateKeys({ name: 'first', email: 'first@email.com' });
+
             const PGPKeys = `${PGPInstanceToShare.publicKeySpecial},${firstUser.publicKey}`;
+
             const options = {
                 file: fs.readFileSync(path.resolve(__dirname, './resources/test.txt')).toString('base64'),
                 fileName: 'test.txt',
