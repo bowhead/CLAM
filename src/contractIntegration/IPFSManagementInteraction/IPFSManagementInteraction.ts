@@ -1,4 +1,3 @@
-/*eslint no-unused-vars: "error"*/
 //eslint-disable-next-line
 import { injectable } from 'tsyringe';
 import { IIPFSManagementInteraction } from '.';
