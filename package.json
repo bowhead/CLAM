@@ -28,6 +28,7 @@
         "babel-plugin-transform-typescript-metadata": "^0.3.1",
         "dotenv": "^16.0.1",
         "eslint": "^8.22.0",
+        "eslint-config-prettier": "^8.5.0",
         "eslint-plugin-spellcheck": "^0.0.19",
         "ganache": "^7.4.3",
         "husky": "^8.0.1",

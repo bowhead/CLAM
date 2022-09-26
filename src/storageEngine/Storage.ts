@@ -1,4 +1,5 @@
 import IStorageEngine from './IStorageEngine';
+//eslint-disable-next-line
 import { injectable, inject } from 'tsyringe';
 
 /**

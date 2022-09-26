@@ -1,6 +1,7 @@
 import IEncryptionLayer from './IEncryptionLayer';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const CryptoJS = require('crypto-js');
+//eslint-disable-next-line
 import { injectable } from 'tsyringe';
 /**
  * This class is the implementation of EncryptionLayer using the AES algorithm.

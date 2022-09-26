@@ -1,3 +1,4 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 interface IInteractionConfig {
     provider: any;
     chainId?: number;

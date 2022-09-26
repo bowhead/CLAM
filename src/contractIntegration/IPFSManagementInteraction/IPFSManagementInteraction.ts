@@ -1,3 +1,5 @@
+/*eslint no-unused-vars: "error"*/
+//eslint-disable-next-line
 import { injectable } from 'tsyringe';
 import { IIPFSManagementInteraction } from '.';
 import Web3 from 'web3';
@@ -13,7 +15,7 @@ import IContractActions from '../interaction/web3Provider/IContractActions';
  */
 @injectable()
 class IPFSManagementInteraction implements IIPFSManagementInteraction {
-    private provider: IWeb3Provider = FactoryWeb3Interaction.getInstance().generateWeb3Provider("web3");
+    private provider: IWeb3Provider = FactoryWeb3Interaction.getInstance().generateWeb3Provider('web3');
     /**
      * Add file to IPFS management contract
      * @param {string} fileHash - File identifier or location
@@ -28,7 +30,7 @@ class IPFSManagementInteraction implements IIPFSManagementInteraction {
         const options: IContractActions = {
             action: 'send',
             methodName: 'addFile'
-        }
+        };
         await this.provider.useContractMethod(contract, identity, options, fileHash, Web3.utils.fromAscii(fileName));
         return;
     }
@@ -45,7 +47,7 @@ class IPFSManagementInteraction implements IIPFSManagementInteraction {
         const options: IContractActions = {
             action: 'send',
             methodName: 'removeFile'
-        }
+        };
         await this.provider.useContractMethod(contract, identity, options, fileHash);
         return;
     }
@@ -63,8 +65,8 @@ class IPFSManagementInteraction implements IIPFSManagementInteraction {
         const options: IContractActions = {
             action: 'call',
             methodName: 'checkAccess'
-        }
-        const result = await this.provider.useContractMethod(contract, identity, options, identity.address, fileHash)
+        };
+        const result = await this.provider.useContractMethod(contract, identity, options, identity.address, fileHash);
         return result;
     }
 
@@ -81,8 +83,8 @@ class IPFSManagementInteraction implements IIPFSManagementInteraction {
         const options: IContractActions = {
             action: 'call',
             methodName: 'fileIsAvailable'
-        }
-        const result = await this.provider.useContractMethod(contract, identity, options, identity.address, fileHash)
+        };
+        const result = await this.provider.useContractMethod(contract, identity, options, identity.address, fileHash);
         return result;
     }
 
@@ -97,8 +99,8 @@ class IPFSManagementInteraction implements IIPFSManagementInteraction {
         const options: IContractActions = {
             action: 'call',
             methodName: 'getFiles'
-        }
-        const result = await this.provider.useContractMethod(contract, identity, options, identity.address)
+        };
+        const result = await this.provider.useContractMethod(contract, identity, options, identity.address);
         return result;
     }
 

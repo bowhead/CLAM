@@ -1,3 +1,4 @@
+//eslint-disable-next-line
 import { injectable } from 'tsyringe';
 import IKeysGenerator from './IKeysGenerator';
 import IKeys from './IKeys';

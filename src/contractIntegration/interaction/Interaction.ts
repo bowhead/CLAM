@@ -1,3 +1,4 @@
+//eslint-disable-next-line
 import { injectable, inject } from 'tsyringe';
 import {
     IConsentInteraction,
