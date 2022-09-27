@@ -55,9 +55,10 @@ class FactoryWeb3Interaction {
         }
         const optionWeb3Provider = this.web3Providers.find(optionAux => optionAux.name === option.name);
         if (optionWeb3Provider) {
-            throw new Error('This option already exists.');
+            this.web3Providers.map(optionAux=>optionAux.name===optionWeb3Provider.name?optionWeb3Provider:optionAux);
+        }else{
+            this.web3Providers.push(option);
         }
-        this.web3Providers.push(option);
     }
 
     /**
