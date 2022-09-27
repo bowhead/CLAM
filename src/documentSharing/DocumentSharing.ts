@@ -1,5 +1,6 @@
 import { IdentityManager } from '../indentityManager';
 import IDocumentSharing from './IDocumentSharing';
+//eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { injectable } from 'tsyringe';
 import { IStorageEngine } from '../storageEngine';
 import { IDocumentSharingSave } from './types/IDocumentSharingSave'; 

@@ -1,4 +1,6 @@
+/*eslint no-unused-vars: "error"*/
 /*global Promise*/
+//eslint-disable-next-line @typescript-eslint/no-unused-vars,no-unused-vars
 import { injectable } from 'tsyringe';
 import { IAccessInteraction } from '.';
 import Web3 from 'web3';
@@ -17,7 +19,7 @@ import IContractActions from '../interaction/web3Provider/IContractActions';
  */
 @injectable()
 class AccessInteraction implements IAccessInteraction {
-    private provider: IWeb3Provider = FactoryWeb3Interaction.getInstance().generateWeb3Provider("web3");
+    private provider: IWeb3Provider = FactoryWeb3Interaction.getInstance().generateWeb3Provider('web3');
 
     /**
      * This function gives access by making use of the values passed as parameters.
@@ -37,8 +39,8 @@ class AccessInteraction implements IAccessInteraction {
         const options: IContractActions = {
             action: 'send',
             methodName: 'giveAccess'
-        }
-        const result = await this.provider.useContractMethod(contract, identity, options, resource, Web3.utils.fromAscii(consentId), accounts, Web3.utils.fromAscii(resourceName))
+        };
+        const result = await this.provider.useContractMethod(contract, identity, options, resource, Web3.utils.fromAscii(consentId), accounts, Web3.utils.fromAscii(resourceName));
         return result.status;
     }
 
@@ -57,8 +59,8 @@ class AccessInteraction implements IAccessInteraction {
         const options: IContractActions = {
             action: 'call',
             methodName: 'checkAccess'
-        }
-        return await this.provider.useContractMethod(contract, identity, options, resource, Web3.utils.fromAscii(consentId))
+        };
+        return await this.provider.useContractMethod(contract, identity, options, resource, Web3.utils.fromAscii(consentId));
     }
 
     /**
@@ -74,7 +76,7 @@ class AccessInteraction implements IAccessInteraction {
         const options: IContractActions = {
             action: 'call',
             methodName: 'getResourceByConsent'
-        }
+        };
         return this.provider.useContractMethod(contract, identity, options, Web3.utils.fromAscii(consentId));
     }
 

@@ -111,7 +111,8 @@ module.exports = {
                     'keypair',
                     'txt',
                     'Misformed',
-                    'dotenv'
+                    'dotenv',
+                    'bowhead'
                 ],
                 'skipIfMatch': [
                     '.+\.txt',

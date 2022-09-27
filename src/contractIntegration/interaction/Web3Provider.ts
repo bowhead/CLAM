@@ -13,7 +13,9 @@ class Web3Provider {
     /**
      * Empty constructor
      */
-    private constructor() { }
+    private constructor() { // eslint-disable-line @typescript-eslint/no-empty-function
+
+    }
 
     /**
      * This function returns the instance of the class using the sigleton pattern.
@@ -32,8 +34,8 @@ class Web3Provider {
      * This function set the configuration to connect with the blockchain.
      * 
      * @param {Web3} web3Object This parameter this parameter Web3Provider.
+     * @param {IInteractionConfig} interactionConfig This parameter is the interaction configuration.
      */
-
     public setConfig(web3Object: Web3, interactionConfig: IInteractionConfig): void {
         this.web3Object = web3Object;
         this.interactionConfig = interactionConfig;
@@ -42,7 +44,7 @@ class Web3Provider {
     /**
      * This function return a new Web3 instance.
      * 
-     * @returns {Web3} returna instance of Web3 using the configuration.
+     * @returns {Web3} return a instance of Web3 using the configuration.
      */
     public getProvider(): Web3 {
         return this.web3Object;

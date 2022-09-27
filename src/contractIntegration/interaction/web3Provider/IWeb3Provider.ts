@@ -1,5 +1,6 @@
-import { IdentityManager } from "../../../indentityManager";
-import IContractActions from "./IContractActions";
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+import { IdentityManager } from '../../../indentityManager';
+import IContractActions from './IContractActions';
 
 interface IWeb3Provider {
     getMethods(interactionType: string): any;

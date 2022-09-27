@@ -1,9 +1,12 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
+/*eslint no-unused-vars: "error"*/
+//eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config();
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+//eslint-disable-next-line @typescript-eslint/no-var-requires
 require('@babel/core').transformSync('code', {
     plugins: ['@babel/plugin-proposal-decorators'],
 });
+//eslint-disable-next-line  no-unused-vars,@typescript-eslint/no-unused-vars
 import { injectable } from 'tsyringe';
 import { IConsentInteraction } from '.';
 import Web3 from 'web3';
