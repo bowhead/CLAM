@@ -1,18 +1,18 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 
-//eslint-disable-next-line
+//eslint-disable-next-line @typescript-eslint/no-var-requires
 const Web3Bowhead = require('bowhead-web3');
 import { IdentityManager } from '../../../indentityManager';
 import IInteractionConfig from '../IInteractionConfig';
 import IWeb3Provider from './IWeb3Provider';
-//eslint-disable-next-line
+//eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { injectable, inject } from 'tsyringe';
 import FactoryWeb3Interaction from './FactoryWeb3Interaction';
 import IContractActions from './IContractActions';
 import NonceManager from './nonceManager/NonceManager';
-//eslint-disable-next-line
+//eslint-disable-next-line @typescript-eslint/no-var-requires, spellcheck/spell-checker
 const Tx = require('ethereumjs-tx').Transaction;
-//eslint-disable-next-line
+//eslint-disable-next-line @typescript-eslint/no-var-requires, spellcheck/spell-checker
 const Common = require('ethereumjs-common').default;
 /**
  * This class is used to use bowhead-network and web3js library
@@ -54,7 +54,7 @@ class Web3ProviderBowhead implements IWeb3Provider {
             abi = this.interactionConfig.consent.abi;
             address = this.interactionConfig.consent.address;
         }
-        //eslint-disable-next-line
+        //eslint-disable-next-line spellcheck/spell-checker
         const contract = new this.provider.aht.contract(abi).at(address);
         return contract;
     }
@@ -73,7 +73,7 @@ class Web3ProviderBowhead implements IWeb3Provider {
             if (options.action.trim() === 'send') {
                 const nonce: number = await this.getNonce(identity.address);
                 this.nonceManager.save(nonce > this.nonceManager.get() ? nonce : this.nonceManager.get());
-                //eslint-disable-next-line
+                //eslint-disable-next-line spellcheck/spell-checker
                 const rawTx = {
                     'to': FactoryWeb3Interaction.getInstance().config.consent.address,
                     'nonce': this.provider.toHex(this.nonceManager.get()),
@@ -83,7 +83,7 @@ class Web3ProviderBowhead implements IWeb3Provider {
                     'data': contract[options.methodName].getData.apply(contract, params),
                     'chainId': FactoryWeb3Interaction.getInstance().config.chainId,
                 };
-                //eslint-disable-next-line
+                //eslint-disable-next-line spellcheck/spell-checker
                 const bufferTransaction = await this.signTransaction(rawTx, identity);
                 const hash = await this.sendSignedTransaction(bufferTransaction);
                 const result = await this.getTransactionReceipt(hash);
@@ -95,7 +95,7 @@ class Web3ProviderBowhead implements IWeb3Provider {
                     ...params,
                     { from: identity.address }
                 );
-                //eslint-disable-next-line
+                //eslint-disable-next-line spellcheck/spell-checker
                 const result = await this.promersify(fn);
                 return result;
             }
@@ -111,12 +111,12 @@ class Web3ProviderBowhead implements IWeb3Provider {
      */
     getNonce(userAddress: string): Promise<number> {
         return new Promise((resolve, reject) => {
-            //eslint-disable-next-line
+            //eslint-disable-next-line spellcheck/spell-checker
             this.provider.aht.getTransactionCount(userAddress, (err: Error, nonce: number) => {
                 if (err) {
                     reject({
                         'status': 500,
-                        //eslint-disable-next-line
+                        //eslint-disable-next-line spellcheck/spell-checker
                         'message': 'Blockchain error: calculating the nonce',
                         'systemMessage': err,
                     });
@@ -135,21 +135,21 @@ class Web3ProviderBowhead implements IWeb3Provider {
      */
     async signTransaction(transaction: any, identity: IdentityManager): Promise<any> {
         const customCommon = Common.forCustomChain(
-            //eslint-disable-next-line
+            //eslint-disable-next-line spellcheck/spell-checker
             'mainnet',
             {
-                //eslint-disable-next-line
+                //eslint-disable-next-line spellcheck/spell-checker
                 'name': 'aht',
                 'chainId': transaction.chainId,
             },
-            //eslint-disable-next-line
+            //eslint-disable-next-line spellcheck/spell-checker
             'petersburg',
         );
-        //eslint-disable-next-line
+        //eslint-disable-next-line spellcheck/spell-checker
         const tx = new Tx(transaction, { 'common': customCommon, });
-        //eslint-disable-next-line
+        //eslint-disable-next-line spellcheck/spell-checker
         tx.sign(Buffer.from(identity.privateKey.substring(2, identity.privateKey.length), 'hex'));
-        //eslint-disable-next-line
+        //eslint-disable-next-line spellcheck/spell-checker
         return tx.serialize();
     }
 
@@ -158,15 +158,14 @@ class Web3ProviderBowhead implements IWeb3Provider {
      * @param {Buffer} tx this is the buffer result 
      * @returns {Promise<string>} return the hash of the transaction
      */
-    //eslint-disable-next-line
-    sendSignedTransaction(tx: Buffer): Promise<string> {
+    sendSignedTransaction(tx: Buffer): Promise<string> {// eslint-disable-line spellcheck/spell-checker
         return new Promise((resolve, reject) => {
-            //eslint-disable-next-line
+            //eslint-disable-next-line spellcheck/spell-checker
             this.provider.aht.sendRawTransaction('0x' + tx.toString('hex'), (err: Error, hash: string) => {
                 if (err) {
                     reject({
                         'status': 500,
-                        //eslint-disable-next-line
+                        //eslint-disable-next-line spellcheck/spell-checker
                         'message': 'Blockchain Error: sending transaction',
                         'systemMessage': err,
                     });
@@ -182,10 +181,9 @@ class Web3ProviderBowhead implements IWeb3Provider {
      * @param {string} txHash Transaction hash
      * @returns {Promise<any>} return the transaction receipt
      */
-    //eslint-disable-next-line
-    getTransactionReceipt(txHash: string): Promise<any> {
+    getTransactionReceipt(txHash: string): Promise<any> {// eslint-disable-line spellcheck/spell-checker
         return new Promise((resolve, reject) => {
-            //eslint-disable-next-line
+            //eslint-disable-next-line spellcheck/spell-checker
             this.provider.aht.getTransactionReceipt(txHash, (err: Error, result: any) => {
                 if (err) {
                     reject(err);
@@ -201,8 +199,7 @@ class Web3ProviderBowhead implements IWeb3Provider {
      * @param {Function} fn callback tu run
      * @returns {Promise<any>} The result of the callback in a promise
      */
-    //eslint-disable-next-line
-    promersify(fn: Function) {
+    promersify(fn: Function) {// eslint-disable-line @typescript-eslint/ban-types, spellcheck/spell-checker
         return new Promise((resolve, reject) => {
             fn((err: Error, result: any) => {
                 if (err) {

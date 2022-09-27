@@ -1,5 +1,5 @@
 import ICacheEngine from './ICacheEngine';
-//eslint-disable-next-line
+//eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { injectable } from 'tsyringe';
 
 /**

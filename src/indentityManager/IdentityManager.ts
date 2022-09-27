@@ -1,11 +1,11 @@
 import { IEncryptionLayer } from '../encryptionLayer';
 import { IKeysGenerator } from '../keysGenerator';
-//eslint-disable-next-line
+//eslint-disable-next-line @typescript-eslint/no-var-requires,spellcheck/spell-checker
 const Mnemonic = require('bitcore-mnemonic');
 
-// eslint-disable-next-line
+// eslint-disable-next-line @typescript-eslint/no-var-requires,spellcheck/spell-checker
 const { fromMnemonic } = require('ethereum-hdwallet');
-// eslint-disable-next-line
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { injectable, inject } from 'tsyringe';
 
 /**

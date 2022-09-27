@@ -3,7 +3,7 @@ import Web3 from 'web3';
 import { IdentityManager } from '../../../indentityManager';
 import IInteractionConfig from '../IInteractionConfig';
 import IWeb3Provider from './IWeb3Provider';
-//eslint-disable-next-line
+//eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { injectable, inject } from 'tsyringe';
 import IContractActions from './IContractActions';
 

@@ -1,6 +1,6 @@
 import {AbiItem} from 'web3-utils';
 interface IInteractionConfig {
-    //eslint-disable-next-line
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
     provider: any;
     chainId?: number;
     consent: { address: string, abi: AbiItem };

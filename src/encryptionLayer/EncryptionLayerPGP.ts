@@ -1,6 +1,6 @@
 import { IEncryptionLayer } from '.';
 import { readKey, encrypt, decrypt, readMessage, createMessage, decryptKey, readPrivateKey } from 'openpgp';
-//eslint-disable-next-line
+//eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { injectable } from 'tsyringe';
 /**
  * This class is the implementation of EncryptionLayer using the PGP algorithm.

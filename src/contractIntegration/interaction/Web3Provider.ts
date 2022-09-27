@@ -13,8 +13,9 @@ class Web3Provider {
     /**
      * Empty constructor
      */
-    //eslint-disable-next-line
-    private constructor() { }
+    private constructor() { // eslint-disable-line @typescript-eslint/no-empty-function
+
+    }
 
     /**
      * This function returns the instance of the class using the sigleton pattern.

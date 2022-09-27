@@ -1,6 +1,6 @@
 /*eslint no-unused-vars: "error"*/
 /*global Promise*/
-//eslint-disable-next-line
+//eslint-disable-next-line @typescript-eslint/no-unused-vars,no-unused-vars
 import { injectable } from 'tsyringe';
 import { IAccessInteraction } from '.';
 import Web3 from 'web3';

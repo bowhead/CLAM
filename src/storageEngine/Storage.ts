@@ -1,5 +1,5 @@
 import IStorageEngine from './IStorageEngine';
-//eslint-disable-next-line
+//eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { injectable, inject } from 'tsyringe';
 
 /**
