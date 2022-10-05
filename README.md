@@ -23,6 +23,7 @@ Using blockchain as basis, CLAM helps developers to focus on the implementation 
 	- [How to encrypt, save and decrypt a document using AES](#how-to-encrypt-save-and-decrypt-a-document-using-aes)
 	- [How to encrypt, save and decrypt a document using Open PGP](#how-to-encrypt-save-and-decrypt-a-document-using-open-pgp)
 	- [Use a custom encryption algorithm](#use-a-custom-encryption-algorithm)
+	- [Use a custom contract interaction](#use-a-custom-contract-interaction)
 	- [Use a custom storage engine](#use-a-custom-storage-engine)
 - [License](#license)
 
@@ -196,10 +197,8 @@ const  decryptDataMethod  =  async  ()  =>  {
 ### How to accept a consent
 Load modules, create instances and initialized them.
 ```js
-// Load Web3Provider, FactoryIdentity and FactoryInteraction modules
-import { Web3Provider, FactoryIdentity, FactoryInteraction } from 'bowhead-clam';
-// Load Web3 library
-import Web3 from 'web3';
+// Load FactoryWeb3Interaction, FactoryIdentity and FactoryInteraction modules
+import { FactoryWeb3Interaction, FactoryIdentity, FactoryInteraction } from 'bowhead-clam';
 
 // Create  new FactoryIdentity instance
 const factoryIdentity = new FactoryIdentity();
@@ -215,25 +214,29 @@ const identity = factoryIdentity.generateIdentity('PGP', 'PGP');
 identity.generateIdentity();
 
 // Get web3 provider instance
-const web3Provider = Web3Provider.getInstance();
+const factoryWeb3Provider = FactoryWeb3Interaction.getInstance();
 ```
 
 Set Web3 provider configuration.
 ```js
-// Set provider
-const web3 = new Web3(urlProvider);
-
-// Set address and ABI for Consent contract
-const consentConfig = { address: '0x09Fe1b1A9Cd73F35945Bfdc0378c9aCC227c0DBF', abi: ABIConsent };
-// Set address and ABI for Access contract
-const accessConfig = { address: '0x82E54b8B226b007704D1203f0951138338CB921F', abi: ABIAccess };
-// Set address and ABI for Consent Resource contract
-const consentResourceConfig = { address: '0x639c9197aB9be745A6D2CB6cB8c2d46D7BB9A412', abi: ABIConsentResource };
-// Set address and ABI for IPFS management contract
-const IPFSManagementConfig = { address: '0xB19Fb08e183fF19989792ceD10325BF0C45CCd27', abi: ABIIPFSManagement };
+// Provider configuration
+const interactionConfig = {
+	// Set URL provider
+	provider: 'http://localhost:8545',
+	// Set chain ID
+	chainId: 13,
+	// Set address and ABI for Consent contract
+	consent: { address: '0x09Fe1b1A9Cd73F35945Bfdc0378c9aCC227c0DBF', abi: ABIConsent },
+	// Set address and ABI for Access contract
+	access: { address: '0x82E54b8B226b007704D1203f0951138338CB921F', abi: ABIAccess },
+	// Set address and ABI for Consent Resource contract
+	consentResource: { address: '0x639c9197aB9be745A6D2CB6cB8c2d46D7BB9A412'), abi: ABIConsentResource },
+	// Set address and ABI for IPFS management contract
+	ipfs: { address: '0xB19Fb08e183fF19989792ceD10325BF0C45CCd27', abi: ABIIPFSManagement }
+}
 
 // Set Web3 provider configuration
-web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
+factoryWeb3Provider.setConfig(interactionConfig);
 ```
 
 Save consent approval.
@@ -242,16 +245,14 @@ Save consent approval.
 const consentId = 'AAA1'
 
 // Call saveConsent that it's contained in consentInteraction
-await interaction.consentInteraction.saveConsent(consentId, identity);
+await cotractInteraction.consentInteraction.saveConsent(consentId, identity);
 ```
 
 ### How to share a document with other accounts
 Load modules, create instances and initialized them.
 ```js
-// Load Web3Provider, FactoryIdentity and FactoryInteraction modules
-import { Web3Provider, FactoryIdentity, FactoryInteraction } from 'bowhead-clam';
-// Load Web3 library
-import Web3 from 'web3';
+// Load FactoryWeb3Interaction, FactoryIdentity and FactoryInteraction modules
+import { FactoryWeb3Interaction, FactoryIdentity, FactoryInteraction } from 'bowhead-clam';
 
 // Create  new FactoryIdentity instance
 const factoryIdentity = new FactoryIdentity();
@@ -267,25 +268,29 @@ const identity = factoryIdentity.generateIdentity('PGP', 'PGP');
 identity.generateIdentity();
 
 // Get web3 provider instance
-const web3Provider = Web3Provider.getInstance();
+const factoryWeb3Provider = FactoryWeb3Interaction.getInstance();
 ```
 
 Set Web3 provider configuration.
 ```js
-// Set provider
-const web3 = new Web3(urlProvider);
-
-// Set address and ABI for Consent contract
-const consentConfig = { address: '0x09Fe1b1A9Cd73F35945Bfdc0378c9aCC227c0DBF', abi: ABIConsent };
-// Set address and ABI for Access contract
-const accessConfig = { address: '0x82E54b8B226b007704D1203f0951138338CB921F', abi: ABIAccess };
-// Set address and ABI for Consent Resource contract
-const consentResourceConfig = { address: '0x639c9197aB9be745A6D2CB6cB8c2d46D7BB9A412', abi: ABIConsentResource };
-// Set address and ABI for IPFS management contract
-const IPFSManagementConfig = { address: '0xB19Fb08e183fF19989792ceD10325BF0C45CCd27', abi: ABIIPFSManagement };
+// Provider configuration
+const interactionConfig = {
+	// Set URL provider
+	provider: 'http://localhost:8545',
+	// Set chain ID
+	chainId: 13,
+	// Set address and ABI for Consent contract
+	consent: { address: '0x09Fe1b1A9Cd73F35945Bfdc0378c9aCC227c0DBF', abi: ABIConsent },
+	// Set address and ABI for Access contract
+	access: { address: '0x82E54b8B226b007704D1203f0951138338CB921F', abi: ABIAccess },
+	// Set address and ABI for Consent Resource contract
+	consentResource: { address: '0x639c9197aB9be745A6D2CB6cB8c2d46D7BB9A412'), abi: ABIConsentResource },
+	// Set address and ABI for IPFS management contract
+	ipfs: { address: '0xB19Fb08e183fF19989792ceD10325BF0C45CCd27', abi: ABIIPFSManagement }
+}
 
 // Set Web3 provider configuration
-web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
+factoryWeb3Provider.setConfig(interactionConfig);
 ```
 
 Add new user to allowed list to share documents by consent.
@@ -298,16 +303,14 @@ const addressUserToShare = '0x93120bA8FBb9eF2f6744C7d50803A4390E4eF961'
 const publicPGPKeyUserToShare = '-----BEGIN PGP PUBLIC KEY BLOCK----- ...'
 
 // Call addKey that it's contained in consentInteraction
-await interaction.consentInteraction.addKey(consentId, addressUserToShare, publicPGPKeyUserToShare, identity);
+await cotractInteraction.consentInteraction.addKey(consentId, addressUserToShare, publicPGPKeyUserToShare, identity);
 ```
 
 ### How to decrypt a shared document by other account
 Load modules, create instances and initialized them.
 ```js
-// Load Web3Provider, FactoryIdentity, FactoryInteraction, StorageEngine and DocumentSharing modules
-import { Web3Provider, FactoryIdentity, FactoryInteraction, StorageEngine, DocumentSharing } from 'bowhead-clam';
-// Load Web3 library
-import Web3 from 'web3';
+// Load FactoryWeb3Interaction, FactoryIdentity, FactoryInteraction, StorageEngine and DocumentSharing modules
+import { FactoryWeb3Interaction, FactoryIdentity, FactoryInteraction, StorageEngine, DocumentSharing } from 'bowhead-clam';
 
 // Create  new FactoryIdentity instance
 const factoryIdentity = new FactoryIdentity();
@@ -323,14 +326,16 @@ const identity = factoryIdentity.generateIdentity('PGP', 'PGP');
 identity.generateIdentity();
 
 // Get web3 provider instance
-const web3Provider = Web3Provider.getInstance();
+const factoryWeb3Provider = FactoryWeb3Interaction.getInstance();
 
 // Create a new instance of StorageEngine and pass the configuration
-const storageEngine: IStorageEngine = new StorageEngine({
+const storageEngineFactory = new StorageEngine();
+const storageEngine = storageEngineFactory.getStorageEngine();
+storageEngine.setConfiguration({
 	URL: 'http://localhost:3000',
 	ApiKey: 'wXW9c5NObnsrZIY1J3Tqhvz4cZ7YQrrKnbJpo9xOqJM=',
 	timeout: 2000
-	});
+});
 
 // Create DocumentSharing instance
 const documentSharing = new DocumentSharing(storageEngine);
@@ -338,20 +343,24 @@ const documentSharing = new DocumentSharing(storageEngine);
 
 Set Web3 provider configuration.
 ```js
-// Set provider
-const web3 = new Web3(urlProvider);
-
-// Set address and ABI for Consent contract
-const consentConfig = { address: '0x09Fe1b1A9Cd73F35945Bfdc0378c9aCC227c0DBF', abi: ABIConsent };
-// Set address and ABI for Access contract
-const accessConfig = { address: '0x82E54b8B226b007704D1203f0951138338CB921F', abi: ABIAccess };
-// Set address and ABI for Consent Resource contract
-const consentResourceConfig = { address: '0x639c9197aB9be745A6D2CB6cB8c2d46D7BB9A412', abi: ABIConsentResource };
-// Set address and ABI for IPFS management contract
-const IPFSManagementConfig = { address: '0xB19Fb08e183fF19989792ceD10325BF0C45CCd27', abi: ABIIPFSManagement };
+// Provider configuration
+const interactionConfig = {
+	// Set URL provider
+	provider: 'http://localhost:8545',
+	// Set chain ID
+	chainId: 13,
+	// Set address and ABI for Consent contract
+	consent: { address: '0x09Fe1b1A9Cd73F35945Bfdc0378c9aCC227c0DBF', abi: ABIConsent },
+	// Set address and ABI for Access contract
+	access: { address: '0x82E54b8B226b007704D1203f0951138338CB921F', abi: ABIAccess },
+	// Set address and ABI for Consent Resource contract
+	consentResource: { address: '0x639c9197aB9be745A6D2CB6cB8c2d46D7BB9A412'), abi: ABIConsentResource },
+	// Set address and ABI for IPFS management contract
+	ipfs: { address: '0xB19Fb08e183fF19989792ceD10325BF0C45CCd27', abi: ABIIPFSManagement }
+}
 
 // Set Web3 provider configuration
-web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
+factoryWeb3Provider.setConfig(interactionConfig);
 ```
 
 Get shared file.
@@ -370,10 +379,8 @@ const file = await documentSharing.getSharedFile(identity, options); // => 'dGVz
 ### How to encrypt, save and decrypt a document using AES
 Load modules, create instances and initialized them.
 ```js
-// Load Web3Provider, FactoryIdentity, FactoryInteraction, StorageEngine and DocumentSharing modules
-import { Web3Provider, FactoryIdentity, FactoryInteraction, StorageEngine, DocumentSharing } from 'bowhead-clam';
-// Load Web3 library
-import Web3 from 'web3';
+// Load FactoryWeb3Interaction, FactoryIdentity, FactoryInteraction, StorageEngine and DocumentSharing modules
+import { FactoryWeb3Interaction, FactoryIdentity, FactoryInteraction, StorageEngine, DocumentSharing } from 'bowhead-clam';
 
 // Create  new FactoryIdentity instance
 const factoryIdentity = new FactoryIdentity();
@@ -389,14 +396,16 @@ const identity = factoryIdentity.generateIdentity('AES', 'PGP');
 identity.generateIdentity();
 
 // Get web3 provider instance
-const web3Provider = Web3Provider.getInstance();
+const factoryWeb3Provider = FactoryWeb3Interaction.getInstance();
 
 // Create a new instance of StorageEngine and pass the configuration
-const storageEngine: IStorageEngine = new StorageEngine({
+const storageEngineFactory = new StorageEngine();
+const storageEngine = storageEngineFactory.getStorageEngine();
+storageEngine.setConfiguration({
 	URL: 'http://localhost:3000',
 	ApiKey: 'wXW9c5NObnsrZIY1J3Tqhvz4cZ7YQrrKnbJpo9xOqJM=',
 	timeout: 2000
-	});
+});
 
 // Create DocumentSharing instance
 const documentSharing = new DocumentSharing(storageEngine);
@@ -404,20 +413,24 @@ const documentSharing = new DocumentSharing(storageEngine);
 
 Set Web3 provider configuration.
 ```js
-// Set provider
-const web3 = new Web3(urlProvider);
-
-// Set address and ABI for Consent contract
-const consentConfig = { address: '0x09Fe1b1A9Cd73F35945Bfdc0378c9aCC227c0DBF', abi: ABIConsent };
-// Set address and ABI for Access contract
-const accessConfig = { address: '0x82E54b8B226b007704D1203f0951138338CB921F', abi: ABIAccess };
-// Set address and ABI for Consent Resource contract
-const consentResourceConfig = { address: '0x639c9197aB9be745A6D2CB6cB8c2d46D7BB9A412', abi: ABIConsentResource };
-// Set address and ABI for IPFS management contract
-const IPFSManagementConfig = { address: '0xB19Fb08e183fF19989792ceD10325BF0C45CCd27', abi: ABIIPFSManagement };
+// Provider configuration
+const interactionConfig = {
+	// Set URL provider
+	provider: 'http://localhost:8545',
+	// Set chain ID
+	chainId: 13,
+	// Set address and ABI for Consent contract
+	consent: { address: '0x09Fe1b1A9Cd73F35945Bfdc0378c9aCC227c0DBF', abi: ABIConsent },
+	// Set address and ABI for Access contract
+	access: { address: '0x82E54b8B226b007704D1203f0951138338CB921F', abi: ABIAccess },
+	// Set address and ABI for Consent Resource contract
+	consentResource: { address: '0x639c9197aB9be745A6D2CB6cB8c2d46D7BB9A412'), abi: ABIConsentResource },
+	// Set address and ABI for IPFS management contract
+	ipfs: { address: '0xB19Fb08e183fF19989792ceD10325BF0C45CCd27', abi: ABIIPFSManagement }
+}
 
 // Set Web3 provider configuration
-web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
+factoryWeb3Provider.setConfig(interactionConfig);
 ```
 
 Save encrypted file with AES.
@@ -449,10 +462,8 @@ const file = await documentSharing.getFile(identity, options);
 ### How to encrypt, save and decrypt a document using Open PGP
 Load modules, create instances and initialized them.
 ```js
-// Load Web3Provider, FactoryIdentity, FactoryInteraction, StorageEngine and DocumentSharing modules
-import { Web3Provider, FactoryIdentity, FactoryInteraction, StorageEngine, DocumentSharing } from 'bowhead-clam';
-// Load Web3 library
-import Web3 from 'web3';
+// Load FactoryWeb3Interaction, FactoryIdentity, FactoryInteraction, StorageEngine and DocumentSharing modules
+import { FactoryWeb3Interaction, FactoryIdentity, FactoryInteraction, StorageEngine, DocumentSharing } from 'bowhead-clam';
 
 // Create  new FactoryIdentity instance
 const factoryIdentity = new FactoryIdentity();
@@ -468,14 +479,16 @@ const identity = factoryIdentity.generateIdentity('PGP', 'PGP');
 identity.generateIdentity();
 
 // Get web3 provider instance
-const web3Provider = Web3Provider.getInstance();
+const factoryWeb3Provider = FactoryWeb3Interaction.getInstance();
 
 // Create a new instance of StorageEngine and pass the configuration
-const storageEngine: IStorageEngine = new StorageEngine({
+const storageEngineFactory = new StorageEngine();
+const storageEngine = storageEngineFactory.getStorageEngine();
+storageEngine.setConfiguration({
 	URL: 'http://localhost:3000',
 	ApiKey: 'wXW9c5NObnsrZIY1J3Tqhvz4cZ7YQrrKnbJpo9xOqJM=',
 	timeout: 2000
-	});
+});
 
 // Create DocumentSharing instance
 const documentSharing = new DocumentSharing(storageEngine);
@@ -483,20 +496,24 @@ const documentSharing = new DocumentSharing(storageEngine);
 
 Set Web3 provider configuration.
 ```js
-// Set provider
-const web3 = new Web3(urlProvider);
-
-// Set address and ABI for Consent contract
-const consentConfig = { address: '0x09Fe1b1A9Cd73F35945Bfdc0378c9aCC227c0DBF', abi: ABIConsent };
-// Set address and ABI for Access contract
-const accessConfig = { address: '0x82E54b8B226b007704D1203f0951138338CB921F', abi: ABIAccess };
-// Set address and ABI for Consent Resource contract
-const consentResourceConfig = { address: '0x639c9197aB9be745A6D2CB6cB8c2d46D7BB9A412', abi: ABIConsentResource };
-// Set address and ABI for IPFS management contract
-const IPFSManagementConfig = { address: '0xB19Fb08e183fF19989792ceD10325BF0C45CCd27', abi: ABIIPFSManagement };
+// Provider configuration
+const interactionConfig = {
+	// Set URL provider
+	provider: 'http://localhost:8545',
+	// Set chain ID
+	chainId: 13,
+	// Set address and ABI for Consent contract
+	consent: { address: '0x09Fe1b1A9Cd73F35945Bfdc0378c9aCC227c0DBF', abi: ABIConsent },
+	// Set address and ABI for Access contract
+	access: { address: '0x82E54b8B226b007704D1203f0951138338CB921F', abi: ABIAccess },
+	// Set address and ABI for Consent Resource contract
+	consentResource: { address: '0x639c9197aB9be745A6D2CB6cB8c2d46D7BB9A412'), abi: ABIConsentResource },
+	// Set address and ABI for IPFS management contract
+	ipfs: { address: '0xB19Fb08e183fF19989792ceD10325BF0C45CCd27', abi: ABIIPFSManagement }
+}
 
 // Set Web3 provider configuration
-web3Provider.setConfig(web3, consentConfig, accessConfig, consentResourceConfig, IPFSManagementConfig);
+factoryWeb3Provider.setConfig(interactionConfig);
 ```
 
 Save encrypted file with Open PGP
@@ -518,7 +535,7 @@ const cid = await documentSharing.sharedFile(identity, options, usersToShare.pgp
 await contractInteraction.IPFSManagementInteraction.addFile(cid, options.fileName, identity);
 
 // Add the address of the users who can get the file in the Access contract
-await this.contractInteraction.acccessInteraction.giveAccess(cid, options.consentId, [options.identity.address], options.fileName, options.identity);
+await contractInteraction.acccessInteraction.giveAccess(cid, options.consentId, [options.identity.address], options.fileName, options.identity);
 ```
 
 // Get encrypted file with Open PGP
@@ -585,6 +602,86 @@ factoryIdentity.setOptionEncryption({ name: 'LULU', option: EncryptionLayerLULU 
 // Get an identity instance that will use the new encryption implementation
 const identity: IdentityManager = factoryIdentity.generateIdentity('LULU', 'PGP');
 ```
+
+### Use a custom contract interaction
+Create new implementation for consent based on IConsentInteraction
+```js
+// Load IConsentInteraction module
+import { IConsentInteraction } from 'bowhead-clam'
+
+class ConsentInteractionOther implements IConsentInteraction {
+    /**
+     * This function saves a consent with the information passed as parameters. 
+     * @param {string} consentId This parameter is the consentID to identify consent.
+     * @param {IdentityManager} identity This parameter is the Identity to configurate the smart contract interaction.
+     * @returns {Promise<boolean>} return the address of the transaction.
+     */
+    async saveConsent(consentId: string, identity: IdentityManager): Promise<boolean> {
+        return consentId && identity ? true : false;
+    }
+    /**
+     * This function cancel a consent based in the consentID passed in th eparameter.
+     * @param {string} consentId This parameter is the consentID to identify consent.
+     * @param {IdentityManager} identity This parameter is the Identity to configurate the smart contract interaction.
+     * @returns {Promise<boolean>} return the address of the transaction.
+     */
+    async cancelConsent(consentId: string, identity: IdentityManager): Promise<boolean> {
+        return consentId && identity? true : false;
+    }
+
+    /**
+     * This function return the consent status based in the consentID passed in the parameter.
+     * @param {string} consentId This parameters is the consentID to indentify the consent.
+     * @param {string} owner This parameter is the owner addres.
+     * @param {IdentityManager} identity This parameter is the Identity to configurate the smart contract interaction.
+     * @returns {Promise<boolean>} return the consent status. 
+     */
+    async getConsentById(consentId: string, owner: string, identity: IdentityManager): Promise<boolean> {
+        return consentId && owner && identity ? true : false;
+    }
+
+    /**
+     * This funtion add a key in a consent based in the consentID in the case if the consent has already been acepted.
+     * @param {string} consentId This parameter is the consentID to indentify the consent.
+     * @param {string} addressConsent This parameter is the adressConsent to indentify the consent.
+     * @param {string} key  This parameter is the key to be added in the consent.
+     * @param {IdentityManager} identity This parameter is the Identity to configurate the smart contract interaction. 
+     * @returns {Promise<boolean>}  return the address of the transaction.  
+     */
+    async addKey(consentId: string, addressConsent: string, key: string, identity: IdentityManager): Promise<boolean> {
+        return consentId && addressConsent && identity && key? true : false;
+    }
+
+    /**
+     * This funtion return the addres's and keys's the consent based in the consentId.
+     * @param {string} consentId This parameter is the consentID to indentify the consent.
+     * @param {IdentityManager} identity This parameter is the Identity to configurate the smart contract interaction. 
+     * @returns {Promise<any>} return the addres's and keys's
+     */
+    async getKeys(consentId: string, identity: IdentityManager): Promise<IConsentKeys> {
+        return {'0': [consentId], '1': [identity? '': '']};
+    }
+}
+```
+
+Register the new implementation
+```js
+// Load FactoryInteraction
+import { FactoryInteraction } from 'bowhead-clam';
+
+// Create a factory interaction instance
+const factoryInteraction = new FactoryInteraction();
+
+// Set the new implementation
+factoryInteraction.setOptionConsentInteraction({ name: 'other', option: ConsentInteractionOther });
+
+// Get the contract interaction and pass the name of the new implementation as a parameter
+const contractInteraciton = factoryInteraction.generateInteraction('other', 'clam', 'clam');
+```
+> **_NOTE:_** 
+The function ```generateInteraction``` receive three parameters, the first corresponds to ConsentInteraction, the second to AccessInteraction and the third to IPFSManagementInteraction.
+>
+> Pass ```'clam'``` to keep the deault implementation.
 
 ### Use a custom storage engine
 Create new implementation based on IStorageEngine
@@ -679,7 +776,7 @@ class TemporalEngine implements IStorageEngine {
 Register the new implementation
 ```js
 // Load StorageEngine module
-import { StorageEngine } from 'bowhead-clam'
+import { StorageEngine } from 'bowhead-clam';
 
 // Create a storage engine instance and pass the new implementation as a parameter in the constructor
 const storageEngineFactory = new StorageEngine(TemporalEngine);
