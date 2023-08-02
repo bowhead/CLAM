@@ -1,7 +1,7 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 
 //eslint-disable-next-line @typescript-eslint/no-var-requires
-const Web3Bowhead = require('bowhead-web3');
+import * as Web3Bowhead from 'bowhead-web3';
 import { IdentityManager } from '../../../indentityManager';
 import IInteractionConfig from '../IInteractionConfig';
 import IWeb3Provider from './IWeb3Provider';
@@ -11,9 +11,9 @@ import FactoryWeb3Interaction from './FactoryWeb3Interaction';
 import IContractActions from './IContractActions';
 import NonceManager from './nonceManager/NonceManager';
 //eslint-disable-next-line @typescript-eslint/no-var-requires, spellcheck/spell-checker
-const Tx = require('ethereumjs-tx').Transaction;
+import {Transaction as Tx} from 'ethereumjs-tx';
 //eslint-disable-next-line @typescript-eslint/no-var-requires, spellcheck/spell-checker
-const Common = require('ethereumjs-common').default;
+import Common from 'ethereumjs-common';
 /**
  * This class is used to use bowhead-network and web3js library
  * 

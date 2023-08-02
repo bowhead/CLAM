@@ -1,12 +1,14 @@
 import { IEncryptionLayer } from '../encryptionLayer';
 import { IKeysGenerator } from '../keysGenerator';
 //eslint-disable-next-line @typescript-eslint/no-var-requires,spellcheck/spell-checker
-const Mnemonic = require('bitcore-mnemonic');
+import * as Mnemonic from 'bitcore-mnemonic';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires,spellcheck/spell-checker
-const { fromMnemonic } = require('ethereum-hdwallet');
+import * as HDWallet from 'ethereum-hdwallet';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { injectable, inject } from 'tsyringe';
+
+const { fromMnemonic } = HDWallet;
 
 /**
  * This class is to create your mnemonic, address, public key and private key to build your identity, 

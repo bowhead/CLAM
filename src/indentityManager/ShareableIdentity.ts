@@ -1,7 +1,8 @@
 import IdentityManager from './IdentityManager';
 import FactoryIdentity from '../factoryIdentity/FactoryIdentity';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { fromMnemonic } = require('ethereum-hdwallet');
+import * as HDWallet from 'ethereum-hdwallet';
+const { fromMnemonic } = HDWallet;
 
 /**
  * This class allows you to create N identities based on a main identity, 

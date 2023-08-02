@@ -1,6 +1,6 @@
 import IEncryptionLayer from './IEncryptionLayer';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const CryptoJS = require('crypto-js');
+import CryptoES from 'crypto-es';
 //eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { injectable } from 'tsyringe';
 /**
@@ -25,19 +25,19 @@ class EncryptionLayerAES implements IEncryptionLayer {
         if (key.trim().length === 0 || key.trim().length < 3) throw new Error('Error, the length of the key to encrypt the data must be greater than 5');
         if (data.trim().length === 0) throw new Error('The data must have at least one character');
 
-        const salt = CryptoJS.lib.WordArray.random(128 / 8);
-        const keyEncrypt = CryptoJS.PBKDF2(key, salt, {
+        const salt = CryptoES.lib.WordArray.random(128 / 8);
+        const keyEncrypt = CryptoES.PBKDF2(key, salt, {
             keySize: this.keySize / 32,
             iterations: this.iterations,
         });
-        const iv = CryptoJS.lib.WordArray.random(128 / 8);
-        const encrypted = CryptoJS.AES.encrypt(data, keyEncrypt, {
+        const iv = CryptoES.lib.WordArray.random(128 / 8);
+        const encrypted = CryptoES.AES.encrypt(data, keyEncrypt, {
             iv: iv,
-            padding: CryptoJS.pad.Pkcs7,
-            mode: CryptoJS.mode.CBC,
+            padding: CryptoES.pad.Pkcs7,
+            mode: CryptoES.mode.CBC,
         });
         const transitMessage = salt.toString() + iv.toString() + encrypted.toString();
-        return transitMessage;
+        return Promise.resolve(transitMessage);
     }
     /**
      * This function decrypt the data passed as a parameter
@@ -51,20 +51,20 @@ class EncryptionLayerAES implements IEncryptionLayer {
         if (key.trim().length === 0 || key.trim().length < 3) throw new Error('Error, the length of the key to decrypt the data must be greater than 5');
         if (data.trim().length === 0) throw new Error('The data must have at least one character');
 
-        const salt = CryptoJS.enc.Hex.parse(data.substr(0, 32));
-        const iv = CryptoJS.enc.Hex.parse(data.substr(32, 32));
+        const salt = CryptoES.enc.Hex.parse(data.substr(0, 32));
+        const iv = CryptoES.enc.Hex.parse(data.substr(32, 32));
 
         const encrypted = data.substring(64);
-        const keyEncrypt = CryptoJS.PBKDF2(key, salt, {
+        const keyEncrypt = CryptoES.PBKDF2(key, salt, {
             keySize: this.keySize / 32,
             iterations: this.iterations,
         });
-        const decrypted = CryptoJS.AES.decrypt(encrypted, keyEncrypt, {
+        const decrypted = CryptoES.AES.decrypt(encrypted, keyEncrypt, {
             iv: iv,
-            padding: CryptoJS.pad.Pkcs7,
-            mode: CryptoJS.mode.CBC,
+            padding: CryptoES.pad.Pkcs7,
+            mode: CryptoES.mode.CBC,
         });
-        return decrypted.toString(CryptoJS.enc.Utf8);
+        return Promise.resolve(decrypted.toString(CryptoES.enc.Utf8));
     }
 
 }
