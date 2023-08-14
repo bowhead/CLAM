@@ -2,13 +2,13 @@
 
 ## About
 
-CLAM stands for Consent and Content Access Management Library. It is a users' data privacy first and extensible tool that abstracts the complexity of different technologies, like blockchain and IPFS. 
+CLAM stands for Consent and Content Access Management Library. Prioritizing user data privacy, CLAM is an extensible tool that abstracts the complexities of various technologies, including blockchain and IPFS.
 
-Using blockchain as basis, CLAM helps developers to focus on the implementation of their solution and not worry about technical details of two common cases when a system is built to handle sensitive data:
+With blockchain as its foundation, CLAM allows developers to concentrate on implementing their solutions without getting bogged down by the intricate technical details of handling sensitive data. It addresses two primary concerns:
 
-* Consent: Acquiring users' consent where they agree to share their delicate data is a challenge. With an anonymous, decentralized and immutable consent, the users’ enrollment increases by giving them the option to quit at any time they want, propagating the change to all linked systems without no effort.
+* Consent: Acquiring user consent, especially when they're required to share sensitive data, poses significant challenges. By offering anonymous, decentralized, and immutable consent, CLAM boosts user enrollment. Users have the flexibility to withdraw their consent whenever they wish, prompting changes across all linked systems effortlessly.
+* Content Access Management: Users have the autonomy to determine when and with whom their information is shared. This process is managed through smart contracts, centralizing the logic and ensuring transparency for all stakeholders. The information remains encrypted at all times and is accessible solely by the owner and those they choose to share it with. This could range from doctors and researchers to any trusted entity the user designates.
 
-* Content access management: the users’ can decide when and with whom the information is shared, everything is handled by smart contracts whose main purpose is to decentralize the logic and make the process transparent for all the stakeholders. The information is always encrypted and cannot be accessed by anyone except the user owner and those that she decided to share, who could be a doctor, researchers or any actor that the user trusts.
 
 ## Table of Contents
 - [Requirements](#requirements)
